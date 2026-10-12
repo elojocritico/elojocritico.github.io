@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Lista de autorizados: ajustes/global.usuarios = { correo: "admin" | "editor" }
+    function ajustes() {
+      return get(/databases/$(database)/documents/ajustes/global).data;
+    }
+    function conSesion() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/ajustes/global);
+    }
+    function papel() {
+      return ajustes().get('usuarios', {}).get(request.auth.token.email, '');
+    }
+    function autorizado() { return conSesion() && papel() != ''; }
+    function esAdmin() { return autorizado() && papel() == 'admin'; }
+    function esEditor() { return autorizado() && (papel() == 'editor' || papel() == 'admin'); }
+
+    // Articulos: solo editores y admins; las versiones son solo de alta.
+    match /articulos/{id} {
+      allow read, write: if esEditor();
+      match /versiones/{v} {
+        allow create, read: if esEditor();
+        allow update, delete: if false;
+      }
+    }
+
+    // Comentarios: el publico solo crea comentarios pendientes y validados.
+    match /comentarios/{id} {
+      allow create: if request.resource.data.keys().hasOnly(
+            ['articuloSlug', 'nombre', 'correo', 'texto', 'respuestaA', 'estado', 'origen', 'creadoEn'])
+        && request.resource.data.keys().hasAll(
+            ['articuloSlug', 'nombre', 'correo', 'texto', 'respuestaA', 'estado', 'origen', 'creadoEn'])
+        && request.resource.data.estado == 'pendiente'
+        && request.resource.data.origen == 'nuevo'
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() >= 1 && request.resource.data.nombre.size() <= 60
+        && request.resource.data.texto is string
+        && request.resource.data.texto.size() >= 1 && request.resource.data.texto.size() <= 3000
+        && request.resource.data.correo is string
+        && request.resource.data.correo.size() <= 120
+        && request.resource.data.articuloSlug is string
+        && request.resource.data.articuloSlug.matches('^[^/]{1,200}$')
+        && (request.resource.data.respuestaA == null || request.resource.data.respuestaA is string)
+        && request.resource.data.creadoEn == request.time;
+      allow read, update, delete: if esEditor();
+    }
+
+    match /archivoOcultos/{slug} {
+      allow read, write: if esEditor();
+    }
+
+    // Ajustes: leen los autorizados, escribe solo el admin (incluye usuarios).
+    match /ajustes/global {
+      allow read: if autorizado();
+      allow write: if esAdmin();
+    }
+
+    // Estado: los editores solo pueden cambiar publicarPendiente.
+    match /estado/sistema {
+      allow read: if autorizado();
+      allow update: if esEditor()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicarPendiente']);
+    }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

@@ -1,0 +1,213 @@
+import { readFileSync } from "node:fs";
+import { initializeTestEnvironment, assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, getDocs, serverTimestamp, setLogLevel } from "firebase/firestore";
+import { describe, it, beforeAll, afterAll, beforeEach } from "vitest";
+
+setLogLevel("silent");
+let env;
+const ADMIN = "admin@eoc.test", EDITOR = "editor@eoc.test", SINPAPEL = "otro@eoc.test", FUERA = "intruso@eoc.test";
+const auth = (e) => env.authenticatedContext("u-" + e, { email: e, email_verified: true }).firestore();
+const anon = () => env.unauthenticatedContext().firestore();
+
+beforeAll(async () => {
+  const [host, port] = (process.env.FIRESTORE_EMULATOR_HOST ?? "127.0.0.1:8080").split(":");
+  env = await initializeTestEnvironment({
+    projectId: "demo-elojocritico",
+    firestore: { rules: readFileSync("firestore.rules", "utf8"), host, port: Number(port) },
+  });
+});
+afterAll(async () => { await env?.cleanup(); });
+beforeEach(async () => {
+  await env.clearFirestore();
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await setDoc(doc(db, "ajustes/global"), {
+      destacado: null, enlaces: [], queEsEoc: { titulo: "", cuerpoHtml: "" },
+      adsense: { activo: false, cliente: "", bloque: "" },
+      usuarios: { [ADMIN]: "admin", [EDITOR]: "editor", [SINPAPEL]: "lector" },
+    });
+    await setDoc(doc(db, "articulos/a1"), { titulo: "Hola", estado: "publicado" });
+    await setDoc(doc(db, "articulos/a1/versiones/v1"), { titulo: "Hola", guardadoPor: EDITOR });
+    await setDoc(doc(db, "comentarios/c1"), { articuloSlug: "x", nombre: "N", correo: "p@q.r", texto: "t", respuestaA: null, estado: "pendiente", origen: "nuevo" });
+    await setDoc(doc(db, "archivoOcultos/x"), { ids: [] });
+    await setDoc(doc(db, "estado/sistema"), { publicarPendiente: false, lecturasHoy: 0 });
+  });
+});
+
+const comentario = (o = {}) => ({
+  articuloSlug: "mi-articulo", nombre: "Ana", correo: "ana@x.es", texto: "Buen articulo",
+  respuestaA: null, estado: "pendiente", origen: "nuevo", creadoEn: serverTimestamp(), ...o,
+});
+const sinCampo = (c) => { const x = comentario(); delete x[c]; return x; };
+
+describe("lector malicioso (anonimo)", () => {
+  it("crea un comentario valido", async () => {
+    await assertSucceeds(addDoc(collection(anon(), "comentarios"), comentario()));
+  });
+  it("acepta correo vacio y respuestaA string", async () => {
+    await assertSucceeds(addDoc(collection(anon(), "comentarios"), comentario({ correo: "", respuestaA: "c1" })));
+  });
+  it("no puede crear un comentario ya aprobado", async () => {
+    await assertFails(addDoc(collection(anon(), "comentarios"), comentario({ estado: "aprobado" })));
+  });
+  it("no puede crear con origen distinto de nuevo", async () => {
+    await assertFails(addDoc(collection(anon(), "comentarios"), comentario({ origen: "archivo" })));
+  });
+  it("rechaza texto enorme (900 KB, cerca del limite de Firestore)", async () => {
+    await assertFails(addDoc(collection(anon(), "comentarios"), comentario({ texto: "a".repeat(900 * 1024) })));
+  });
+  it("rechaza texto vacio, texto de 3001, nombre vacio o de 61, correo de 121", async () => {
+    const c = collection(anon(), "comentarios");
+    await assertFails(addDoc(c, comentario({ texto: "" })));
+    await assertFails(addDoc(c, comentario({ texto: "a".repeat(3001) })));
+    await assertFails(addDoc(c, comentario({ nombre: "" })));
+    await assertFails(addDoc(c, comentario({ nombre: "n".repeat(61) })));
+    await assertFails(addDoc(c, comentario({ correo: "c".repeat(121) })));
+  });
+  it("acepta los limites exactos (60, 3000, 120)", async () => {
+    await assertSucceeds(addDoc(collection(anon(), "comentarios"), comentario({ nombre: "n".repeat(60), texto: "a".repeat(3000), correo: "c".repeat(120) })));
+  });
+  it("rechaza campos extra", async () => {
+    await assertFails(addDoc(collection(anon(), "comentarios"), comentario({ admin: true })));
+  });
+  it("rechaza si falta un campo obligatorio", async () => {
+    for (const c of ["nombre", "texto", "correo", "articuloSlug", "respuestaA", "creadoEn", "estado", "origen"])
+      await assertFails(addDoc(collection(anon(), "comentarios"), sinCampo(c)));
+  });
+  it("rechaza articuloSlug con barra, vacio o largo", async () => {
+    const c = collection(anon(), "comentarios");
+    await assertFails(addDoc(c, comentario({ articuloSlug: "a/b" })));
+    await assertFails(addDoc(c, comentario({ articuloSlug: "" })));
+    await assertFails(addDoc(c, comentario({ articuloSlug: "a".repeat(201) })));
+  });
+  it("rechaza creadoEn falsificado o respuestaA no string", async () => {
+    const c = collection(anon(), "comentarios");
+    await assertFails(addDoc(c, comentario({ creadoEn: new Date("2020-01-01") })));
+    await assertFails(addDoc(c, comentario({ respuestaA: 5 })));
+  });
+  it("no puede leer comentarios (ni uno ni la lista)", async () => {
+    await assertFails(getDoc(doc(anon(), "comentarios/c1")));
+    await assertFails(getDocs(collection(anon(), "comentarios")));
+  });
+  it("no puede modificar ni borrar comentarios", async () => {
+    await assertFails(updateDoc(doc(anon(), "comentarios/c1"), { estado: "aprobado" }));
+    await assertFails(deleteDoc(doc(anon(), "comentarios/c1")));
+  });
+  it("no puede leer ni escribir articulos", async () => {
+    await assertFails(getDoc(doc(anon(), "articulos/a1")));
+    await assertFails(setDoc(doc(anon(), "articulos/a2"), { titulo: "x" }));
+    await assertFails(updateDoc(doc(anon(), "articulos/a1"), { titulo: "x" }));
+    await assertFails(deleteDoc(doc(anon(), "articulos/a1")));
+  });
+  it("no puede leer ni escribir ajustes, estado ni archivoOcultos", async () => {
+    await assertFails(getDoc(doc(anon(), "ajustes/global")));
+    await assertFails(updateDoc(doc(anon(), "ajustes/global"), { destacado: "x" }));
+    await assertFails(getDoc(doc(anon(), "estado/sistema")));
+    await assertFails(updateDoc(doc(anon(), "estado/sistema"), { publicarPendiente: true }));
+    await assertFails(setDoc(doc(anon(), "archivoOcultos/x"), { ids: ["1"] }));
+  });
+  it("no puede tocar colecciones desconocidas", async () => {
+    await assertFails(setDoc(doc(anon(), "otra/x"), { a: 1 }));
+    await assertFails(getDoc(doc(anon(), "otra/x")));
+  });
+});
+
+describe("usuario con sesion pero no autorizado", () => {
+  it("no lee ajustes, articulos ni comentarios, ni escribe", async () => {
+    const db = auth(FUERA);
+    await assertFails(getDoc(doc(db, "ajustes/global")));
+    await assertFails(getDoc(doc(db, "articulos/a1")));
+    await assertFails(getDoc(doc(db, "comentarios/c1")));
+    await assertFails(setDoc(doc(db, "articulos/a2"), { titulo: "x" }));
+  });
+  it("si puede crear un comentario publico (como cualquier lector)", async () => {
+    await assertSucceeds(addDoc(collection(auth(FUERA), "comentarios"), comentario()));
+  });
+});
+
+describe("autorizado sin papel de editor/admin", () => {
+  it("lee ajustes y estado, pero no articulos, comentarios ni escribe", async () => {
+    const db = auth(SINPAPEL);
+    await assertSucceeds(getDoc(doc(db, "ajustes/global")));
+    await assertSucceeds(getDoc(doc(db, "estado/sistema")));
+    await assertFails(getDoc(doc(db, "articulos/a1")));
+    await assertFails(getDoc(doc(db, "comentarios/c1")));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true }));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { destacado: "x" }));
+  });
+});
+
+describe("editor", () => {
+  it("lee y escribe articulos y los borra", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(getDoc(doc(db, "articulos/a1")));
+    await assertSucceeds(setDoc(doc(db, "articulos/a2"), { titulo: "Nuevo" }));
+    await assertSucceeds(updateDoc(doc(db, "articulos/a1"), { titulo: "Editado" }));
+    await assertSucceeds(deleteDoc(doc(db, "articulos/a2")));
+  });
+  it("crea y lee versiones, pero no las modifica ni borra", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(setDoc(doc(db, "articulos/a1/versiones/v2"), { titulo: "v2" }));
+    await assertSucceeds(getDoc(doc(db, "articulos/a1/versiones/v1")));
+    await assertSucceeds(getDocs(collection(db, "articulos/a1/versiones")));
+    await assertFails(updateDoc(doc(db, "articulos/a1/versiones/v1"), { titulo: "x" }));
+    await assertFails(setDoc(doc(db, "articulos/a1/versiones/v1"), { titulo: "x" }));
+    await assertFails(deleteDoc(doc(db, "articulos/a1/versiones/v1")));
+  });
+  it("lee comentarios, cambia su estado y los borra", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(getDocs(collection(db, "comentarios")));
+    await assertSucceeds(updateDoc(doc(db, "comentarios/c1"), { estado: "aprobado" }));
+    await assertSucceeds(deleteDoc(doc(db, "comentarios/c1")));
+  });
+  it("escribe archivoOcultos", async () => {
+    await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/x"), { ids: ["1"] }));
+  });
+  it("lee ajustes pero no puede escribirlos", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(getDoc(doc(db, "ajustes/global")));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { destacado: "x" }));
+  });
+  it("no puede tocar usuarios (ni auto-ascenderse a admin)", async () => {
+    const db = auth(EDITOR);
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { usuarios: { [EDITOR]: "admin" } }));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { "usuarios.nuevo@x.es": "editor" }));
+  });
+  it("solo escribe publicarPendiente en estado/sistema", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(getDoc(doc(db, "estado/sistema")));
+    await assertSucceeds(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true }));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { lecturasHoy: 99 }));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true, ultimaPublicacion: "x" }));
+    await assertFails(setDoc(doc(db, "estado/sistema"), { lecturasHoy: 1 }));
+  });
+  it("no puede tocar colecciones desconocidas", async () => {
+    await assertFails(setDoc(doc(auth(EDITOR), "otra/x"), { a: 1 }));
+  });
+});
+
+describe("admin", () => {
+  it("hace todo lo del editor", async () => {
+    const db = auth(ADMIN);
+    await assertSucceeds(setDoc(doc(db, "articulos/a3"), { titulo: "x" }));
+    await assertSucceeds(updateDoc(doc(db, "comentarios/c1"), { estado: "spam" }));
+    await assertSucceeds(setDoc(doc(db, "articulos/a1/versiones/v9"), { titulo: "v" }));
+    await assertFails(updateDoc(doc(db, "articulos/a1/versiones/v1"), { titulo: "x" }));
+  });
+  it("escribe ajustes, incluidos usuarios", async () => {
+    const db = auth(ADMIN);
+    await assertSucceeds(updateDoc(doc(db, "ajustes/global"), { destacado: "x" }));
+    await assertSucceeds(updateDoc(doc(db, "ajustes/global"), { "usuarios.nuevo@x.es": "editor" }));
+  });
+  it("puede escribir publicarPendiente", async () => {
+    await assertSucceeds(updateDoc(doc(auth(ADMIN), "estado/sistema"), { publicarPendiente: true }));
+  });
+});
+
+describe("sin ajustes/global (arranque)", () => {
+  it("nadie autenticado obtiene permisos si el documento no existe", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => { await deleteDoc(doc(ctx.firestore(), "ajustes/global")); });
+    await assertFails(getDoc(doc(auth(ADMIN), "articulos/a1")));
+    await assertFails(setDoc(doc(auth(ADMIN), "ajustes/global"), { usuarios: { [ADMIN]: "admin" } }));
+  });
+});

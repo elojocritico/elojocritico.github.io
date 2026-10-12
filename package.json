@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "verificar": "node scripts/verificar.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "simulador": "node scripts/con-java.mjs firebase emulators:start --only auth,firestore --project demo-elojocritico",
+    "test:reglas": "node scripts/con-java.mjs firebase emulators:exec --only firestore --project demo-elojocritico \"vitest run -c vitest.reglas.config.mjs\""
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,9 @@
     "pagefind": "^1.5.2"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^4.0.1",
+    "firebase": "^11.10.0",
+    "firebase-tools": "^13.35.1",
     "vitest": "^3.2.7"
   }
 }
