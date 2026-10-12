@@ -1,4 +1,4 @@
-import { it, expect, beforeAll } from "vitest";
+import { it, expect, beforeAll, vi } from "vitest";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -29,8 +29,27 @@ it("valida y ordena, lo más reciente primero y sin fecha al final", async () =>
 });
 it("JSON inválido lanza error", async () => {
   const malo = mkdtempSync(join(tmpdir(), "eocm-malo-"));
-  writeFileSync(join(malo, "videos.json"), JSON.stringify([{ titulo: "sin id" }]));
+  writeFileSync(join(malo, "videos.json"), "{no es json");
   process.env.EOC_CONTENIDO = malo;
+  const m = await import("./medios");
+  expect(() => m.videos()).toThrow();
+});
+it("un registro malo se descarta con aviso, sin tirar el archivo", async () => {
+  const d = mkdtempSync(join(tmpdir(), "eocm-parcial-"));
+  writeFileSync(join(d, "videos.json"), JSON.stringify([
+    { id: "ok", titulo: "Bueno", fecha: null, duracion: null },
+    { id: "mal", titulo: "", fecha: null, duracion: null }]));
+  process.env.EOC_CONTENIDO = d;
+  const aviso = vi.spyOn(console, "warn").mockImplementation(() => {});
+  const m = await import("./medios");
+  expect(m.videos().map((v) => v.id)).toEqual(["ok"]);
+  expect(aviso).toHaveBeenCalled();
+  aviso.mockRestore();
+});
+it("un JSON que no es lista lanza error", async () => {
+  const d = mkdtempSync(join(tmpdir(), "eocm-obj-"));
+  writeFileSync(join(d, "videos.json"), JSON.stringify({ a: 1 }));
+  process.env.EOC_CONTENIDO = d;
   const m = await import("./medios");
   expect(() => m.videos()).toThrow();
 });

@@ -69,11 +69,12 @@ export function parseIvoox(xml) {
     const url = limpio(it.link);
     const guid = limpio(it.guid);
     const id = /_rf_(\d+)_/.exec(url)?.[1] ?? /(\d+)\/?$/.exec(guid)?.[1];
-    if (!id) continue;
+    const titulo = limpio(it.title);
+    if (!id || !titulo) continue;
     const fechaTxt = limpio(it.pubDate);
     salida.push({
       id,
-      titulo: limpio(it.title),
+      titulo,
       fecha: fechaTxt ? fechaRfc822(fechaTxt) : null,
       duracion: limpio(it["itunes:duration"]) || null,
       mp3: atributo(it.enclosure, "url") || null,
@@ -91,11 +92,12 @@ export function parseYoutube(xml) {
   const salida = [];
   for (const e of entradas) {
     const id = limpio(e["yt:videoId"]);
-    if (!id) continue;
+    const titulo = limpio(e.title);
+    if (!id || !titulo) continue;
     const pub = limpio(e.published);
     salida.push({
       id,
-      titulo: limpio(e.title),
+      titulo,
       fecha: /^\d{4}-\d{2}-\d{2}/.test(pub) ? pub.slice(0, 10) : null,
       duracion: null,
     });

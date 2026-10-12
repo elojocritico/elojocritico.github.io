@@ -194,3 +194,10 @@ it("main: reintenta y se recupera de un fallo puntual", async () => {
   expect(r.codigo).toBe(0);
   expect(n).toBe(2);
 });
+
+it("parseIvoox y parseYoutube omiten items con título vacío", () => {
+  const iv = `<rss><channel><item><title>  </title><link>https://www.ivoox.com/x_rf_123_1.html</link><guid>1</guid></item></channel></rss>`;
+  expect(parseIvoox(iv)).toEqual([]);
+  const yt = `<feed><entry><yt:videoId>abc</yt:videoId><title></title></entry></feed>`;
+  expect(parseYoutube(yt)).toEqual([]);
+});

@@ -25,9 +25,18 @@ export type Video = z.infer<typeof VideoZ>;
 function cargar<T>(nombre: string, esquema: z.ZodType<T, z.ZodTypeDef, unknown>): T[] {
   const ruta = join(RAIZ_CONTENIDO(), nombre);
   if (!existsSync(ruta)) return [];
-  const r = z.array(esquema).safeParse(JSON.parse(readFileSync(ruta, "utf-8")));
-  if (!r.success) throw new Error(`${nombre} inválido: ${r.error.message}`);
-  return r.data;
+  const crudo: unknown = JSON.parse(readFileSync(ruta, "utf-8"));
+  if (!Array.isArray(crudo)) throw new Error(`${nombre} inválido: se esperaba una lista`);
+  const validos: T[] = [];
+  let descartados = 0;
+  let primero = "";
+  for (const item of crudo) {
+    const r = esquema.safeParse(item);
+    if (r.success) validos.push(r.data);
+    else if (descartados++ === 0) primero = `${JSON.stringify(item).slice(0, 200)} -> ${r.error.issues.map((i) => i.path.join(".") + ": " + i.message).join("; ")}`;
+  }
+  if (descartados) console.warn(`${nombre}: ${descartados} registro(s) inválido(s) descartado(s). Primero: ${primero}`);
+  return validos;
 }
 // Más reciente primero; lo que no tiene fecha va al final, en su orden original.
 function ordenar<T extends { fecha: string | null }>(xs: T[]): T[] {

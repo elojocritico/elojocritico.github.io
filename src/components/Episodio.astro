@@ -14,3 +14,9 @@ const dur = duracionLegible(ep.duracion);
     : <p><a class="enlace" href={ep.url} rel="noopener" target="_blank">Escuchar en iVoox ↗</a></p>}
   {ep.mp3 && <p class="meta"><a class="enlace" href={ep.url} rel="noopener" target="_blank">Ver en iVoox ↗</a></p>}
 </article>
+{ep.mp3 && <script>
+  // Delegado y único por página (Astro deduplica): al empezar un audio se pausan los demás.
+  document.addEventListener("play", (e) => {
+    document.querySelectorAll("audio").forEach((a) => { if (a !== e.target) a.pause(); });
+  }, true);
+</script>}
