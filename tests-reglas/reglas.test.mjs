@@ -1,12 +1,13 @@
 import { readFileSync } from "node:fs";
 import { initializeTestEnvironment, assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
-import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, getDocs, serverTimestamp, setLogLevel } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, getDocs, serverTimestamp, setLogLevel, FieldPath } from "firebase/firestore";
+import assert from "node:assert/strict";
 import { describe, it, beforeAll, afterAll, beforeEach } from "vitest";
 
 setLogLevel("silent");
 let env;
 const ADMIN = "admin@eoc.test", EDITOR = "editor@eoc.test", SINPAPEL = "otro@eoc.test", FUERA = "intruso@eoc.test";
-const auth = (e) => env.authenticatedContext("u-" + e, { email: e, email_verified: true }).firestore();
+const auth = (e, verificado = true) => env.authenticatedContext("u-" + e, { email: e, email_verified: verificado }).firestore();
 const anon = () => env.unauthenticatedContext().firestore();
 
 beforeAll(async () => {
@@ -79,6 +80,13 @@ describe("lector malicioso (anonimo)", () => {
     await assertFails(addDoc(c, comentario({ articuloSlug: "a/b" })));
     await assertFails(addDoc(c, comentario({ articuloSlug: "" })));
     await assertFails(addDoc(c, comentario({ articuloSlug: "a".repeat(201) })));
+  });
+  it("respuestaA: enorme o con barra denegada, id normal permitido", async () => {
+    const c = collection(anon(), "comentarios");
+    await assertFails(addDoc(c, comentario({ respuestaA: "a".repeat(900 * 1024) })));
+    await assertFails(addDoc(c, comentario({ respuestaA: "a/b" })));
+    await assertFails(addDoc(c, comentario({ respuestaA: "a".repeat(65) })));
+    await assertSucceeds(addDoc(c, comentario({ respuestaA: "Ab_1-xyz" })));
   });
   it("rechaza creadoEn falsificado o respuestaA no string", async () => {
     const c = collection(anon(), "comentarios");
@@ -171,12 +179,20 @@ describe("editor", () => {
   it("no puede tocar usuarios (ni auto-ascenderse a admin)", async () => {
     const db = auth(EDITOR);
     await assertFails(updateDoc(doc(db, "ajustes/global"), { usuarios: { [EDITOR]: "admin" } }));
-    await assertFails(updateDoc(doc(db, "ajustes/global"), { "usuarios.nuevo@x.es": "editor" }));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), new FieldPath("usuarios", "nuevo@x.es"), "editor"));
+  });
+  it("editor: solo cambia estado en comentarios, con valor valido", async () => {
+    const db = auth(EDITOR);
+    await assertFails(updateDoc(doc(db, "comentarios/c1"), { texto: "manipulado" }));
+    await assertFails(updateDoc(doc(db, "comentarios/c1"), { estado: "aprobado", nombre: "otro" }));
+    await assertFails(updateDoc(doc(db, "comentarios/c1"), { estado: "inventado" }));
+    await assertSucceeds(updateDoc(doc(db, "comentarios/c1"), { estado: "aprobado" }));
   });
   it("solo escribe publicarPendiente en estado/sistema", async () => {
     const db = auth(EDITOR);
     await assertSucceeds(getDoc(doc(db, "estado/sistema")));
     await assertSucceeds(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true }));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: "si" }));
     await assertFails(updateDoc(doc(db, "estado/sistema"), { lecturasHoy: 99 }));
     await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true, ultimaPublicacion: "x" }));
     await assertFails(setDoc(doc(db, "estado/sistema"), { lecturasHoy: 1 }));
@@ -197,10 +213,31 @@ describe("admin", () => {
   it("escribe ajustes, incluidos usuarios", async () => {
     const db = auth(ADMIN);
     await assertSucceeds(updateDoc(doc(db, "ajustes/global"), { destacado: "x" }));
-    await assertSucceeds(updateDoc(doc(db, "ajustes/global"), { "usuarios.nuevo@x.es": "editor" }));
+    await assertSucceeds(updateDoc(doc(db, "ajustes/global"), new FieldPath("usuarios", "nuevo@x.es"), "editor"));
+    const d = (await getDoc(doc(db, "ajustes/global"))).data();
+    assert.equal(d.usuarios["nuevo@x.es"], "editor");
+    assert.equal(d.usuarios.nuevo, undefined);
+  });
+  it("no puede borrar ajustes/global ni quedarse sin admins", async () => {
+    const db = auth(ADMIN);
+    await assertFails(deleteDoc(doc(db, "ajustes/global")));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { usuarios: { [EDITOR]: "editor" } }));
+    await assertFails(updateDoc(doc(db, "ajustes/global"), { usuarios: {} }));
+    await assertSucceeds(updateDoc(doc(db, "ajustes/global"), { usuarios: { [ADMIN]: "admin", [EDITOR]: "editor" } }));
   });
   it("puede escribir publicarPendiente", async () => {
     await assertSucceeds(updateDoc(doc(auth(ADMIN), "estado/sistema"), { publicarPendiente: true }));
+  });
+});
+
+describe("correo verificado y mayusculas", () => {
+  it("correo en la lista pero sin verificar: denegado", async () => {
+    await assertFails(getDoc(doc(auth(EDITOR, false), "articulos/a1")));
+    await assertFails(getDoc(doc(auth(ADMIN, false), "ajustes/global")));
+    await assertFails(updateDoc(doc(auth(ADMIN, false), "ajustes/global"), { destacado: "x" }));
+  });
+  it("el correo del token se compara en minusculas", async () => {
+    await assertSucceeds(getDoc(doc(auth("Editor@EOC.test"), "articulos/a1")));
   });
 });
 

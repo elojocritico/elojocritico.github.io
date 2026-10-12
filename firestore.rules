@@ -9,10 +9,11 @@ service cloud.firestore {
     function conSesion() {
       return request.auth != null
         && request.auth.token.email != null
+        && request.auth.token.email_verified == true
         && exists(/databases/$(database)/documents/ajustes/global);
     }
     function papel() {
-      return ajustes().get('usuarios', {}).get(request.auth.token.email, '');
+      return ajustes().get('usuarios', {}).get(request.auth.token.email.lower(), '');
     }
     function autorizado() { return conSesion() && papel() != ''; }
     function esAdmin() { return autorizado() && papel() == 'admin'; }
@@ -43,9 +44,14 @@ service cloud.firestore {
         && request.resource.data.correo.size() <= 120
         && request.resource.data.articuloSlug is string
         && request.resource.data.articuloSlug.matches('^[^/]{1,200}$')
-        && (request.resource.data.respuestaA == null || request.resource.data.respuestaA is string)
+        && (request.resource.data.respuestaA == null
+          || (request.resource.data.respuestaA is string
+              && request.resource.data.respuestaA.matches('^[A-Za-z0-9_-]{1,64}$')))
         && request.resource.data.creadoEn == request.time;
-      allow read, update, delete: if esEditor();
+      allow read, delete: if esEditor();
+      allow update: if esEditor()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado'])
+        && request.resource.data.estado in ['pendiente', 'aprobado', 'rechazado', 'spam'];
     }
 
     match /archivoOcultos/{slug} {
@@ -55,14 +61,17 @@ service cloud.firestore {
     // Ajustes: leen los autorizados, escribe solo el admin (incluye usuarios).
     match /ajustes/global {
       allow read: if autorizado();
-      allow write: if esAdmin();
+      // Sin create/delete desde el cliente; siempre debe quedar algun admin.
+      allow update: if esAdmin()
+        && request.resource.data.usuarios.values().hasAny(['admin']);
     }
 
     // Estado: los editores solo pueden cambiar publicarPendiente.
     match /estado/sistema {
       allow read: if autorizado();
       allow update: if esEditor()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicarPendiente']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicarPendiente'])
+        && request.resource.data.publicarPendiente is bool;
     }
 
     match /{document=**} { allow read, write: if false; }
