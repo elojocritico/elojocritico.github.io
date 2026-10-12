@@ -1,0 +1,48 @@
+---
+interface Props { que: "podcast" | "videos"; etiqueta: string }
+const { que, etiqueta } = Astro.props;
+---
+<div class="filtro" data-indice={`/${que}/indice.json`} hidden>
+  <label class="meta" for="filtro-q">{etiqueta}</label>
+  <input id="filtro-q" type="search" autocomplete="off" placeholder="Escribe al menos 3 letras" />
+  <ul class="filtro-res" aria-live="polite"></ul>
+</div>
+<script is:inline>
+(function () {
+  var cont = document.querySelector(".filtro");
+  if (!cont) return;
+  cont.hidden = false;
+  var q = cont.querySelector("input"), ul = cont.querySelector("ul"), datos = null, cargando = false;
+  function norm(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function pintar() {
+    var palabras = norm(q.value).split(/\s+/).filter(Boolean);
+    ul.textContent = "";
+    if (q.value.trim().length < 3 || !datos) return;
+    var n = 0, total = 0;
+    for (var i = 0; i < datos.length; i++) {
+      var t = datos[i]._n;
+      if (palabras.every(function (p) { return t.indexOf(p) !== -1; })) {
+        total++;
+        if (n < 30) {
+          var li = document.createElement("li"), a = document.createElement("a");
+          a.href = datos[i].u; a.textContent = datos[i].t;
+          li.appendChild(a);
+          if (datos[i].f) { var s = document.createElement("span"); s.className = "meta"; s.textContent = " " + datos[i].f; li.appendChild(s); }
+          ul.appendChild(li); n++;
+        }
+      }
+    }
+    if (!total) { var v = document.createElement("li"); v.textContent = "Sin resultados."; ul.appendChild(v); }
+    else if (total > n) { var m = document.createElement("li"); m.className = "meta"; m.textContent = "Mostrando " + n + " de " + total + ". Escribe más para afinar."; ul.appendChild(m); }
+  }
+  q.addEventListener("input", function () {
+    if (q.value.trim().length >= 3 && !datos && !cargando) {
+      cargando = true;
+      fetch(cont.dataset.indice).then(function (r) { return r.json(); }).then(function (d) {
+        d.forEach(function (x) { x._n = norm(x.t); });
+        datos = d; pintar();
+      }).catch(function () { cargando = false; ul.textContent = "No se pudo cargar el buscador."; });
+    } else pintar();
+  });
+})();
+</script>

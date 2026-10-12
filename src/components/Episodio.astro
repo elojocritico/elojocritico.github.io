@@ -1,0 +1,16 @@
+---
+import { fechaLarga } from "../lib/contenido";
+import { duracionLegible, type Episodio } from "../lib/medios";
+interface Props { ep: Episodio }
+const { ep } = Astro.props;
+const dur = duracionLegible(ep.duracion);
+---
+<article class="medio" id={`ep-${ep.id}`}>
+  <h3>{ep.titulo}</h3>
+  <div class="meta">{[ep.fecha && fechaLarga(ep.fecha), dur].filter(Boolean).join(" · ")}</div>
+  {ep.descripcion && <p class="desc">{ep.descripcion}</p>}
+  {ep.mp3
+    ? <audio controls preload="none" src={ep.mp3} aria-label={`Escuchar: ${ep.titulo}`}></audio>
+    : <p><a class="enlace" href={ep.url} rel="noopener" target="_blank">Escuchar en iVoox ↗</a></p>}
+  {ep.mp3 && <p class="meta"><a class="enlace" href={ep.url} rel="noopener" target="_blank">Ver en iVoox ↗</a></p>}
+</article>

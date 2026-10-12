@@ -1,0 +1,25 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Base from "../../layouts/Base.astro";
+import VideoYoutube from "../../components/VideoYoutube.astro";
+import ScriptVideo from "../../components/ScriptVideo.astro";
+import FiltroMedios from "../../components/FiltroMedios.astro";
+import Paginacion from "../../components/Paginacion.astro";
+import { videos } from "../../lib/medios";
+import { POR_PAGINA, CANAL_YOUTUBE } from "../../lib/medios-paginas";
+export function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  return paginate(videos(), { pageSize: POR_PAGINA });
+}
+const { page } = Astro.props;
+const titulo = `Vídeos · ${page.total} vídeos`;
+---
+<Base titulo={page.currentPage > 1 ? `${titulo} · página ${page.currentPage}` : titulo} descripcion="Todos los vídeos del canal de El Ojo Crítico, del más reciente al más antiguo." actual="videos">
+  <section class="contenedor" style="padding-top:28px">
+    <h1 class="seccion-titulo" style="font-size:14px">{titulo}</h1>
+    <p class="meta"><a href={CANAL_YOUTUBE} rel="noopener" target="_blank" style="color:var(--ambar)">Ver el canal en YouTube ↗</a></p>
+    <FiltroMedios que="videos" etiqueta="Buscar en los vídeos" />
+    <div class="medios-rejilla">{page.data.map((v) => <VideoYoutube video={v} />)}</div>
+    <Paginacion page={page} />
+  </section>
+  <ScriptVideo />
+</Base>

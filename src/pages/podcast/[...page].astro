@@ -1,0 +1,23 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Base from "../../layouts/Base.astro";
+import Episodio from "../../components/Episodio.astro";
+import FiltroMedios from "../../components/FiltroMedios.astro";
+import Paginacion from "../../components/Paginacion.astro";
+import { episodios } from "../../lib/medios";
+import { POR_PAGINA, CANAL_IVOOX } from "../../lib/medios-paginas";
+export function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  return paginate(episodios(), { pageSize: POR_PAGINA });
+}
+const { page } = Astro.props;
+const titulo = `Podcast · ${page.total} episodios`;
+---
+<Base titulo={page.currentPage > 1 ? `${titulo} · página ${page.currentPage}` : titulo} descripcion="Todos los episodios del podcast de El Ojo Crítico, del más reciente al más antiguo." actual="podcast">
+  <section class="contenedor" style="padding-top:28px">
+    <h1 class="seccion-titulo" style="font-size:14px">{titulo}</h1>
+    <p class="meta"><a href={CANAL_IVOOX} rel="noopener" target="_blank" style="color:var(--ambar)">Ver todo en iVoox ↗</a></p>
+    <FiltroMedios que="podcast" etiqueta="Buscar en los episodios" />
+    <div class="medios-lista">{page.data.map((ep) => <Episodio ep={ep} />)}</div>
+    <Paginacion page={page} />
+  </section>
+</Base>

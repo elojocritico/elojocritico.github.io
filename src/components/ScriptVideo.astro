@@ -1,0 +1,17 @@
+---
+// Un único script por página: al pulsar la miniatura se cambia por el reproductor de YouTube.
+---
+<script is:inline>
+document.addEventListener("click", function (e) {
+  var a = e.target.closest && e.target.closest("a.fachada");
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+  e.preventDefault();
+  var f = document.createElement("iframe");
+  f.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(a.dataset.video) + "?autoplay=1";
+  f.title = a.dataset.titulo || "Vídeo";
+  f.allow = "autoplay; encrypted-media";
+  f.allowFullscreen = true;
+  a.replaceWith(f);
+  f.focus();
+});
+</script>

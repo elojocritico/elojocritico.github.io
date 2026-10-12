@@ -1,0 +1,17 @@
+---
+import { fechaLarga } from "../lib/contenido";
+import { duracionLegible, type Video } from "../lib/medios";
+interface Props { video: Video }
+const { video } = Astro.props;
+const dur = duracionLegible(video.duracion);
+---
+<article class="medio medio-video" id={`v-${video.id}`}>
+  <div class="reproductor">
+    <a class="fachada" href={`https://www.youtube.com/watch?v=${video.id}`} rel="noopener" target="_blank" data-video={video.id} data-titulo={video.titulo} aria-label={`Reproducir: ${video.titulo}`}>
+      <img src={`https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`} alt="" width="480" height="360" loading="lazy" />
+      <span class="play" aria-hidden="true">▶</span>
+    </a>
+  </div>
+  <h3>{video.titulo}</h3>
+  <div class="meta">{[video.fecha && fechaLarga(video.fecha), dur].filter(Boolean).join(" · ")}</div>
+</article>

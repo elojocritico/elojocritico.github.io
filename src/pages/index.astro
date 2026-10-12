@@ -4,11 +4,17 @@ import Tarjeta from "../components/Tarjeta.astro";
 import Anuncio from "../components/Anuncio.astro";
 import { articulos, destacado, ajustes, secciones, fechaLarga, minutosLectura, nombreSeccion } from "../lib/contenido";
 import { numeros, urlPortada } from "../lib/revista";
+import Episodio from "../components/Episodio.astro";
+import VideoYoutube from "../components/VideoYoutube.astro";
+import ScriptVideo from "../components/ScriptVideo.astro";
+import { episodios, videos } from "../lib/medios";
 const todos = articulos();
 const aj = ajustes();
 const dest = destacado(todos, aj);
 const ultimos = todos.filter((a) => a.slug !== dest.slug).slice(0, 6);
 const revista = numeros();
+const ultimoEp = episodios()[0];
+const ultimoVideo = videos()[0];
 ---
 <Base titulo="El Ojo Crítico" actual="inicio">
   <section class="contenedor" style="padding-top:28px">
@@ -33,6 +39,16 @@ const revista = numeros();
     <div class="rejilla">{ultimos.map((a) => <Tarjeta articulo={a} />)}</div>
     <p><a class="meta" href="/articulos/" style="color:var(--ambar)">Ver todos los artículos →</a></p>
   </section>
+  {(ultimoEp || ultimoVideo) && (
+    <section class="contenedor" style="padding-top:40px">
+      <h2 class="seccion-titulo">Escuchar y ver</h2>
+      <div class="portada-medios">
+        {ultimoEp && <div><div class="etiqueta">Último episodio</div><Episodio ep={ultimoEp} /><p><a class="meta" href="/podcast/" style="color:var(--ambar)">Ver todo el podcast →</a></p></div>}
+        {ultimoVideo && <div><div class="etiqueta">Último vídeo</div><VideoYoutube video={ultimoVideo} /><p><a class="meta" href="/videos/" style="color:var(--ambar)">Ver todos los vídeos →</a></p></div>}
+      </div>
+      {ultimoVideo && <ScriptVideo />}
+    </section>
+  )}
   <Anuncio />
   <section class="contenedor" style="padding-top:32px">
     <h2 class="seccion-titulo">La Revista · {revista.length} números</h2>
