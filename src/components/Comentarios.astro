@@ -1,0 +1,21 @@
+---
+import { fechaLarga, type NodoComentario } from "../lib/contenido";
+interface Props { nodos: NodoComentario[] }
+const { nodos } = Astro.props;
+---
+<ol class="comentarios">
+  {nodos.map((c) => (
+    <li id={`comentario-${c.id}`}>
+      <div class="meta"><strong style="color:var(--texto)">{c.autor}</strong> · {fechaLarga(c.fecha)}</div>
+      <div class="texto" set:html={c.html} />
+      {c.respuestas.length > 0 && <Astro.self nodos={c.respuestas} />}
+    </li>
+  ))}
+</ol>
+<style>
+  .comentarios { list-style: none; padding-left: 0; margin: 0; }
+  .comentarios .comentarios { padding-left: 18px; border-left: 1px solid var(--linea); margin-top: 12px; }
+  li { margin: 0 0 18px; }
+  .texto { font: 15px/1.6 var(--serif); color: var(--texto-2); overflow-wrap: anywhere; }
+  .texto :global(a) { color: var(--ambar); }
+</style>

@@ -65,3 +65,9 @@ img { max-width: 100%; height: auto; }
   .buscador input { width: 100%; }
   .cuerpo .izq, .cuerpo .der { float: none; max-width: 100%; margin: 1em 0; }
 }
+
+/* Cuerpos migrados: tablas, código y URLs largas nunca desbordan la página */
+.cuerpo { overflow-wrap: anywhere; }
+.cuerpo table { display: block; overflow-x: auto; max-width: 100%; border-collapse: collapse; }
+.cuerpo td, .cuerpo th { border: 1px solid var(--linea); padding: 6px 8px; }
+.cuerpo pre { overflow-x: auto; white-space: pre-wrap; }
