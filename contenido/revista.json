@@ -1,0 +1,4720 @@
+[
+ {
+  "slug": "1",
+  "numero": "1",
+  "fecha": "1994",
+  "paginas": 6,
+  "pdf": "eoc-001.pdf",
+  "portada": "eoc-001.jpg",
+  "mb": 4.2,
+  "indice": []
+ },
+ {
+  "slug": "2",
+  "numero": "2",
+  "fecha": "1994",
+  "paginas": 6,
+  "pdf": "eoc-002.pdf",
+  "portada": "eoc-002.jpg",
+  "mb": 4.3,
+  "indice": []
+ },
+ {
+  "slug": "7",
+  "numero": "7",
+  "fecha": "Febrero 1995",
+  "paginas": 8,
+  "pdf": "eoc-007.pdf",
+  "portada": "eoc-007.jpg",
+  "mb": 2.5,
+  "indice": []
+ },
+ {
+  "slug": "8",
+  "numero": "8",
+  "fecha": "Marzo 1995",
+  "paginas": 8,
+  "pdf": "eoc-008.pdf",
+  "portada": "eoc-008.jpg",
+  "mb": 2.7,
+  "indice": []
+ },
+ {
+  "slug": "11",
+  "numero": "11",
+  "fecha": "Junio 1995",
+  "paginas": 8,
+  "pdf": "eoc-011.pdf",
+  "portada": "eoc-011.jpg",
+  "mb": 5.6,
+  "indice": []
+ },
+ {
+  "slug": "23",
+  "numero": "23",
+  "fecha": "Junio 1998",
+  "paginas": 20,
+  "pdf": "eoc-023.pdf",
+  "portada": "eoc-023.jpg",
+  "mb": 6.0,
+  "indice": [
+   {
+    "titulo": "En busca de los diablos de Haití: crónica de una aventura paranormal en la capital del vudú",
+    "pagina": 1
+   },
+   {
+    "titulo": "Denuncian una secta de culto ovni, liderada por un estigmatizado, que anuncia el fin del mundo (II)",
+    "pagina": 5
+   },
+   {
+    "titulo": "La prostitución del periodismo paranormal",
+    "pagina": 8
+   },
+   {
+    "titulo": "Entrega de los premios Mundo Misterioso en Madrid",
+    "pagina": 11
+   },
+   {
+    "titulo": "Teosofía: claves de un mito",
+    "pagina": 12
+   },
+   {
+    "titulo": "Curso de formación para la Policía y Guardia Civil sobre sectas y grupos esotéricos",
+    "pagina": 15
+   },
+   {
+    "titulo": "El modelo del año entrante: la aparición de los ovnis triangulares (II)",
+    "pagina": 16
+   }
+  ]
+ },
+ {
+  "slug": "25",
+  "numero": "25",
+  "fecha": "Marzo 1999",
+  "paginas": 28,
+  "pdf": "eoc-025.pdf",
+  "portada": "eoc-025.jpg",
+  "mb": 31.1,
+  "indice": []
+ },
+ {
+  "slug": "26",
+  "numero": "26",
+  "fecha": "Junio 1999",
+  "paginas": 20,
+  "pdf": "eoc-026.pdf",
+  "portada": "eoc-026.jpg",
+  "mb": 20.3,
+  "indice": []
+ },
+ {
+  "slug": "34",
+  "numero": "34",
+  "fecha": "Invierno 2001",
+  "paginas": 28,
+  "pdf": "eoc-034.pdf",
+  "portada": "eoc-034.jpg",
+  "mb": 1.6,
+  "indice": []
+ },
+ {
+  "slug": "35",
+  "numero": "35",
+  "fecha": "Primavera 2002",
+  "paginas": 36,
+  "pdf": "eoc-035.pdf",
+  "portada": "eoc-035.jpg",
+  "mb": 2.2,
+  "indice": [
+   {
+    "titulo": "Vampiros urbanos",
+    "pagina": 7
+   },
+   {
+    "titulo": "Imágenes del “más acá”",
+    "pagina": 9
+   },
+   {
+    "titulo": "Ufólogos piden seriedad al congreso",
+    "pagina": 14
+   },
+   {
+    "titulo": "El “hombre del hielo” murió en ritual",
+    "pagina": 15
+   },
+   {
+    "titulo": "Sucesos anómalos en Morón I y II",
+    "pagina": 16
+   },
+   {
+    "titulo": "Laura Antonelli víctima de exorcistas",
+    "pagina": 21
+   },
+   {
+    "titulo": "Hay otros mundos, pero están en este",
+    "pagina": 22
+   },
+   {
+    "titulo": "El FBI perfecciona el ciberespionaje",
+    "pagina": 26
+   },
+   {
+    "titulo": "Asesinato satánico en Alemania",
+    "pagina": 26
+   },
+   {
+    "titulo": "Las mujeres en la investigación paranormal",
+    "pagina": 27
+   }
+  ]
+ },
+ {
+  "slug": "36",
+  "numero": "36",
+  "fecha": "Verano 2002",
+  "paginas": 38,
+  "pdf": "eoc-036.pdf",
+  "portada": "eoc-036.jpg",
+  "mb": 1.9,
+  "indice": [
+   {
+    "titulo": "Entrevista con Raúl Núñez",
+    "pagina": 7
+   },
+   {
+    "titulo": "Ashashin: La Cólera de Alá",
+    "pagina": 10
+   },
+   {
+    "titulo": "El Cerebro, última frontera",
+    "pagina": 12
+   },
+   {
+    "titulo": "Elegidos por la luz",
+    "pagina": 18
+   },
+   {
+    "titulo": "Noticias",
+    "pagina": 21
+   },
+   {
+    "titulo": "Los Confidenciales EOC",
+    "pagina": 36
+   }
+  ]
+ },
+ {
+  "slug": "37",
+  "numero": "37",
+  "fecha": "Otoño 2002",
+  "paginas": 36,
+  "pdf": "eoc-037.pdf",
+  "portada": "eoc-037.jpg",
+  "mb": 2.7,
+  "indice": [
+   {
+    "titulo": "Señales en los sembrados",
+    "pagina": 6
+   },
+   {
+    "titulo": "Estigmatizados: La pasión de la mente",
+    "pagina": 12
+   },
+   {
+    "titulo": "Terror en la India: Insecto ataca personas",
+    "pagina": 17
+   },
+   {
+    "titulo": "El mercado del morbo en Inglaterra",
+    "pagina": 18
+   },
+   {
+    "titulo": "Las sectas “constructivas”",
+    "pagina": 20
+   },
+   {
+    "titulo": "Vampiros: Historia y Mito (2)",
+    "pagina": 23
+   },
+   {
+    "titulo": "Los enigmas del III Reich",
+    "pagina": 26
+   },
+   {
+    "titulo": "12 Aniversario del infanticidio de Almansa",
+    "pagina": 31
+   },
+   {
+    "titulo": "Los confidenciales",
+    "pagina": 34
+   }
+  ]
+ },
+ {
+  "slug": "38",
+  "numero": "38",
+  "fecha": "Invierno 2002",
+  "paginas": 34,
+  "pdf": "eoc-038.pdf",
+  "portada": "eoc-038.jpg",
+  "mb": 2.8,
+  "indice": [
+   {
+    "titulo": "La ufología anticomercial española se reúne",
+    "pagina": 8
+   },
+   {
+    "titulo": "El fraude de las apariciones marianas de Pedrera",
+    "pagina": 9
+   },
+   {
+    "titulo": "Entrevista a Clara Tahoces",
+    "pagina": 15
+   },
+   {
+    "titulo": "Reflexiones sobre Friendship",
+    "pagina": 18
+   },
+   {
+    "titulo": "Terror, gore y snuff movies",
+    "pagina": 21
+   },
+   {
+    "titulo": "El vampirismo y la medicina",
+    "pagina": 23
+   },
+   {
+    "titulo": "Drogas y experiencias psíquicas",
+    "pagina": 28
+   },
+   {
+    "titulo": "Gestión científica de los fenómenos anómalos",
+    "pagina": 31
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 32
+   },
+   {
+    "titulo": "Cuando los gigantes descendieron del cielo (I)",
+    "pagina": 34
+   }
+  ]
+ },
+ {
+  "slug": "39",
+  "numero": "39",
+  "fecha": "Primavera 2003",
+  "paginas": 40,
+  "pdf": "eoc-039.pdf",
+  "portada": "eoc-039.jpg",
+  "mb": 5.3,
+  "indice": [
+   {
+    "titulo": "La cruz y el platillo",
+    "pagina": 7
+   },
+   {
+    "titulo": "Oswald ¿hombre de negro o de paja?",
+    "pagina": 11
+   },
+   {
+    "titulo": "Cuando los gigantes descendieron del cielo",
+    "pagina": 21
+   },
+   {
+    "titulo": "Entrevista a Miguel Blanco",
+    "pagina": 31
+   },
+   {
+    "titulo": "Del Control Mental a las armas no letales",
+    "pagina": 34
+   },
+   {
+    "titulo": "Los Confidenciales",
+    "pagina": 37
+   },
+   {
+    "titulo": "Los fraudes científicos",
+    "pagina": 39
+   }
+  ]
+ },
+ {
+  "slug": "40",
+  "numero": "40",
+  "fecha": "Verano 2003",
+  "paginas": 32,
+  "pdf": "eoc-040.pdf",
+  "portada": "eoc-040.jpg",
+  "mb": 3.0,
+  "indice": [
+   {
+    "titulo": "Entrevista a Javier Sierra",
+    "pagina": 8
+   },
+   {
+    "titulo": "El enigma nazi",
+    "pagina": 11
+   },
+   {
+    "titulo": "Salvador Freixedo: El jesuita rebelde",
+    "pagina": 17
+   },
+   {
+    "titulo": "Magia en las cruzadas",
+    "pagina": 21
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 29
+   },
+   {
+    "titulo": "11-S Historia de una infamia",
+    "pagina": 31
+   }
+  ]
+ },
+ {
+  "slug": "41",
+  "numero": "41",
+  "fecha": "Invierno 2003",
+  "paginas": 33,
+  "pdf": "eoc-041.pdf",
+  "portada": "eoc-041.jpg",
+  "mb": 3.9,
+  "indice": [
+   {
+    "titulo": "Tren mortal hacia Júpiter",
+    "pagina": 6
+   },
+   {
+    "titulo": "Entrevista con Luisa Alba",
+    "pagina": 11
+   },
+   {
+    "titulo": "El caso de la aparición soñada",
+    "pagina": 23
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 26
+   },
+   {
+    "titulo": "El fraude del cronovisor",
+    "pagina": 28
+   },
+   {
+    "titulo": "Noticias",
+    "pagina": 29
+   }
+  ]
+ },
+ {
+  "slug": "42-43",
+  "numero": "42/43",
+  "fecha": "Otoño 2004",
+  "paginas": 48,
+  "pdf": "eoc-042-043.pdf",
+  "portada": "eoc-042-043.jpg",
+  "mb": 1.2,
+  "indice": [
+   {
+    "titulo": "El culto al Diablo en Estados Unidos",
+    "pagina": 7
+   },
+   {
+    "titulo": "San Pedro: el camino del shamán",
+    "pagina": 15
+   },
+   {
+    "titulo": "Los sueños que cambiaron la historia",
+    "pagina": 19
+   },
+   {
+    "titulo": "La explosión de Tunguska",
+    "pagina": 23
+   },
+   {
+    "titulo": "Fenómenos aéreos anómalos en Africa",
+    "pagina": 29
+   },
+   {
+    "titulo": "OPINION: Cariño no lo digas, soy Antonio Salas",
+    "pagina": 34
+   },
+   {
+    "titulo": "Fallecimientos en la comunidad ufológica",
+    "pagina": 35
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 36
+   },
+   {
+    "titulo": "Los cuatro pilares del apocalipsis",
+    "pagina": 38
+   },
+   {
+    "titulo": "Actualidad",
+    "pagina": 41
+   }
+  ]
+ },
+ {
+  "slug": "44",
+  "numero": "44",
+  "fecha": "2005",
+  "paginas": 36,
+  "pdf": "eoc-044.pdf",
+  "portada": "eoc-044.jpg",
+  "mb": 2.5,
+  "indice": []
+ },
+ {
+  "slug": "45",
+  "numero": "45",
+  "fecha": "Invierno 2005",
+  "paginas": 36,
+  "pdf": "eoc-045.pdf",
+  "portada": "eoc-045.jpg",
+  "mb": 3.3,
+  "indice": [
+   {
+    "titulo": "Octavio Aceves: el otro brujo de Isabelita Peron",
+    "pagina": 3
+   },
+   {
+    "titulo": "Ricardo Schiariti: La “mente mas poderosa”",
+    "pagina": 11
+   },
+   {
+    "titulo": "Cronovisor: ¿un fraude vaticano?",
+    "pagina": 15
+   },
+   {
+    "titulo": "Como hacer un milagro en tu propia casa",
+    "pagina": 18
+   },
+   {
+    "titulo": "Los “ovnis” del planeta caucho",
+    "pagina": 19
+   },
+   {
+    "titulo": "Objetos Volantes Si Identificados",
+    "pagina": 22
+   },
+   {
+    "titulo": "Los misterios de Sai Baba",
+    "pagina": 26
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 32
+   },
+   {
+    "titulo": "El falso OVNI de Capilla del Monte",
+    "pagina": 41
+   }
+  ]
+ },
+ {
+  "slug": "46",
+  "numero": "46",
+  "fecha": "Primavera 2005",
+  "paginas": 36,
+  "pdf": "eoc-046.pdf",
+  "portada": "eoc-046.jpg",
+  "mb": 1.2,
+  "indice": [
+   {
+    "titulo": "La mágia de las ciudades perdidas",
+    "pagina": 8
+   },
+   {
+    "titulo": "Los Sikh: la quinta religión",
+    "pagina": 13
+   },
+   {
+    "titulo": "Los nuevos santos de Argentina",
+    "pagina": 17
+   },
+   {
+    "titulo": "Los 13 misterios inexplicados",
+    "pagina": 23
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 25
+   },
+   {
+    "titulo": "Nos vemos en el mas allá",
+    "pagina": 28
+   },
+   {
+    "titulo": "“Las caras de Belmez son un fraude”",
+    "pagina": 30
+   },
+   {
+    "titulo": "Los falsos poltergeist",
+    "pagina": 33
+   }
+  ]
+ },
+ {
+  "slug": "47",
+  "numero": "47",
+  "fecha": "Otoño 2005",
+  "paginas": 44,
+  "pdf": "eoc-047.pdf",
+  "portada": "eoc-047.jpg",
+  "mb": 2.1,
+  "indice": [
+   {
+    "titulo": "Misterios en la carretera",
+    "pagina": 11
+   },
+   {
+    "titulo": "Aniversario del caso Kelly Hopkisville",
+    "pagina": 19
+   },
+   {
+    "titulo": "Un perito policial en el mundo de la TCI",
+    "pagina": 21
+   },
+   {
+    "titulo": "Comparativa de las Caras de Belmez",
+    "pagina": 27
+   },
+   {
+    "titulo": "Jacques Vallee opina sobre UMMO",
+    "pagina": 30
+   },
+   {
+    "titulo": "Curso de terrorismo islamista",
+    "pagina": 32
+   },
+   {
+    "titulo": "Aviso a los investigadores",
+    "pagina": 36
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 37
+   },
+   {
+    "titulo": "Milenio 3: El fraude",
+    "pagina": 40
+   }
+  ]
+ },
+ {
+  "slug": "48-49",
+  "numero": "48/49",
+  "fecha": "Invierno 2006",
+  "paginas": 48,
+  "pdf": "eoc-048-049.pdf",
+  "portada": "eoc-048-049.jpg",
+  "mb": 8.0,
+  "indice": [
+   {
+    "titulo": "El caso de Arcos de la Frontera",
+    "pagina": 4
+   },
+   {
+    "titulo": "Estudio fotográfico de una foto paranormal",
+    "pagina": 7
+   },
+   {
+    "titulo": "UMMO vuelve a la Ballena Alegre",
+    "pagina": 9
+   },
+   {
+    "titulo": "La verdad sobre el “monstruo” de N. Zelanda",
+    "pagina": 11
+   },
+   {
+    "titulo": "OVNIs: la confusión militar intencionada",
+    "pagina": 13
+   },
+   {
+    "titulo": "El Secreto de los Dioses",
+    "pagina": 17
+   },
+   {
+    "titulo": "Noticias críticas",
+    "pagina": 21
+   },
+   {
+    "titulo": "Akakor: la leyenda de los Ugha Mongulala",
+    "pagina": 22
+   },
+   {
+    "titulo": "Reunión de investigadores Galicia-06",
+    "pagina": 30
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 32
+   },
+   {
+    "titulo": "Tablón de anuncios entre investigadores",
+    "pagina": 35
+   },
+   {
+    "titulo": "Las nuevas “caras de Belmez” son falsas",
+    "pagina": 36
+   },
+   {
+    "titulo": "Comunicado de Vicente J. Ballester Olmos",
+    "pagina": 37
+   },
+   {
+    "titulo": "J. J. Benitez entrevista a Andras Faber Kaiser",
+    "pagina": 38
+   },
+   {
+    "titulo": "HUMMOR",
+    "pagina": 40
+   },
+   {
+    "titulo": "El ejército español traicionó a los ufologos",
+    "pagina": 41
+   },
+   {
+    "titulo": "Los amigos de los hermanos de UMMO",
+    "pagina": 42
+   },
+   {
+    "titulo": "El dia de mañana… llega en marzo",
+    "pagina": 46
+   }
+  ]
+ },
+ {
+  "slug": "50",
+  "numero": "50",
+  "fecha": "Verano 2006",
+  "paginas": 64,
+  "pdf": "eoc-050.pdf",
+  "portada": "eoc-050.jpg",
+  "mb": 12.1,
+  "indice": []
+ },
+ {
+  "slug": "51",
+  "numero": "51",
+  "fecha": "Verano 2006",
+  "paginas": 64,
+  "pdf": "eoc-051.pdf",
+  "portada": "eoc-051.jpg",
+  "mb": 3.7,
+  "indice": []
+ },
+ {
+  "slug": "52",
+  "numero": "52",
+  "fecha": "Invierno 2006",
+  "paginas": 56,
+  "pdf": "eoc-052.pdf",
+  "portada": "eoc-052.jpg",
+  "mb": 3.9,
+  "indice": []
+ },
+ {
+  "slug": "53",
+  "numero": "53",
+  "fecha": "Febrero 2007",
+  "paginas": 44,
+  "pdf": "eoc-053.pdf",
+  "portada": "eoc-053.jpg",
+  "mb": 4.1,
+  "indice": [
+   {
+    "titulo": "Lo que dicen de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "Lo nunca dicho del caso Benacazón",
+    "pagina": 3
+   },
+   {
+    "titulo": "100 desapariciones inquietantes",
+    "pagina": 8
+   },
+   {
+    "titulo": "El primer “platillo volante” español",
+    "pagina": 10
+   },
+   {
+    "titulo": "Las “Doce Tribus”",
+    "pagina": 13
+   },
+   {
+    "titulo": "Videntes en el polígrafo",
+    "pagina": 15
+   },
+   {
+    "titulo": "La USAF y el fenómeno OVNI",
+    "pagina": 17
+   },
+   {
+    "titulo": "El inventor de la ufología española",
+    "pagina": 21
+   },
+   {
+    "titulo": "Fran Contreras en profundidad",
+    "pagina": 26
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 33
+   },
+   {
+    "titulo": "Directorio del misterio en Internet",
+    "pagina": 36
+   },
+   {
+    "titulo": "Nuevo caso explicado en Fotocat",
+    "pagina": 38
+   },
+   {
+    "titulo": "El negocio del “escepticismo”",
+    "pagina": 39
+   },
+   {
+    "titulo": "El astronauta de Fergana no existe",
+    "pagina": 40
+   },
+   {
+    "titulo": "Adelanto: Bélmez y la Guardia Civil",
+    "pagina": 43
+   }
+  ]
+ },
+ {
+  "slug": "54",
+  "numero": "54",
+  "fecha": "Mayo 2007",
+  "paginas": 52,
+  "pdf": "eoc-054.pdf",
+  "portada": "eoc-054.jpg",
+  "mb": 3.2,
+  "indice": [
+   {
+    "titulo": "Lo que dicen de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "La pasión de investigar",
+    "pagina": 3
+   },
+   {
+    "titulo": "¿Los videntes adivinan el futuro?",
+    "pagina": 4
+   },
+   {
+    "titulo": "La noche de los ecos imposibles",
+    "pagina": 11
+   },
+   {
+    "titulo": "Un infiltrado en las apariciones",
+    "pagina": 16
+   },
+   {
+    "titulo": "Aliens: la importancia de ser rubio",
+    "pagina": 24
+   },
+   {
+    "titulo": "Exposición: “Imágenes de lo oculto”",
+    "pagina": 34
+   },
+   {
+    "titulo": "La teoría del puente sumergido",
+    "pagina": 40
+   },
+   {
+    "titulo": "Los nuevos autores de EdT",
+    "pagina": 42
+   },
+   {
+    "titulo": "VI congreso Misterios de la Ciencia",
+    "pagina": 43
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 44
+   },
+   {
+    "titulo": "Sobre farolas y anomalías",
+    "pagina": 46
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 47
+   },
+   {
+    "titulo": "La conspiración del mesias",
+    "pagina": 48
+   },
+   {
+    "titulo": "Próximamente",
+    "pagina": 51
+   }
+  ]
+ },
+ {
+  "slug": "55",
+  "numero": "55",
+  "fecha": "Septiembre 2007",
+  "paginas": 64,
+  "pdf": "eoc-055.pdf",
+  "portada": "eoc-055.jpg",
+  "mb": 4.0,
+  "indice": [
+   {
+    "titulo": "Lo que dicen de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "Ciencia contra asesinos en serie",
+    "pagina": 4
+   },
+   {
+    "titulo": "El increíble Caso Ruda",
+    "pagina": 7
+   },
+   {
+    "titulo": "La Bestia de Gevaudán",
+    "pagina": 8
+   },
+   {
+    "titulo": "El proceso deductivo en el perfilado",
+    "pagina": 10
+   },
+   {
+    "titulo": "Luis Alfonso Gámez condenado",
+    "pagina": 11
+   },
+   {
+    "titulo": "ESPECIAL Curso de criminalística",
+    "pagina": 12
+   },
+   {
+    "titulo": "Yezidis: los “satanistas” del Islam",
+    "pagina": 32
+   },
+   {
+    "titulo": "Homenaje al Dr. Jiménez del Oso",
+    "pagina": 35
+   },
+   {
+    "titulo": "Servicios Secretos y OVNIs",
+    "pagina": 36
+   },
+   {
+    "titulo": "Alta extrañeza",
+    "pagina": 39
+   },
+   {
+    "titulo": "Fanzines del misterio: los orígenes",
+    "pagina": 44
+   },
+   {
+    "titulo": "Las Caras de Bélmez y la Guardia Civil",
+    "pagina": 47
+   },
+   {
+    "titulo": "La primera sentencia de J.J.Benítez",
+    "pagina": 50
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 54
+   },
+   {
+    "titulo": "Salvador Freixedo: Lo que yo creo",
+    "pagina": 57
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 61
+   }
+  ]
+ },
+ {
+  "slug": "56",
+  "numero": "56",
+  "fecha": "Enero 2008",
+  "paginas": 56,
+  "pdf": "eoc-056.pdf",
+  "portada": "eoc-056.jpg",
+  "mb": 12.4,
+  "indice": [
+   {
+    "titulo": "Lo que opinan de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "El general que desclasifico los OVNIs",
+    "pagina": 3
+   },
+   {
+    "titulo": "El observatorio Vaticano y los ETs",
+    "pagina": 7
+   },
+   {
+    "titulo": "Santos famosos ¿Quién manda en el cielo?",
+    "pagina": 8
+   },
+   {
+    "titulo": "Los antropólogos de la CIA en Afganistán",
+    "pagina": 11
+   },
+   {
+    "titulo": "El alma del asesino",
+    "pagina": 14
+   },
+   {
+    "titulo": "España: Suspenso en ciencias",
+    "pagina": 19
+   },
+   {
+    "titulo": "El insólito caso del “pitufo” de Girona",
+    "pagina": 21
+   },
+   {
+    "titulo": "El efecto Lucifer",
+    "pagina": 23
+   },
+   {
+    "titulo": "Annus horribilis",
+    "pagina": 26
+   },
+   {
+    "titulo": "INFORME: Videntes y crimen organizado",
+    "pagina": 28
+   },
+   {
+    "titulo": "Los jinas y la tradición islámica",
+    "pagina": 33
+   },
+   {
+    "titulo": "Los No Identificados y la Guardia Civil",
+    "pagina": 39
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 42
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 44
+   },
+   {
+    "titulo": "Magistral conferencia de J. Armentia",
+    "pagina": 47
+   },
+   {
+    "titulo": "DOSSIER: lo paranormal en la Universidad",
+    "pagina": 48
+   },
+   {
+    "titulo": "Ultima hora",
+    "pagina": 56
+   }
+  ]
+ },
+ {
+  "slug": "57",
+  "numero": "57",
+  "fecha": "Abril 2008",
+  "paginas": 48,
+  "pdf": "eoc-057.pdf",
+  "portada": "eoc-057.jpg",
+  "mb": 9.8,
+  "indice": [
+   {
+    "titulo": "Lo que opinan de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "MUTI: Pequeños sacrificios humanos",
+    "pagina": 3
+   },
+   {
+    "titulo": "Los OVNIs en el 2008 según S. Freixedo",
+    "pagina": 7
+   },
+   {
+    "titulo": "Lo ufólogos españoles “fichados” por EdA",
+    "pagina": 9
+   },
+   {
+    "titulo": "OVNI en España: Intervención silenciosa",
+    "pagina": 10
+   },
+   {
+    "titulo": "007: un astrólogo del MI5 contra Hitler",
+    "pagina": 18
+   },
+   {
+    "titulo": "El poder curativo de la fe ante la ciencia",
+    "pagina": 22
+   },
+   {
+    "titulo": "Una historia ilustrada del fenómeno OVNI",
+    "pagina": 23
+   },
+   {
+    "titulo": "La abducción de Olga L",
+    "pagina": 27
+   },
+   {
+    "titulo": "El bosque de Juan Antonio Cebrián",
+    "pagina": 31
+   },
+   {
+    "titulo": "El caso de “El Condesito”",
+    "pagina": 32
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 36
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 39
+   },
+   {
+    "titulo": "Escapada a la India",
+    "pagina": 41
+   },
+   {
+    "titulo": "Fraudes y falsos profetas en el Islam",
+    "pagina": 42
+   },
+   {
+    "titulo": "El ummólogo acusado de asesinato libre",
+    "pagina": 44
+   },
+   {
+    "titulo": "Himmler en España",
+    "pagina": 45
+   },
+   {
+    "titulo": "De profesión: estafador",
+    "pagina": 47
+   }
+  ]
+ },
+ {
+  "slug": "58",
+  "numero": "58",
+  "fecha": "Julio 2008",
+  "paginas": 52,
+  "pdf": "eoc-058.pdf",
+  "portada": "eoc-058.jpg",
+  "mb": 9.7,
+  "indice": [
+   {
+    "titulo": "Lo que opinan de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "Los jueces de los OVNIs identificados",
+    "pagina": 3
+   },
+   {
+    "titulo": "Entrevista a Juantxo Domínguez",
+    "pagina": 7
+   },
+   {
+    "titulo": "Recorremos la ruta de Nostradamus",
+    "pagina": 10
+   },
+   {
+    "titulo": "La teoría Aerostática",
+    "pagina": 13
+   },
+   {
+    "titulo": "El síndrome del peregrino",
+    "pagina": 20
+   },
+   {
+    "titulo": "Ariño: el caso del humanoide verde",
+    "pagina": 22
+   },
+   {
+    "titulo": "Los monumentos a los OVNIs en el mundo",
+    "pagina": 25
+   },
+   {
+    "titulo": "Identificamos a otro falso vidente",
+    "pagina": 27
+   },
+   {
+    "titulo": "Operaciones Psicológicas del CNI-CESID",
+    "pagina": 28
+   },
+   {
+    "titulo": "J. Maskelyne: un mago contra el III Reich",
+    "pagina": 35
+   },
+   {
+    "titulo": "Cienciología pide prisión para un gallego",
+    "pagina": 37
+   },
+   {
+    "titulo": "Psicología del testimonio y anomalías",
+    "pagina": 38
+   },
+   {
+    "titulo": "Reflexiones sobre el mal",
+    "pagina": 41
+   },
+   {
+    "titulo": "Los confidenciales de EOC",
+    "pagina": 43
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 45
+   },
+   {
+    "titulo": "Desvelamos el misterio de los círculos",
+    "pagina": 46
+   },
+   {
+    "titulo": "Bodas de oro de la ufología española",
+    "pagina": 51
+   }
+  ]
+ },
+ {
+  "slug": "59",
+  "numero": "59",
+  "fecha": "Octubre 2008",
+  "paginas": 52,
+  "pdf": "eoc-059.pdf",
+  "portada": "eoc-059.jpg",
+  "mb": 7.2,
+  "indice": [
+   {
+    "titulo": "Lo que dicen de EOC",
+    "pagina": 2
+   },
+   {
+    "titulo": "Divide y vencerás: la estrategia militar",
+    "pagina": 3
+   },
+   {
+    "titulo": "Entrevista a Miguel Blanco",
+    "pagina": 7
+   },
+   {
+    "titulo": "El gran fraude del Bigfoot en 2008",
+    "pagina": 9
+   },
+   {
+    "titulo": "Critica a: El secreto de los dioses",
+    "pagina": 11
+   },
+   {
+    "titulo": "Los nuevos fraudes publicitarios",
+    "pagina": 15
+   },
+   {
+    "titulo": "La nociva droga de la Fe",
+    "pagina": 16
+   },
+   {
+    "titulo": "El Síndrome de John Wayne",
+    "pagina": 22
+   },
+   {
+    "titulo": "El “Sentido Azul”",
+    "pagina": 25
+   },
+   {
+    "titulo": "INFORME: Las sectas en el siglo XXI",
+    "pagina": 30
+   },
+   {
+    "titulo": "Incidente OVNI en el Valle del Sarrón",
+    "pagina": 37
+   },
+   {
+    "titulo": "¿Qué no conoces a Martin Mystere?",
+    "pagina": 38
+   },
+   {
+    "titulo": "La vidente de Chimbarongo",
+    "pagina": 41
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 43
+   },
+   {
+    "titulo": "Tablón de anúncios",
+    "pagina": 45
+   },
+   {
+    "titulo": "Policía y “corp circles” de Ronda",
+    "pagina": 46
+   },
+   {
+    "titulo": "El caso del vidente transexualizado",
+    "pagina": 48
+   },
+   {
+    "titulo": "Las mejores investigaciones críticas",
+    "pagina": 50
+   },
+   {
+    "titulo": "Apuntes sobre el caso Madeleine",
+    "pagina": 51
+   }
+  ]
+ },
+ {
+  "slug": "60",
+  "numero": "60",
+  "fecha": "Enero 2009",
+  "paginas": 52,
+  "pdf": "eoc-060.pdf",
+  "portada": "eoc-060.jpg",
+  "mb": 12.8,
+  "indice": [
+   {
+    "titulo": "EOC: 15 años de independencia",
+    "pagina": 2
+   },
+   {
+    "titulo": "Cosas que los ciudadanos no deben saber",
+    "pagina": 3
+   },
+   {
+    "titulo": "¿Existe el sexto sentido?",
+    "pagina": 6
+   },
+   {
+    "titulo": "¿Por qué mentir sobre lo paranormal?",
+    "pagina": 7
+   },
+   {
+    "titulo": "Entrevista exclusiva con E. de Santo",
+    "pagina": 8
+   },
+   {
+    "titulo": "Dossier OUIJA: peligros de lo paranormal",
+    "pagina": 11
+   },
+   {
+    "titulo": "Biografía y bibliografía de AFK",
+    "pagina": 17
+   },
+   {
+    "titulo": "Mundo Desconocido: La revista",
+    "pagina": 18
+   },
+   {
+    "titulo": "Lo que dicen de AFK",
+    "pagina": 19
+   },
+   {
+    "titulo": "La Cruz del Diablo (Por AFK)",
+    "pagina": 23
+   },
+   {
+    "titulo": "La mentira de la colza (Por AFK)",
+    "pagina": 27
+   },
+   {
+    "titulo": "MK-Ultra: la muerte mental (Por AFK)",
+    "pagina": 33
+   },
+   {
+    "titulo": "Homenaje a AFK",
+    "pagina": 36
+   },
+   {
+    "titulo": "Buscador en las estrellas",
+    "pagina": 37
+   },
+   {
+    "titulo": "Carta a mi padre (por Sergi Faber)",
+    "pagina": 38
+   },
+   {
+    "titulo": "Entrevista a Julio Marvizon",
+    "pagina": 41
+   },
+   {
+    "titulo": "El expediente Boisaca: Caso resuelto",
+    "pagina": 46
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 48
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 50
+   }
+  ]
+ },
+ {
+  "slug": "61",
+  "numero": "61",
+  "fecha": "Mayo 2009",
+  "paginas": 52,
+  "pdf": "eoc-061.pdf",
+  "portada": "eoc-061.jpg",
+  "mb": 13.0,
+  "indice": [
+   {
+    "titulo": "La repercusión de EOC nº 60",
+    "pagina": 2
+   },
+   {
+    "titulo": "Y la CIA dijo “hágase el secreto”",
+    "pagina": 3
+   },
+   {
+    "titulo": "El final de la falsa autopsia de Roswell",
+    "pagina": 7
+   },
+   {
+    "titulo": "Experiencia anómala en Barcelona",
+    "pagina": 9
+   },
+   {
+    "titulo": "Entrevista exclusiva a Angel Gari",
+    "pagina": 11
+   },
+   {
+    "titulo": "Los fraudes de Las Hurdes en comic",
+    "pagina": 13
+   },
+   {
+    "titulo": "Ha muerto Miguel Serrano",
+    "pagina": 15
+   },
+   {
+    "titulo": "El mundillo del misterio… 20 años atrás",
+    "pagina": 17
+   },
+   {
+    "titulo": "Caso Iñás: escépticos y globosondas",
+    "pagina": 20
+   },
+   {
+    "titulo": "¿OVNIs o globososdas?",
+    "pagina": 23
+   },
+   {
+    "titulo": "Tortura y técnicas de interrogatorio",
+    "pagina": 25
+   },
+   {
+    "titulo": "Natural… sobrenatural… ¿antinatural?",
+    "pagina": 35
+   },
+   {
+    "titulo": "Entrevista a Marcelino Requejo",
+    "pagina": 37
+   },
+   {
+    "titulo": "La grafología en el ámbito forense",
+    "pagina": 39
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 42
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 47
+   },
+   {
+    "titulo": "La destrucción de informes OVNI",
+    "pagina": 49
+   },
+   {
+    "titulo": "El show extraterrestre de Uri Geller",
+    "pagina": 51
+   }
+  ]
+ },
+ {
+  "slug": "62",
+  "numero": "62",
+  "fecha": "Agosto 2009",
+  "paginas": 52,
+  "pdf": "eoc-062.pdf",
+  "portada": "eoc-062.jpg",
+  "mb": 8.6,
+  "indice": [
+   {
+    "titulo": "Ha muerto la secretaria de UMMO",
+    "pagina": 2
+   },
+   {
+    "titulo": "Los documentos OVNI no desclasificados",
+    "pagina": 3
+   },
+   {
+    "titulo": "A. Hortelano: un 007 en el Vaticano",
+    "pagina": 6
+   },
+   {
+    "titulo": "“Yo ayude a Iker Jiménez a ser famoso”",
+    "pagina": 10
+   },
+   {
+    "titulo": "Sixto Paz denunciado en los juzgados",
+    "pagina": 16
+   },
+   {
+    "titulo": "J.J. Benítez más íntimo que nunca",
+    "pagina": 17
+   },
+   {
+    "titulo": "OVNIs y pilotos: un examen crítico",
+    "pagina": 19
+   },
+   {
+    "titulo": "Algo flotó sobre España",
+    "pagina": 25
+   },
+   {
+    "titulo": "Castaneda o el ocaso del Nagual",
+    "pagina": 31
+   },
+   {
+    "titulo": "La estupidez de los divulgadores OVNI",
+    "pagina": 35
+   },
+   {
+    "titulo": "Psicofonías: 50 aniversario de un fraude",
+    "pagina": 36
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 39
+   },
+   {
+    "titulo": "Crónica de una cumbre imposible",
+    "pagina": 41
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 42
+   },
+   {
+    "titulo": "Cómo saber si el testigo miente",
+    "pagina": 43
+   }
+  ]
+ },
+ {
+  "slug": "63",
+  "numero": "63",
+  "fecha": "Diciembre 2009",
+  "paginas": 56,
+  "pdf": "eoc-063.pdf",
+  "portada": "eoc-063.jpg",
+  "mb": 16.9,
+  "indice": [
+   {
+    "titulo": "Opinión y despedida",
+    "pagina": 2
+   },
+   {
+    "titulo": "Operaciones militares tras casos OVNI",
+    "pagina": 3
+   },
+   {
+    "titulo": "Cuando la realidad supera la ¿ficción?",
+    "pagina": 7
+   },
+   {
+    "titulo": "El milagro que hará santo al Papa",
+    "pagina": 12
+   },
+   {
+    "titulo": "La desclasificación OVNI en el mundo",
+    "pagina": 14
+   },
+   {
+    "titulo": "¿Qué es el Marketing Viral?",
+    "pagina": 20
+   },
+   {
+    "titulo": "Los 6 principios del Marketin Viral",
+    "pagina": 23
+   },
+   {
+    "titulo": "Misterios virales y EOC",
+    "pagina": 24
+   },
+   {
+    "titulo": "Falsa Oleada OVNI: La investigación",
+    "pagina": 28
+   },
+   {
+    "titulo": "El OVNI gallego según su creador",
+    "pagina": 33
+   },
+   {
+    "titulo": "¿Porqué nos toman el pelo?",
+    "pagina": 36
+   },
+   {
+    "titulo": "Campaña viral solidaria",
+    "pagina": 39
+   },
+   {
+    "titulo": "Manual del refutador escéptico",
+    "pagina": 40
+   },
+   {
+    "titulo": "Los niños embrujados de Africa",
+    "pagina": 47
+   },
+   {
+    "titulo": "Viaje escéptico al Templo de Shaoling",
+    "pagina": 48
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 52
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 55
+   }
+  ]
+ },
+ {
+  "slug": "64",
+  "numero": "64",
+  "fecha": "Mayo 2010",
+  "paginas": 52,
+  "pdf": "eoc-064.pdf",
+  "portada": "eoc-064.jpg",
+  "mb": 7.4,
+  "indice": [
+   {
+    "titulo": "Opinión",
+    "pagina": 2
+   },
+   {
+    "titulo": "INFORME: Exorcismos y criminalidad",
+    "pagina": 3
+   },
+   {
+    "titulo": "Apariciones del Escorial y Caso Gürtel",
+    "pagina": 12
+   },
+   {
+    "titulo": "Otro informe secreto sobre JJ Benítez",
+    "pagina": 16
+   },
+   {
+    "titulo": "OUIJA: Jugando con la muerte",
+    "pagina": 19
+   },
+   {
+    "titulo": "Misterios de la Ciencia y la Historia (IX)",
+    "pagina": 22
+   },
+   {
+    "titulo": "Enrique Vila: Obra y entrevista póstuma",
+    "pagina": 24
+   },
+   {
+    "titulo": "Mecánica cuántica y anomalías",
+    "pagina": 26
+   },
+   {
+    "titulo": "El fraude de los OVNIs de Haití",
+    "pagina": 29
+   },
+   {
+    "titulo": "Filosofía e Hipótesis Extra-Terrestre",
+    "pagina": 32
+   },
+   {
+    "titulo": "Exopolítica, milenarismo y pienso mental",
+    "pagina": 35
+   },
+   {
+    "titulo": "Réplica “Iker, el mago del misterio”",
+    "pagina": 37
+   },
+   {
+    "titulo": "Todos los informes OVNI a tu alcance",
+    "pagina": 38
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 41
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 43
+   },
+   {
+    "titulo": "Los españoles ya no creen en milagros",
+    "pagina": 46
+   },
+   {
+    "titulo": "El caso de la habitación 712",
+    "pagina": 47
+   },
+   {
+    "titulo": "Iº Premio Juan Antonio Cebrián",
+    "pagina": 51
+   }
+  ]
+ },
+ {
+  "slug": "65",
+  "numero": "65",
+  "fecha": "Septiembre 2010",
+  "paginas": 64,
+  "pdf": "eoc-065.pdf",
+  "portada": "eoc-065.jpg",
+  "mb": 5.4,
+  "indice": [
+   {
+    "titulo": "Exclusiva: El CESID respondió al ufólogo",
+    "pagina": 2
+   },
+   {
+    "titulo": "Historia del espionaje español",
+    "pagina": 3
+   },
+   {
+    "titulo": "UMMO, nazis y espias",
+    "pagina": 7
+   },
+   {
+    "titulo": "El arte de la guerra… psicológica",
+    "pagina": 8
+   },
+   {
+    "titulo": "La CIA y el oráculo del Tibet",
+    "pagina": 11
+   },
+   {
+    "titulo": "Sociedades secretas en China Imperial",
+    "pagina": 13
+   },
+   {
+    "titulo": "Strauss y el gobierno secreto de Bush",
+    "pagina": 19
+   },
+   {
+    "titulo": "11-S: Pilotos contra la versión oficial",
+    "pagina": 21
+   },
+   {
+    "titulo": "Operaciones psicológicas en Iraq",
+    "pagina": 23
+   },
+   {
+    "titulo": "David Kelly, la víctima número 17",
+    "pagina": 26
+   },
+   {
+    "titulo": "Caso Port-Saint-Esprit: la CIA en Francia",
+    "pagina": 28
+   },
+   {
+    "titulo": "Operaciones psicológicas en Kosovo",
+    "pagina": 29
+   },
+   {
+    "titulo": "Glosario de la guerra psicológica",
+    "pagina": 30
+   },
+   {
+    "titulo": "Infierno en el Corona de Aragón",
+    "pagina": 31
+   },
+   {
+    "titulo": "M.C.V. : Aplicaciones civiles y militares",
+    "pagina": 35
+   },
+   {
+    "titulo": "Inteligencia grafotécnica",
+    "pagina": 37
+   },
+   {
+    "titulo": "Desencanto y corrupción en la policía",
+    "pagina": 41
+   },
+   {
+    "titulo": "CIA y Vaticano: una relación antinatura",
+    "pagina": 44
+   },
+   {
+    "titulo": "El uso político de la prensa rosa",
+    "pagina": 45
+   },
+   {
+    "titulo": "Entrevista a… José Lesta",
+    "pagina": 47
+   },
+   {
+    "titulo": "El Grial de Valencia ante la ciencia",
+    "pagina": 50
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 56
+   },
+   {
+    "titulo": "Erich von Däniken… en comic",
+    "pagina": 59
+   },
+   {
+    "titulo": "Crónica del IV congreso SEIP",
+    "pagina": 62
+   }
+  ]
+ },
+ {
+  "slug": "66",
+  "numero": "66",
+  "fecha": "Enero 2011",
+  "paginas": 58,
+  "pdf": "eoc-066.pdf",
+  "portada": "eoc-066.jpg",
+  "mb": 11.7,
+  "indice": [
+   {
+    "titulo": "Editorial",
+    "pagina": 2
+   },
+   {
+    "titulo": "OVNIs y Ejército: Quién, qué, dónde",
+    "pagina": 3
+   },
+   {
+    "titulo": "Cydonia: una visión social del misterio",
+    "pagina": 11
+   },
+   {
+    "titulo": "Escépticos y creyentes manipulan los ovni",
+    "pagina": 14
+   },
+   {
+    "titulo": "Egipto ¿auténtica cuna de la civilización?",
+    "pagina": 19
+   },
+   {
+    "titulo": "Jesús en Egipto, un análisis crítico",
+    "pagina": 23
+   },
+   {
+    "titulo": "Jornada universitaria sobre “espionaje”",
+    "pagina": 28
+   },
+   {
+    "titulo": "OVNIs: los últimos documentos de USA",
+    "pagina": 31
+   },
+   {
+    "titulo": "Iconografía social del siglo XXI",
+    "pagina": 33
+   },
+   {
+    "titulo": "El caso del vidente violador de menores",
+    "pagina": 36
+   },
+   {
+    "titulo": "Viajamos al Área 51 con David Benito",
+    "pagina": 37
+   },
+   {
+    "titulo": "Misteriosas muertes de animales",
+    "pagina": 38
+   },
+   {
+    "titulo": "El fraude de las gárgolas de Puerto Rico",
+    "pagina": 41
+   },
+   {
+    "titulo": "Congreso de Toledo: Egos y relevos",
+    "pagina": 43
+   },
+   {
+    "titulo": "Los que nos dejaron en 2010",
+    "pagina": 45
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 47
+   },
+   {
+    "titulo": "Tablón de avisos",
+    "pagina": 50
+   },
+   {
+    "titulo": "Réplica a Bruno Cardeñosa",
+    "pagina": 51
+   },
+   {
+    "titulo": "El Santo Sudario: Una reflexión crítica",
+    "pagina": 52
+   },
+   {
+    "titulo": "El “Efecto Nocebo”: La ciencia del vudú",
+    "pagina": 57
+   }
+  ]
+ },
+ {
+  "slug": "67",
+  "numero": "67",
+  "fecha": "Mayo 2011",
+  "paginas": 62,
+  "pdf": "eoc-067.pdf",
+  "portada": "eoc-067.jpg",
+  "mb": 7.4,
+  "indice": [
+   {
+    "titulo": "Editorial",
+    "pagina": 2
+   },
+   {
+    "titulo": "GAO: Militares contra la desclasificación",
+    "pagina": 3
+   },
+   {
+    "titulo": "Entrevista a Bruno Cardeñosa",
+    "pagina": 6
+   },
+   {
+    "titulo": "Análisis químico del vibhuti de Sai Baba",
+    "pagina": 9
+   },
+   {
+    "titulo": "Neuromagic: Neurología y Magia en Vigo",
+    "pagina": 11
+   },
+   {
+    "titulo": "El misterioso caso O´Ferril",
+    "pagina": 12
+   },
+   {
+    "titulo": "Caballeros Templarios: asesinos y narcos",
+    "pagina": 13
+   },
+   {
+    "titulo": "Caso Pons Prades: el contacto olvidado",
+    "pagina": 15
+   },
+   {
+    "titulo": "Fenómenos Aéreos Anómalos en A Coruña",
+    "pagina": 18
+   },
+   {
+    "titulo": "Las intimidades del espionaje español",
+    "pagina": 20
+   },
+   {
+    "titulo": "El misterio de “Bélmez Face” resuelto",
+    "pagina": 22
+   },
+   {
+    "titulo": "Los misterios más solidarios",
+    "pagina": 23
+   },
+   {
+    "titulo": "I Jornadas Solidarias del Misterio",
+    "pagina": 29
+   },
+   {
+    "titulo": "Los poderes de los ninja: verdad y fraude",
+    "pagina": 32
+   },
+   {
+    "titulo": "El OVNI de Rgez. de la Fuente no era real",
+    "pagina": 35
+   },
+   {
+    "titulo": "Sumeria, Mesopotamia y los Anunakis",
+    "pagina": 39
+   },
+   {
+    "titulo": "Buscando vida extraterrestre",
+    "pagina": 43
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 47
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 50
+   },
+   {
+    "titulo": "El Santo Sudario: una reflexión crítica (2)",
+    "pagina": 51
+   },
+   {
+    "titulo": "UMMO en comic (Anexo en edición digital)",
+    "pagina": 56
+   }
+  ]
+ },
+ {
+  "slug": "68",
+  "numero": "68",
+  "fecha": "Septiembre 2011",
+  "paginas": 60,
+  "pdf": "eoc-068.pdf",
+  "portada": "eoc-068.jpg",
+  "mb": 7.4,
+  "indice": [
+   {
+    "titulo": "¿El fin de la HPS?",
+    "pagina": 2
+   },
+   {
+    "titulo": "La OUIJA “resuelve” un crimen “ritual”",
+    "pagina": 3
+   },
+   {
+    "titulo": "El encuentro OVNI del Comandante Andreu",
+    "pagina": 5
+   },
+   {
+    "titulo": "Los 13 expedientes no desclasificados",
+    "pagina": 8
+   },
+   {
+    "titulo": "INFORME: El Caso Sai Baba",
+    "pagina": 11
+   },
+   {
+    "titulo": "Psiquiatría y Chamanismo",
+    "pagina": 22
+   },
+   {
+    "titulo": "Misterios y falsos misterios de Google",
+    "pagina": 23
+   },
+   {
+    "titulo": "Caso Petit-Rechain: el Valderas belga",
+    "pagina": 26
+   },
+   {
+    "titulo": "INVESTIGACION: Las piedras de Ica",
+    "pagina": 30
+   },
+   {
+    "titulo": "Investigación en Caravaca de la Cruz",
+    "pagina": 41
+   },
+   {
+    "titulo": "Iªs Jornadas Homenaje del Misterio",
+    "pagina": 45
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 47
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 49
+   },
+   {
+    "titulo": "Sufí: La senda mística del Islam",
+    "pagina": 50
+   },
+   {
+    "titulo": "La leyenda más oscura del Temple",
+    "pagina": 54
+   },
+   {
+    "titulo": "Ultima Hora",
+    "pagina": 59
+   }
+  ]
+ },
+ {
+  "slug": "69",
+  "numero": "69",
+  "fecha": "Diciembre 2011",
+  "paginas": 73,
+  "pdf": "eoc-069.pdf",
+  "portada": "eoc-069.jpg",
+  "mb": 6.2,
+  "indice": [
+   {
+    "titulo": "Lo que el escepticismo debería ser",
+    "pagina": 2
+   },
+   {
+    "titulo": "El Caso Bonadilla: OVNIs en el Cuartel",
+    "pagina": 3
+   },
+   {
+    "titulo": "INFORME: 60 años de literatura OVNI",
+    "pagina": 6
+   },
+   {
+    "titulo": "Ateísmo: El Dios de la Ilustración",
+    "pagina": 15
+   },
+   {
+    "titulo": "El misterio de los Hombres-Murciélago",
+    "pagina": 20
+   },
+   {
+    "titulo": "El final de las Piedras de Ica (y 2)",
+    "pagina": 22
+   },
+   {
+    "titulo": "El secreto de la “Piedra solar” vikinga",
+    "pagina": 33
+   },
+   {
+    "titulo": "DOSSIER Pseudoescepticismo",
+    "pagina": 34
+   },
+   {
+    "titulo": "La falacia del “premio a quien demuestre…”",
+    "pagina": 35
+   },
+   {
+    "titulo": "Pseudoescépticos condenados",
+    "pagina": 36
+   },
+   {
+    "titulo": "El doble rasero pseudoescéptico",
+    "pagina": 37
+   },
+   {
+    "titulo": "Objetivo: las becas universitarias",
+    "pagina": 44
+   },
+   {
+    "titulo": "El fundamentalismo científico",
+    "pagina": 45
+   },
+   {
+    "titulo": "El Caso Campillo contra Cuartero",
+    "pagina": 49
+   },
+   {
+    "titulo": "Schwarz: el retorno del charlatán",
+    "pagina": 51
+   },
+   {
+    "titulo": "El MEO español en estadísticas",
+    "pagina": 55
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 56
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 59
+   },
+   {
+    "titulo": "Actuación policial en casos poltergeist",
+    "pagina": 60
+   },
+   {
+    "titulo": "Aventura en los suburbios del comic",
+    "pagina": 62
+   }
+  ]
+ },
+ {
+  "slug": "70",
+  "numero": "70",
+  "fecha": "Mayo 2012",
+  "paginas": 64,
+  "pdf": "eoc-070.pdf",
+  "portada": "eoc-070.jpg",
+  "mb": 7.7,
+  "indice": [
+   {
+    "titulo": "OPINIONes",
+    "pagina": 2
+   },
+   {
+    "titulo": "Cesar Cabo: ¿Caso OVNI resuelto?",
+    "pagina": 3
+   },
+   {
+    "titulo": "La Parapsicología vuelve a la Universidad",
+    "pagina": 6
+   },
+   {
+    "titulo": "El fraude de George Adamski",
+    "pagina": 8
+   },
+   {
+    "titulo": "La Sábana Santa y los Templarios",
+    "pagina": 10
+   },
+   {
+    "titulo": "MYSTERYMOUS: ¿Mentirías por la fama?",
+    "pagina": 14
+   },
+   {
+    "titulo": "Magos contra falsos mediums",
+    "pagina": 19
+   },
+   {
+    "titulo": "Historia de la magia en España",
+    "pagina": 20
+   },
+   {
+    "titulo": "Luces Rojas y EL OJO CRITICO",
+    "pagina": 24
+   },
+   {
+    "titulo": "Entrevista a Rodrigo Cortés",
+    "pagina": 26
+   },
+   {
+    "titulo": "Neuromagia: Magia y Cerebro",
+    "pagina": 30
+   },
+   {
+    "titulo": "El fraude del premio James Randi",
+    "pagina": 35
+   },
+   {
+    "titulo": "Exopolítica: Los traficantes del miedo",
+    "pagina": 38
+   },
+   {
+    "titulo": "8 nuevos casos OVNI No Desclasificados",
+    "pagina": 43
+   },
+   {
+    "titulo": "Análisis de una psicofonía de Argumosa",
+    "pagina": 48
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 51
+   },
+   {
+    "titulo": "E.C.M.: Las evidencias físicas",
+    "pagina": 55
+   },
+   {
+    "titulo": "Congreso benéfico de ufología",
+    "pagina": 58
+   },
+   {
+    "titulo": "La expedición de John Franklin",
+    "pagina": 61
+   },
+   {
+    "titulo": "PREMIO EOC al pseudo-escéptico",
+    "pagina": 63
+   }
+  ]
+ },
+ {
+  "slug": "71",
+  "numero": "71",
+  "fecha": "Septiembre 2012",
+  "paginas": 76,
+  "pdf": "eoc-071.pdf",
+  "portada": "eoc-071.jpg",
+  "mb": 11.1,
+  "indice": [
+   {
+    "titulo": "La era de Acuario: una reflexión",
+    "pagina": 2
+   },
+   {
+    "titulo": "INFORME: el caso de los Dragonfly Drones",
+    "pagina": 3
+   },
+   {
+    "titulo": "El fraude de Metepec al descubierto",
+    "pagina": 15
+   },
+   {
+    "titulo": "Fenómenos aéreos anómalos en Campillos",
+    "pagina": 19
+   },
+   {
+    "titulo": "7 misterios del pasado a la luz de la ciencia",
+    "pagina": 22
+   },
+   {
+    "titulo": "OVNIs en el arte: un estudio crítico",
+    "pagina": 26
+   },
+   {
+    "titulo": "PSI: Precognición de imágenes eróticas",
+    "pagina": 37
+   },
+   {
+    "titulo": "Zacharia Sitchin: Analizamos su obra",
+    "pagina": 40
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 45
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 48
+   },
+   {
+    "titulo": "Isabel Bathory: Crónica de una infamia",
+    "pagina": 49
+   },
+   {
+    "titulo": "Uri Geller y Daredevil: una rareza histórica",
+    "pagina": 52
+   },
+   {
+    "titulo": "MUTI: Magia negra en África",
+    "pagina": 57
+   },
+   {
+    "titulo": "Experimentos sobre OUIJA en la Universidad",
+    "pagina": 65
+   },
+   {
+    "titulo": "La HET: Una reflexión crítica",
+    "pagina": 66
+   },
+   {
+    "titulo": "Erase un buscador llamado Jordi Magraner",
+    "pagina": 69
+   },
+   {
+    "titulo": "La desaparición de Jacobo Grinberg",
+    "pagina": 72
+   }
+  ]
+ },
+ {
+  "slug": "72",
+  "numero": "72",
+  "fecha": "Marzo 2013",
+  "paginas": 68,
+  "pdf": "eoc-072.pdf",
+  "portada": "eoc-072.jpg",
+  "mb": 12.7,
+  "indice": [
+   {
+    "titulo": "20 años de mirada crítica al misterio",
+    "pagina": 2
+   },
+   {
+    "titulo": "La nueva generación opina sobre EOC",
+    "pagina": 3
+   },
+   {
+    "titulo": "La Guardia Civil investiga los Crop Circles",
+    "pagina": 6
+   },
+   {
+    "titulo": "El “ataúd maldito”: Otro caso resuelto",
+    "pagina": 8
+   },
+   {
+    "titulo": "Los “aviones” de oro de Bogotá no lo son",
+    "pagina": 16
+   },
+   {
+    "titulo": "Carlos Castaneda, la caída de un mito",
+    "pagina": 19
+   },
+   {
+    "titulo": "Pseudo-Escépticos en el Psicólogo",
+    "pagina": 22
+   },
+   {
+    "titulo": "Psicología de la Conspiración",
+    "pagina": 28
+   },
+   {
+    "titulo": "Benítez pide explicaciones por UFOleaks",
+    "pagina": 31
+   },
+   {
+    "titulo": "La primera noticia española sobre OVNIs",
+    "pagina": 32
+   },
+   {
+    "titulo": "La Torre de los Siete Jorobados",
+    "pagina": 33
+   },
+   {
+    "titulo": "OVNIs en el Arte: un estudio crítico (2)",
+    "pagina": 36
+   },
+   {
+    "titulo": "INFORME EOC: El caso Nina Kulagina",
+    "pagina": 42
+   },
+   {
+    "titulo": "Iº Concurso de hUMMOr EOC",
+    "pagina": 52
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 55
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 58
+   },
+   {
+    "titulo": "UMMO: El otro “San José de Valderas”",
+    "pagina": 59
+   },
+   {
+    "titulo": "Hay otros mundos… El libro",
+    "pagina": 66
+   },
+   {
+    "titulo": "Misterios solidarios 2013",
+    "pagina": 67
+   }
+  ]
+ },
+ {
+  "slug": "73",
+  "numero": "73",
+  "fecha": "Junio 2013",
+  "paginas": 68,
+  "pdf": "eoc-073.pdf",
+  "portada": "eoc-073.jpg",
+  "mb": 9.3,
+  "indice": [
+   {
+    "titulo": "Los grandes enigmas frente a la ciencia",
+    "pagina": 2
+   },
+   {
+    "titulo": "El hombre que susurraba a los niños",
+    "pagina": 4
+   },
+   {
+    "titulo": "La secta que se inspiró en UMMO",
+    "pagina": 4
+   },
+   {
+    "titulo": "Eddie González se buscó su asesinato",
+    "pagina": 7
+   },
+   {
+    "titulo": "Las sectas constructivas",
+    "pagina": 11
+   },
+   {
+    "titulo": "Neuroespiritualidad ¿Está Dios en el cerebro?",
+    "pagina": 17
+   },
+   {
+    "titulo": "El misterio de los Discos Dropa resuelto",
+    "pagina": 22
+   },
+   {
+    "titulo": "Anomalías: cuando el testigo es policía",
+    "pagina": 25
+   },
+   {
+    "titulo": "El OVNI que recuperó el ejército español",
+    "pagina": 30
+   },
+   {
+    "titulo": "Ponemos a prueba a Marilyn Rossner",
+    "pagina": 34
+   },
+   {
+    "titulo": "“Monjes Shaolín” y estafadores en serie",
+    "pagina": 37
+   },
+   {
+    "titulo": "Gmong: Sueños que matan",
+    "pagina": 39
+   },
+   {
+    "titulo": "INFORME EOC: EL FENOMENO ABDUCCION",
+    "pagina": 43
+   },
+   {
+    "titulo": "Una historia social del canibalismo",
+    "pagina": 52
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 57
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 60
+   },
+   {
+    "titulo": "Entrevista exclusiva a Juan Ignacio Blanco",
+    "pagina": 61
+   },
+   {
+    "titulo": "La parapsicología como ciencia",
+    "pagina": 66
+   },
+   {
+    "titulo": "Yo fui Jesucristo en otra vida",
+    "pagina": 67
+   }
+  ]
+ },
+ {
+  "slug": "74",
+  "numero": "74",
+  "fecha": "Noviembre 2013",
+  "paginas": 75,
+  "pdf": "eoc-074.pdf",
+  "portada": "eoc-074.jpg",
+  "mb": 8.5,
+  "indice": [
+   {
+    "titulo": "Políticos del misterio",
+    "pagina": 2
+   },
+   {
+    "titulo": "MORMONES: Joseph Smith y los OVNIs",
+    "pagina": 3
+   },
+   {
+    "titulo": "La Santa Compaña, un mito actual",
+    "pagina": 8
+   },
+   {
+    "titulo": "La Santa Compaña, una reflexión crítica",
+    "pagina": 11
+   },
+   {
+    "titulo": "La Paleontología… que placer",
+    "pagina": 13
+   },
+   {
+    "titulo": "Asthar Sheran: biografía de un mito OVNI",
+    "pagina": 18
+   },
+   {
+    "titulo": "Por esto se mueve la tabla OUIJA",
+    "pagina": 22
+   },
+   {
+    "titulo": "Julio F. crónica de un fraude ufológico",
+    "pagina": 23
+   },
+   {
+    "titulo": "La manipulación pseudo-escéptica en red",
+    "pagina": 30
+   },
+   {
+    "titulo": "Las “naves” que vinieron de UMMO (I)",
+    "pagina": 31
+   },
+   {
+    "titulo": "Robbert van der Broken: El contacto total",
+    "pagina": 44
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 49
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 51
+   },
+   {
+    "titulo": "Montsegur: Tres falsas leyendas cátaras",
+    "pagina": 52
+   },
+   {
+    "titulo": "Carta de Juan Ignacio Blanco",
+    "pagina": 58
+   },
+   {
+    "titulo": "50 Crónicas del Misterio",
+    "pagina": 63
+   },
+   {
+    "titulo": "El día que creímos en los extraterrestres",
+    "pagina": 64
+   },
+   {
+    "titulo": "Bruno Cardeñosa más íntimo que nunca",
+    "pagina": 66
+   },
+   {
+    "titulo": "Los “visitantes de alcoba” de Manitoba (solo en red)",
+    "pagina": 68
+   }
+  ]
+ },
+ {
+  "slug": "75",
+  "numero": "75",
+  "fecha": "Marzo 2014",
+  "paginas": 73,
+  "pdf": "eoc-075.pdf",
+  "portada": "eoc-075.jpg",
+  "mb": 11.1,
+  "indice": [
+   {
+    "titulo": "¿OoPARTs?",
+    "pagina": 2
+   },
+   {
+    "titulo": "Nuevos datos sobre el Caso Manises",
+    "pagina": 3
+   },
+   {
+    "titulo": "Paco Mañez responde el Tte. Cnel. Cámara",
+    "pagina": 4
+   },
+   {
+    "titulo": "¿Alteran los “escépticos” su percepción?",
+    "pagina": 4
+   },
+   {
+    "titulo": "Las “Naves” de UMMO (2): El caso Oruro",
+    "pagina": 5
+   },
+   {
+    "titulo": "Así invadieron los OVNIs la prensa chilena",
+    "pagina": 14
+   },
+   {
+    "titulo": "Otro “misterio” es posible",
+    "pagina": 18
+   },
+   {
+    "titulo": "Ochate: Fin del misterio",
+    "pagina": 22
+   },
+   {
+    "titulo": "1414: Una luz extraña en el cielo",
+    "pagina": 30
+   },
+   {
+    "titulo": "La RED: Ufología militar en la URSS",
+    "pagina": 34
+   },
+   {
+    "titulo": "Cuando el misterio cobra forma",
+    "pagina": 40
+   },
+   {
+    "titulo": "Publicidad viral y misterio",
+    "pagina": 45
+   },
+   {
+    "titulo": "Nuevas herramientas de investigación",
+    "pagina": 48
+   },
+   {
+    "titulo": "11M: Falsas claves de una Conspiración",
+    "pagina": 53
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 61
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 64
+   },
+   {
+    "titulo": "Nuevo informe sobre las Piedras de Ica",
+    "pagina": 65
+   },
+   {
+    "titulo": "25 Falsos misterios (solo on-line)",
+    "pagina": 68
+   },
+   {
+    "titulo": "Los niños que lloran piedras (Solo on-line)",
+    "pagina": 71
+   }
+  ]
+ },
+ {
+  "slug": "76",
+  "numero": "76",
+  "fecha": "Julio 2014",
+  "paginas": 74,
+  "pdf": "eoc-076.pdf",
+  "portada": "eoc-076.jpg",
+  "mb": 8.1,
+  "indice": [
+   {
+    "titulo": "Crop circles",
+    "pagina": 2
+   },
+   {
+    "titulo": "APPs para investigadores (I)",
+    "pagina": 3
+   },
+   {
+    "titulo": "APPs para investigadores (II)",
+    "pagina": 6
+   },
+   {
+    "titulo": "Reunión nacional de investigadores",
+    "pagina": 8
+   },
+   {
+    "titulo": "La Atlántida: el mito y la Corona española",
+    "pagina": 12
+   },
+   {
+    "titulo": "Piri Reis como nunca te lo han contado",
+    "pagina": 16
+   },
+   {
+    "titulo": "El hombre perseguido por un OVNI (on line)",
+    "pagina": 28
+   },
+   {
+    "titulo": "¿Casas encantadas?",
+    "pagina": 33
+   },
+   {
+    "titulo": "RED EYES: ¿El mejor caso OVNI español?",
+    "pagina": 35
+   },
+   {
+    "titulo": "Entrevista a Erich von Däniken",
+    "pagina": 53
+   },
+   {
+    "titulo": "Mentiras de la Conspiración Lunar",
+    "pagina": 57
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 59
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 63
+   },
+   {
+    "titulo": "II Jornadas solidarias del Misterio",
+    "pagina": 64
+   },
+   {
+    "titulo": "Los fabricantes de falsos misterios (on line)",
+    "pagina": 66
+   }
+  ]
+ },
+ {
+  "slug": "77",
+  "numero": "77",
+  "fecha": "Diciembre 2014",
+  "paginas": 71,
+  "pdf": "eoc-077.pdf",
+  "portada": "eoc-077.jpg",
+  "mb": 10.8,
+  "indice": [
+   {
+    "titulo": "Editorial: Algo hemos hecho mal",
+    "pagina": 2
+   },
+   {
+    "titulo": "Caso Ferrerías: Una revisión crítica",
+    "pagina": 3
+   },
+   {
+    "titulo": "Ignacio Darnaude: Filosofía de la Ufología",
+    "pagina": 9
+   },
+   {
+    "titulo": "Recuerdos de Tuol Sleng",
+    "pagina": 16
+   },
+   {
+    "titulo": "La identidad de Planck y Saliano",
+    "pagina": 19
+   },
+   {
+    "titulo": "La magia de Ramón Mayrata",
+    "pagina": 28
+   },
+   {
+    "titulo": "Jordán Peña: El tercer hombre",
+    "pagina": 31
+   },
+   {
+    "titulo": "La última lección de Jordán Peña",
+    "pagina": 34
+   },
+   {
+    "titulo": "El Mengele del Misterio",
+    "pagina": 35
+   },
+   {
+    "titulo": "Ultimas conversaciones con Jordán Peña",
+    "pagina": 41
+   },
+   {
+    "titulo": "Escobuleaks: Ataque a La Escóbula",
+    "pagina": 52
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 57
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 59
+   },
+   {
+    "titulo": "Los negocios de la Conspiración",
+    "pagina": 60
+   },
+   {
+    "titulo": "Visitamos El Museo del Espía español (On Line)",
+    "pagina": 68
+   }
+  ]
+ },
+ {
+  "slug": "78",
+  "numero": "78",
+  "fecha": "Junio 2015",
+  "paginas": 78,
+  "pdf": "eoc-078.pdf",
+  "portada": "eoc-078.jpg",
+  "mb": 9.0,
+  "indice": [
+   {
+    "titulo": "Los frutos malos del árbol bueno",
+    "pagina": 2
+   },
+   {
+    "titulo": "Hombres de Negro. Un mito revisado",
+    "pagina": 3
+   },
+   {
+    "titulo": "En defensa de Luis Alfonso Gámez",
+    "pagina": 6
+   },
+   {
+    "titulo": "Videntes: Análisis de una sentencia",
+    "pagina": 8
+   },
+   {
+    "titulo": "Fenómeno OVNI y/o Ciencia Ficción",
+    "pagina": 11
+   },
+   {
+    "titulo": "Caso Pontejos. Aterrizaje en Cantabria",
+    "pagina": 14
+   },
+   {
+    "titulo": "Exopolítica: La conspiración reptiliana",
+    "pagina": 17
+   },
+   {
+    "titulo": "Exopolítica: Los traficantes de esperanza",
+    "pagina": 25
+   },
+   {
+    "titulo": "Expresionismo alemán y nazismo",
+    "pagina": 29
+   },
+   {
+    "titulo": "Nuevo estudio sobre la Síndone",
+    "pagina": 42
+   },
+   {
+    "titulo": "Investigamos “Más Allá de la Vida”",
+    "pagina": 45
+   },
+   {
+    "titulo": "Encuentro con Anne Germain",
+    "pagina": 47
+   },
+   {
+    "titulo": "La médium de los informes",
+    "pagina": 53
+   },
+   {
+    "titulo": "Entrevista a la fuente de los informes",
+    "pagina": 57
+   },
+   {
+    "titulo": "Victimología del engaño y A. Germain",
+    "pagina": 60
+   },
+   {
+    "titulo": "El testimonio de Nayara Jiménez",
+    "pagina": 62
+   },
+   {
+    "titulo": "Lectura en frío: Como lo hacen",
+    "pagina": 64
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 67
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 70
+   },
+   {
+    "titulo": "Espías en el Camino de Santiago (OnLine)",
+    "pagina": 72
+   },
+   {
+    "titulo": "Comunicación no verbal y mentiras (“)",
+    "pagina": 75
+   }
+  ]
+ },
+ {
+  "slug": "79",
+  "numero": "79",
+  "fecha": "Diciembre 2015",
+  "paginas": 81,
+  "pdf": "eoc-079.pdf",
+  "portada": "eoc-079.jpg",
+  "mb": 11.0,
+  "indice": [
+   {
+    "titulo": "Editorial: Pasar miedo, soñar… ¡despertad!",
+    "pagina": 2
+   },
+   {
+    "titulo": "Las mentiras de Rennes Le Chateau",
+    "pagina": 3
+   },
+   {
+    "titulo": "Incidente UMMO en Rumanía",
+    "pagina": 9
+   },
+   {
+    "titulo": "Pseudopostales ummitas",
+    "pagina": 16
+   },
+   {
+    "titulo": "Apariciones de fantasmas y delito",
+    "pagina": 21
+   },
+   {
+    "titulo": "El científico que cambió la ufología",
+    "pagina": 24
+   },
+   {
+    "titulo": "La obra de Jacques Vallée",
+    "pagina": 27
+   },
+   {
+    "titulo": "Reflexiones más allá de las estrellas",
+    "pagina": 28
+   },
+   {
+    "titulo": "Max Schreck: actor y/o vampiro (2)",
+    "pagina": 32
+   },
+   {
+    "titulo": "El manga del crimen",
+    "pagina": 44
+   },
+   {
+    "titulo": "Los OOPArts no existen",
+    "pagina": 49
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 51
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 53
+   },
+   {
+    "titulo": "Vicente Orozco: In Memoriam",
+    "pagina": 54
+   },
+   {
+    "titulo": "Crítica a “60 años de literatura ufológica”",
+    "pagina": 56
+   },
+   {
+    "titulo": "Titulcia: La cueva de la Luna",
+    "pagina": 59
+   },
+   {
+    "titulo": "UMMO: Jordán implantó falsos recuerdos",
+    "pagina": 61
+   },
+   {
+    "titulo": "Periodismo del misterio en la Universidad",
+    "pagina": 64
+   },
+   {
+    "titulo": "Pensamiento mágico y crímen",
+    "pagina": 65
+   },
+   {
+    "titulo": "Däniken: Analizamos toda su obra",
+    "pagina": 71
+   },
+   {
+    "titulo": "CONCURSO: ¿Y tú donde lees EOC?",
+    "pagina": 80
+   }
+  ]
+ },
+ {
+  "slug": "80-81",
+  "numero": "80/81",
+  "fecha": "Julio 2016",
+  "paginas": 101,
+  "pdf": "eoc-080-081.pdf",
+  "portada": "eoc-080-081.jpg",
+  "mb": 17.9,
+  "indice": [
+   {
+    "titulo": "A vueltas con la importancia del testigo",
+    "pagina": 2
+   },
+   {
+    "titulo": "Informe: El Yeti de Formigal",
+    "pagina": 3
+   },
+   {
+    "titulo": "Barón D´Holbach: el filósofo radical",
+    "pagina": 16
+   },
+   {
+    "titulo": "Incidente Aurora: ¿Ufología o sociología?",
+    "pagina": 21
+   },
+   {
+    "titulo": "Pierre Plantard, el fabricante de mitos",
+    "pagina": 25
+   },
+   {
+    "titulo": "La grandeza de la apostasía",
+    "pagina": 31
+   },
+   {
+    "titulo": "50 aniversario de UMMO",
+    "pagina": 33
+   },
+   {
+    "titulo": "UMMO: Una explicación especulativa",
+    "pagina": 36
+   },
+   {
+    "titulo": "El curso de agente operativo del CNI",
+    "pagina": 40
+   },
+   {
+    "titulo": "Los “Periodistas del Misterio”",
+    "pagina": 43
+   },
+   {
+    "titulo": "Caso Vallecas: El informe psicológico",
+    "pagina": 54
+   },
+   {
+    "titulo": "Houdini: El azote de los médiums",
+    "pagina": 59
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 64
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 67
+   },
+   {
+    "titulo": "OVNI: Encuentro cercano de 2 policías",
+    "pagina": 68
+   },
+   {
+    "titulo": "Kindelán y el “Airship” español de 1904",
+    "pagina": 70
+   },
+   {
+    "titulo": "Débora Goldstern y la cueva de Los Tayos",
+    "pagina": 72
+   },
+   {
+    "titulo": "Los nuevos fraudes fotográficos",
+    "pagina": 76
+   },
+   {
+    "titulo": "Carlos Murciano: periodista de los OVNIs",
+    "pagina": 78
+   },
+   {
+    "titulo": "Satanismo y crimen organizado",
+    "pagina": 81
+   },
+   {
+    "titulo": "La gran mentira del Palmar de Troya",
+    "pagina": 87
+   },
+   {
+    "titulo": "La intrahistoria del Cojo de Calanda",
+    "pagina": 89
+   },
+   {
+    "titulo": "Dr. F. Rubia: Neurociencia y mística",
+    "pagina": 95
+   },
+   {
+    "titulo": "Los “ovnis” estrellados del Proyecto Loon",
+    "pagina": 100
+   }
+  ]
+ },
+ {
+  "slug": "82",
+  "numero": "82",
+  "fecha": "Noviembre 2016",
+  "paginas": 78,
+  "pdf": "eoc-082.pdf",
+  "portada": "eoc-082.jpg",
+  "mb": 9.5,
+  "indice": [
+   {
+    "titulo": "Mentiras arriesgadas",
+    "pagina": 2
+   },
+   {
+    "titulo": "J.A.Morales y la Atlántida de Tartesos",
+    "pagina": 3
+   },
+   {
+    "titulo": "El archivo OVNI del Ejército del Aire OnLine",
+    "pagina": 6
+   },
+   {
+    "titulo": "La Biblia de Ankara: un análisis crítico",
+    "pagina": 10
+   },
+   {
+    "titulo": "Informe: El caso Diatlov",
+    "pagina": 13
+   },
+   {
+    "titulo": "La ertzantza y el humanoide de Ayurdín",
+    "pagina": 21
+   },
+   {
+    "titulo": "Milagros celestiales y milagros seculares",
+    "pagina": 26
+   },
+   {
+    "titulo": "El cráneo “alienígena” de Sealand",
+    "pagina": 29
+   },
+   {
+    "titulo": "OVNIs nazis… ¿Mito o timo?",
+    "pagina": 33
+   },
+   {
+    "titulo": "El Pub Abraxas y la ufología catalana",
+    "pagina": 38
+   },
+   {
+    "titulo": "ECM: Un enfoque académico",
+    "pagina": 40
+   },
+   {
+    "titulo": "Manises 1978: El sramble que no existió",
+    "pagina": 44
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 52
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 56
+   },
+   {
+    "titulo": "2 Enigmas: Piri Reis y la batalla de Lepanto",
+    "pagina": 57
+   },
+   {
+    "titulo": "Los niños brujo",
+    "pagina": 62
+   },
+   {
+    "titulo": "Un análisis jurídico de la desclasificación",
+    "pagina": 65
+   },
+   {
+    "titulo": "J. A. Caravaca: Roswell, el informe definitivo",
+    "pagina": 66
+   },
+   {
+    "titulo": "A Favor/En Contra: Celibato/Sexo y Fe",
+    "pagina": 69
+   },
+   {
+    "titulo": "Los ciencinazis y los verdaderos magufos",
+    "pagina": 73
+   },
+   {
+    "titulo": "UMMO: historia de una obsesión",
+    "pagina": 75
+   },
+   {
+    "titulo": "El sesgo del superviviente",
+    "pagina": 77
+   }
+  ]
+ },
+ {
+  "slug": "83-84",
+  "numero": "83/84",
+  "fecha": "Junio 2017",
+  "paginas": 130,
+  "pdf": "eoc-083-084.pdf",
+  "portada": "eoc-083-084.jpg",
+  "mb": 12.8,
+  "indice": [
+   {
+    "titulo": "La Parapsicología es Científica o no es",
+    "pagina": 2
+   },
+   {
+    "titulo": "Bugarach y el negocio del fin del mundo",
+    "pagina": 3
+   },
+   {
+    "titulo": "EOC INVESTIGA: El crimen de Luna 16",
+    "pagina": 10
+   },
+   {
+    "titulo": "Entrevista a la Dra. Annette Mülberger (CSIC)",
+    "pagina": 19
+   },
+   {
+    "titulo": "Parapsicología y parapsicólogos",
+    "pagina": 24
+   },
+   {
+    "titulo": "Investigación científica en parapsicología",
+    "pagina": 26
+   },
+   {
+    "titulo": "Neuroparapsicología: un nuevo modelo",
+    "pagina": 33
+   },
+   {
+    "titulo": "Batería BMI y sesgo en el testimonio",
+    "pagina": 36
+   },
+   {
+    "titulo": "Experimentación con médiums en España",
+    "pagina": 43
+   },
+   {
+    "titulo": "R. Mayrata: Magia, mito y parapsicología",
+    "pagina": 50
+   },
+   {
+    "titulo": "Antropología y parapsicología",
+    "pagina": 55
+   },
+   {
+    "titulo": "Ramón Nogués: sacerdocio y neurociencia",
+    "pagina": 61
+   },
+   {
+    "titulo": "Bibliografía, videoteca y audioteca PSI",
+    "pagina": 63
+   },
+   {
+    "titulo": "Se Busca: la desaparición del Dr. Grinberg",
+    "pagina": 64
+   },
+   {
+    "titulo": "Al habla con Ruth Lorenzo, su 1ª ayudante",
+    "pagina": 68
+   },
+   {
+    "titulo": "Amira Valle y Leah Bella: el legado Grinberg",
+    "pagina": 70
+   },
+   {
+    "titulo": "Entrevista a Estusha Grinberg, su hija",
+    "pagina": 78
+   },
+   {
+    "titulo": "El misterio Grinberg: Entrevista a I. Cuellar",
+    "pagina": 80
+   },
+   {
+    "titulo": "La CIA y la investigación en parapsicología",
+    "pagina": 83
+   },
+   {
+    "titulo": "Roca Muntañola: Habla su viuda",
+    "pagina": 87
+   },
+   {
+    "titulo": "Las mentiras del gigante extremeño",
+    "pagina": 91
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 94
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 97
+   },
+   {
+    "titulo": "“The case for de UFOs” ¡Desvelado!",
+    "pagina": 98
+   },
+   {
+    "titulo": "Los OVNIs aterrizan en la moda",
+    "pagina": 103
+   },
+   {
+    "titulo": "Laicismo y anticlericanismo en España hoy",
+    "pagina": 104
+   },
+   {
+    "titulo": "Rudoph Smith: La astrología es un espejismo",
+    "pagina": 111
+   },
+   {
+    "titulo": "La biblioteca del misterio: Nueva generación",
+    "pagina": 117
+   },
+   {
+    "titulo": "Los investigadores contra el Profesor D´arbó",
+    "pagina": 119
+   },
+   {
+    "titulo": "M. Carballal: “Creamos mitos que matan”",
+    "pagina": 122
+   },
+   {
+    "titulo": "Cabo Valdés: “La noche de los centinelas”",
+    "pagina": 128
+   }
+  ]
+ },
+ {
+  "slug": "85-86",
+  "numero": "85/86",
+  "fecha": "Diciembre 2017",
+  "paginas": 103,
+  "pdf": "eoc-085-086.pdf",
+  "portada": "eoc-085-086.jpg",
+  "mb": 16.7,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: 2017, el año de los OVNIs",
+    "pagina": 2
+   },
+   {
+    "titulo": "El Caso Stephen Michalak a examen",
+    "pagina": 3
+   },
+   {
+    "titulo": "La insólita expedición Atlántida-Cádiz 1973",
+    "pagina": 7
+   },
+   {
+    "titulo": "UMMO: 50 años del “Caso Perfecto”",
+    "pagina": 14
+   },
+   {
+    "titulo": "V. Pérez Baeza: la historia secreta del CEI",
+    "pagina": 18
+   },
+   {
+    "titulo": "DOSSIER: JAVIER SIERRA DESCLASIFICADO",
+    "pagina": 25
+   },
+   {
+    "titulo": "Entrevista a D. Brown: El J. Sierra americano",
+    "pagina": 45
+   },
+   {
+    "titulo": "La conspiración de la tierra plana",
+    "pagina": 48
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 60
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 62
+   },
+   {
+    "titulo": "La cámara Kirlian: un aparato inútil",
+    "pagina": 63
+   },
+   {
+    "titulo": "“Encuentros en la 3º Fase” y la ufología",
+    "pagina": 64
+   },
+   {
+    "titulo": "10 años sin Juan Antonio Cebrián",
+    "pagina": 69
+   },
+   {
+    "titulo": "Alex Chionetti contra la TV americana",
+    "pagina": 71
+   },
+   {
+    "titulo": "Hipergea: lo paranormal en laboratorio",
+    "pagina": 72
+   },
+   {
+    "titulo": "Milagros médicos: Entrevista al Dr. Pertierra",
+    "pagina": 74
+   },
+   {
+    "titulo": "La “desclasificación” OVNI del Pentágono",
+    "pagina": 76
+   },
+   {
+    "titulo": "Sábana Santa ¿Nuevas revelaciones?",
+    "pagina": 80
+   },
+   {
+    "titulo": "El espionaje español y lo paranormal hoy",
+    "pagina": 82
+   },
+   {
+    "titulo": "Jack el Destripador: el testimonio humano",
+    "pagina": 88
+   },
+   {
+    "titulo": "Caso Valderas: El análisis de Rey Brea",
+    "pagina": 93
+   },
+   {
+    "titulo": "Las apariciones de Fátima ante la ciencia",
+    "pagina": 98
+   },
+   {
+    "titulo": "Cataluña y el mundo del misterio",
+    "pagina": 102
+   }
+  ]
+ },
+ {
+  "slug": "87",
+  "numero": "87",
+  "fecha": "Septiembre 2018",
+  "paginas": 116,
+  "pdf": "eoc-087.pdf",
+  "portada": "eoc-087.jpg",
+  "mb": 8.5,
+  "indice": []
+ },
+ {
+  "slug": "88",
+  "numero": "88",
+  "fecha": "Marzo 2019",
+  "paginas": 103,
+  "pdf": "eoc-088.pdf",
+  "portada": "eoc-088.jpg",
+  "mb": 20.6,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: No tengamos miedo",
+    "pagina": 3
+   },
+   {
+    "titulo": "El monstruo de Flatwoods y la CIA",
+    "pagina": 4
+   },
+   {
+    "titulo": "Nuevas datos sobre el caso Pascagoula",
+    "pagina": 8
+   },
+   {
+    "titulo": "“Jacques B. Bley”: Ni Antonio, ni Ribera",
+    "pagina": 14
+   },
+   {
+    "titulo": "La foto OVNI más misteriosa",
+    "pagina": 18
+   },
+   {
+    "titulo": "¿Qué es ser ufólogo?",
+    "pagina": 19
+   },
+   {
+    "titulo": "George Hunt Williamson: Confidencial",
+    "pagina": 20
+   },
+   {
+    "titulo": "La Parapsicología Científica en 2019",
+    "pagina": 25
+   },
+   {
+    "titulo": "Caso Los Villares: A Favor/En Contra",
+    "pagina": 34
+   },
+   {
+    "titulo": "El “hombre de plata”: el origen del mito",
+    "pagina": 38
+   },
+   {
+    "titulo": "El Incidente Manises en el Senado",
+    "pagina": 48
+   },
+   {
+    "titulo": "Clave 28: Catástrofes que no ocurrieron",
+    "pagina": 52
+   },
+   {
+    "titulo": "Las profecías de Jesús",
+    "pagina": 54
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 59
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 62
+   },
+   {
+    "titulo": "Posesiones y exorcismos en el Islam",
+    "pagina": 63
+   },
+   {
+    "titulo": "Däniken reconoce que mintió en Los Tayos",
+    "pagina": 68
+   },
+   {
+    "titulo": "Don Lucio: un Níkola Tesla español",
+    "pagina": 70
+   },
+   {
+    "titulo": "El avistamiento Sierra/Carballal a examen",
+    "pagina": 73
+   },
+   {
+    "titulo": "Zangbetos vudú: los guardianes de la noche",
+    "pagina": 80
+   },
+   {
+    "titulo": "El Programa OVNI del Pentágono ¿fraude?",
+    "pagina": 84
+   },
+   {
+    "titulo": "Poltergeist en Asturias… o no",
+    "pagina": 89
+   },
+   {
+    "titulo": "Debate con el Dr. A. Parra :Enfermería y ECM",
+    "pagina": 92
+   },
+   {
+    "titulo": "Filosofía de la ciencia y anomalías",
+    "pagina": 98
+   }
+  ]
+ },
+ {
+  "slug": "89-90",
+  "numero": "89/90",
+  "fecha": "Diciembre 2019",
+  "paginas": 148,
+  "pdf": "eoc-089-090.pdf",
+  "portada": "eoc-089-090.jpg",
+  "mb": 23.8,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: El hecho y el relato",
+    "pagina": 3
+   },
+   {
+    "titulo": "El día del relámpago: realidad y ficción",
+    "pagina": 4
+   },
+   {
+    "titulo": "Mikel Lejarza “Lobo” y lo paranormal",
+    "pagina": 9
+   },
+   {
+    "titulo": "La sábana santa: un análisis técnico",
+    "pagina": 15
+   },
+   {
+    "titulo": "Incidente OVNI en S. M. de Valdeiglesias",
+    "pagina": 19
+   },
+   {
+    "titulo": "El Caso Vallecas: La Investigación",
+    "pagina": 21
+   },
+   {
+    "titulo": "El hombre de negro de Taylorsville",
+    "pagina": 37
+   },
+   {
+    "titulo": "INFORME: El secreto de la TCI",
+    "pagina": 41
+   },
+   {
+    "titulo": "Deconstruyendo a Whitley Strieber",
+    "pagina": 67
+   },
+   {
+    "titulo": "“Buenos pronósticos”. Por Y. Luna",
+    "pagina": 74
+   },
+   {
+    "titulo": "La confesión de Xavier C.: “Todo es mentira”",
+    "pagina": 77
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 87
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 90
+   },
+   {
+    "titulo": "Egos, plagios y leyendas populares",
+    "pagina": 94
+   },
+   {
+    "titulo": "Freixedo y la carta perdida de UMMO",
+    "pagina": 98
+   },
+   {
+    "titulo": "Museo para la heterodoxia en la Gomera",
+    "pagina": 102
+   },
+   {
+    "titulo": "La magia en el satanismo religioso",
+    "pagina": 104
+   },
+   {
+    "titulo": "Satanismo en la Universidad Complutense",
+    "pagina": 126
+   },
+   {
+    "titulo": "Bruno Cardeñosa, con Fuerza y Honor",
+    "pagina": 132
+   },
+   {
+    "titulo": "¿Paranormal, anomalía o milagro?",
+    "pagina": 134
+   },
+   {
+    "titulo": "27 años de “El Ojo Crítico”",
+    "pagina": 138
+   },
+   {
+    "titulo": "El hombre que hablaba de Platos Voladores",
+    "pagina": 140
+   },
+   {
+    "titulo": "La historia secreta de Ernesto Milá",
+    "pagina": 142
+   },
+   {
+    "titulo": "Crédulos y pseudoescépticos",
+    "pagina": 144
+   },
+   {
+    "titulo": "La CIA, la Guerra Fría y los OVNIs",
+    "pagina": 146
+   }
+  ]
+ },
+ {
+  "slug": "91-92",
+  "numero": "91/92",
+  "fecha": "Septiembre 2020",
+  "paginas": 114,
+  "pdf": "eoc-091-092.pdf",
+  "portada": "eoc-091-092.jpg",
+  "mb": 25.9,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: ¡Que viene el lobo!",
+    "pagina": 3
+   },
+   {
+    "titulo": "La Atlántida del Golfo de Khambhat",
+    "pagina": 4
+   },
+   {
+    "titulo": "EL Caso Conil: entre OVNIs y espías",
+    "pagina": 8
+   },
+   {
+    "titulo": "El Ojo Crítico en la Revista Enigmas",
+    "pagina": 21
+   },
+   {
+    "titulo": "Apariciones de El Escorial: política y fraudes",
+    "pagina": 23
+   },
+   {
+    "titulo": "Tassili N´Ajjer: crónica de un viaje",
+    "pagina": 33
+   },
+   {
+    "titulo": "Fenómenos anómalos en vuelo: conclusiones",
+    "pagina": 37
+   },
+   {
+    "titulo": "Videntes y desaparecidos: habla SOS",
+    "pagina": 43
+   },
+   {
+    "titulo": "GIPs en España: una triste realidad",
+    "pagina": 47
+   },
+   {
+    "titulo": "OVNIs y pilotos: el último caso español",
+    "pagina": 54
+   },
+   {
+    "titulo": "ERIDANI: Luces y sombras",
+    "pagina": 59
+   },
+   {
+    "titulo": "Búsqueda OVNI en Ayamonte",
+    "pagina": 62
+   },
+   {
+    "titulo": "Humor y OVNIs: dos pasiones en una",
+    "pagina": 69
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 73
+   },
+   {
+    "titulo": "Tablón de Anuncios",
+    "pagina": 75
+   },
+   {
+    "titulo": "Avistamiento de “Mothman” en Toledo",
+    "pagina": 76
+   },
+   {
+    "titulo": "Los nuevos evangelios apócrifos",
+    "pagina": 78
+   },
+   {
+    "titulo": "Alcazar de Velasco: espía de la conspiración",
+    "pagina": 82
+   },
+   {
+    "titulo": "UMMO: Los documentos perdidos de Aluche",
+    "pagina": 86
+   },
+   {
+    "titulo": "El ufólogo policía con alma de pirata",
+    "pagina": 94
+   },
+   {
+    "titulo": "Parapsicología: ciencia y ficción",
+    "pagina": 96
+   },
+   {
+    "titulo": "The blackout: el apagón y la universidad",
+    "pagina": 97
+   },
+   {
+    "titulo": "Fondo de investigación OVNI",
+    "pagina": 110
+   },
+   {
+    "titulo": "El legado de Jordán Peña",
+    "pagina": 112
+   }
+  ]
+ },
+ {
+  "slug": "93",
+  "numero": "93",
+  "fecha": "Febrero 2021",
+  "paginas": 90,
+  "pdf": "eoc-093.pdf",
+  "portada": "eoc-093.jpg",
+  "mb": 11.8,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: El desencanto",
+    "pagina": 3
+   },
+   {
+    "titulo": "El Caso José Higgins desde la filología",
+    "pagina": 4
+   },
+   {
+    "titulo": "El crimen de Benimussa",
+    "pagina": 8
+   },
+   {
+    "titulo": "Antonio Ribera: mi entrañable amigo",
+    "pagina": 16
+   },
+   {
+    "titulo": "Una Experiencia Cercana a la Muerte diferente",
+    "pagina": 33
+   },
+   {
+    "titulo": "El humanoide “michelin” de Liria-Olocau",
+    "pagina": 37
+   },
+   {
+    "titulo": "Alberto Sanmartin: Confidencial",
+    "pagina": 48
+   },
+   {
+    "titulo": "Los Confidenciales de EOC",
+    "pagina": 51
+   },
+   {
+    "titulo": "Tablón de Anuncios",
+    "pagina": 53
+   },
+   {
+    "titulo": "Hesperides: el fraude de las islas fantasma",
+    "pagina": 55
+   },
+   {
+    "titulo": "El discordianismo y el asesinato de JFK",
+    "pagina": 61
+   },
+   {
+    "titulo": "El desencanto OVNI",
+    "pagina": 66
+   },
+   {
+    "titulo": "Fútbol y pensamiento mágico",
+    "pagina": 69
+   },
+   {
+    "titulo": "ECT4: Abducciones versus chamanismo",
+    "pagina": 70
+   },
+   {
+    "titulo": "UFOs sí, UAPs no",
+    "pagina": 77
+   },
+   {
+    "titulo": "Las Hijas de UMMO. Una historia increíble",
+    "pagina": 80
+   },
+   {
+    "titulo": "El mejor momento del misterio",
+    "pagina": 85
+   },
+   {
+    "titulo": "El escándalo Nick Pope",
+    "pagina": 86
+   },
+   {
+    "titulo": "El perfil estadístico del usuario de EOC",
+    "pagina": 88
+   }
+  ]
+ },
+ {
+  "slug": "94",
+  "numero": "94",
+  "fecha": "Marzo 2022",
+  "paginas": 132,
+  "pdf": "eoc-094.pdf",
+  "portada": "eoc-094.jpg",
+  "mb": 17.1,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: El espíritu de los libros",
+    "pagina": 3
+   },
+   {
+    "titulo": "Investigación neurológica de los contactados",
+    "pagina": 4
+   },
+   {
+    "titulo": "Apuntes biográficos de María Orsic",
+    "pagina": 13
+   },
+   {
+    "titulo": "Extraterrestres en la antigüedad… o no",
+    "pagina": 16
+   },
+   {
+    "titulo": "La abducción de Nick Pope",
+    "pagina": 20
+   },
+   {
+    "titulo": "El MI5 investigó los Crops Circles",
+    "pagina": 29
+   },
+   {
+    "titulo": "Hablemos de OVNIs, pero hablemos en serio",
+    "pagina": 32
+   },
+   {
+    "titulo": "El caso Cecconi: tic-tac en 1979",
+    "pagina": 40
+   },
+   {
+    "titulo": "Las Caras de Bélmez: la hipótesis Romero",
+    "pagina": 50
+   },
+   {
+    "titulo": "Poltergeists con final sorpresa",
+    "pagina": 62
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 66
+   },
+   {
+    "titulo": "Tablón de Anuncios",
+    "pagina": 68
+   },
+   {
+    "titulo": "Vicente Enguídanos: el renacentista OVNI",
+    "pagina": 70
+   },
+   {
+    "titulo": "Buscar por buscar",
+    "pagina": 71
+   },
+   {
+    "titulo": "Montaña de Sorte: Chamanismo salvaje",
+    "pagina": 72
+   },
+   {
+    "titulo": "Nuevo encuentro OVNI de pilotos españoles",
+    "pagina": 78
+   },
+   {
+    "titulo": "IN MEMORIAM: Investigadores fallecidos",
+    "pagina": 89
+   },
+   {
+    "titulo": "Entrevista con Rodolpho Gauthier Cardoso",
+    "pagina": 90
+   },
+   {
+    "titulo": "Encuentro Cercano en 1922",
+    "pagina": 93
+   },
+   {
+    "titulo": "El lobby pseudoescéptico",
+    "pagina": 97
+   },
+   {
+    "titulo": "Los extremos se tocan",
+    "pagina": 120
+   },
+   {
+    "titulo": "Culto a la Santa Muerte y narcotráfico",
+    "pagina": 125
+   }
+  ]
+ },
+ {
+  "slug": "95",
+  "numero": "95",
+  "fecha": "Noviembre 2022",
+  "paginas": 153,
+  "pdf": "eoc-095.pdf",
+  "portada": "eoc-095.jpg",
+  "mb": 21.1,
+  "indice": [
+   {
+    "titulo": "EDITORIAL",
+    "pagina": 3
+   },
+   {
+    "titulo": "Extraterrestres y religión",
+    "pagina": 4
+   },
+   {
+    "titulo": "Inteligencia y Guerra Electrónica",
+    "pagina": 6
+   },
+   {
+    "titulo": "Iº Congreso Satánico Español",
+    "pagina": 10
+   },
+   {
+    "titulo": "El insólito caso del humanoide de Trujillo",
+    "pagina": 14
+   },
+   {
+    "titulo": "El OVNI de Calvine",
+    "pagina": 18
+   },
+   {
+    "titulo": "INFORME: el cráneo de cuarzo de Colombia",
+    "pagina": 23
+   },
+   {
+    "titulo": "Meditación y experiencia paranormal",
+    "pagina": 39
+   },
+   {
+    "titulo": "Filosofía y ufología: ¿Qué es un OVNI?",
+    "pagina": 40
+   },
+   {
+    "titulo": "UMMO siempre vuelve",
+    "pagina": 50
+   },
+   {
+    "titulo": "El caso Walton: Fake in de sky?",
+    "pagina": 56
+   },
+   {
+    "titulo": "Parapsicología: la mejor tesis doctoral",
+    "pagina": 59
+   },
+   {
+    "titulo": "EOC: 30 años de mirada crítica",
+    "pagina": 60
+   },
+   {
+    "titulo": "ADIASA y la historia de la ufología",
+    "pagina": 65
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 69
+   },
+   {
+    "titulo": "Tablón de Anuncios",
+    "pagina": 70
+   },
+   {
+    "titulo": "Logoshères y la ufología francesa",
+    "pagina": 73
+   },
+   {
+    "titulo": "Novedades legales sobre los OVNIs en EEUU",
+    "pagina": 76
+   },
+   {
+    "titulo": "Meigas y fenómenos anómalos",
+    "pagina": 86
+   },
+   {
+    "titulo": "El laberinto de los Secretos de Estado",
+    "pagina": 99
+   },
+   {
+    "titulo": "Si Hans Bender levantase la cabeza",
+    "pagina": 105
+   },
+   {
+    "titulo": "Sesión OVNI en el Senado de Brasil",
+    "pagina": 107
+   },
+   {
+    "titulo": "Indiana Jones: Oopars, misterios y héroes",
+    "pagina": 142
+   },
+   {
+    "titulo": "ECM: LO QUE SABE LA CIENCIA DE LA MUERTE",
+    "pagina": 151
+   }
+  ]
+ },
+ {
+  "slug": "96",
+  "numero": "96",
+  "fecha": "Agosto 2023",
+  "paginas": 143,
+  "pdf": "eoc-096.pdf",
+  "portada": "eoc-096.jpg",
+  "mb": 24.8,
+  "indice": [
+   {
+    "titulo": "15 de octubre, el verdadero día de los OVNIs",
+    "pagina": 3
+   },
+   {
+    "titulo": "In memoriam Luisa Alba",
+    "pagina": 4
+   },
+   {
+    "titulo": "El misterio del cráter de Cádiz",
+    "pagina": 13
+   },
+   {
+    "titulo": "Entrevista exclusiva a Robert Bartholomew",
+    "pagina": 23
+   },
+   {
+    "titulo": "Experimentación TCI en laboratorio acústico",
+    "pagina": 27
+   },
+   {
+    "titulo": "Apariciones: El caso Ignacio Castellanos",
+    "pagina": 48
+   },
+   {
+    "titulo": "DOSSIER ESPECIAL GERMÁN DE ARGUMOSA",
+    "pagina": 60
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 78
+   },
+   {
+    "titulo": "Tablón de Anuncios",
+    "pagina": 80
+   },
+   {
+    "titulo": "Fernando García: Con sangre, sudor y tinta",
+    "pagina": 83
+   },
+   {
+    "titulo": "Desmontando a Borgas",
+    "pagina": 85
+   },
+   {
+    "titulo": "Encuentro OVNI en Zamora",
+    "pagina": 90
+   },
+   {
+    "titulo": "Más Allá: 25 años de historia",
+    "pagina": 97
+   },
+   {
+    "titulo": "El OVNI del Mar Menor: un falso recuerdo",
+    "pagina": 100
+   },
+   {
+    "titulo": "OVNIs: desde Chile para el mundo",
+    "pagina": 110
+   },
+   {
+    "titulo": "La fiabilidad de los testigos OVNI",
+    "pagina": 116
+   },
+   {
+    "titulo": "Óscar Rey Brea: el inventor de la ufología",
+    "pagina": 117
+   },
+   {
+    "titulo": "Teoría de la Distorsión: un examen crítico",
+    "pagina": 124
+   }
+  ]
+ },
+ {
+  "slug": "97",
+  "numero": "97",
+  "fecha": "Marzo 2024",
+  "paginas": 109,
+  "pdf": "eoc-097.pdf",
+  "portada": "eoc-097.jpg",
+  "mb": 14.2,
+  "indice": [
+   {
+    "titulo": "EDITORIAL",
+    "pagina": 3
+   },
+   {
+    "titulo": "Entrevista a Colm Kelleher",
+    "pagina": 4
+   },
+   {
+    "titulo": "Manipulados: víctimas de la Nueva Era",
+    "pagina": 16
+   },
+   {
+    "titulo": "¿Dónde se fueron los platillos volantes?",
+    "pagina": 21
+   },
+   {
+    "titulo": "Desnudar la ciencia",
+    "pagina": 23
+   },
+   {
+    "titulo": "Memorias de José Antonio Galan",
+    "pagina": 30
+   },
+   {
+    "titulo": "Caso Aluche: el mito de la huella imposible",
+    "pagina": 43
+   },
+   {
+    "titulo": "El “Hard Problem” de los fenómenos PSI",
+    "pagina": 48
+   },
+   {
+    "titulo": "Plasmas ¿pieza clave del enigma OVNI?",
+    "pagina": 55
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 60
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 63
+   },
+   {
+    "titulo": "El timador del podcast",
+    "pagina": 64
+   },
+   {
+    "titulo": "Dossier: 30 años sin Andreas Faber-Kaiser",
+    "pagina": 72
+   },
+   {
+    "titulo": "El Imperio (UAP) Contraataca",
+    "pagina": 83
+   },
+   {
+    "titulo": "El vampiro de Estruch",
+    "pagina": 86
+   },
+   {
+    "titulo": "El misterio como bálsamo social",
+    "pagina": 93
+   },
+   {
+    "titulo": "El jefe del espionaje francés y los UAPs",
+    "pagina": 94
+   },
+   {
+    "titulo": "Los Tayos ¿plagio de un caso anterior?",
+    "pagina": 97
+   },
+   {
+    "titulo": "ECM y neurología",
+    "pagina": 101
+   },
+   {
+    "titulo": "Los archivos de APRO recuperados",
+    "pagina": 104
+   },
+   {
+    "titulo": "La Verdad nos hará libres…pero",
+    "pagina": 107
+   }
+  ]
+ },
+ {
+  "slug": "98",
+  "numero": "98",
+  "fecha": "Agosto 2024",
+  "paginas": 182,
+  "pdf": "eoc-098.pdf",
+  "portada": "eoc-098.jpg",
+  "mb": 19.4,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: Los ladrillos del misterio",
+    "pagina": 3
+   },
+   {
+    "titulo": "UAPs, dinero y mentiras en el Pentágono",
+    "pagina": 4
+   },
+   {
+    "titulo": "Los OVNIs en el Parlamento Europeo",
+    "pagina": 13
+   },
+   {
+    "titulo": "Así se construyeron las pirámides de Egipto",
+    "pagina": 17
+   },
+   {
+    "titulo": "El caso de los Platillos Volantes (en 1954)",
+    "pagina": 21
+   },
+   {
+    "titulo": "DMT: Las antípodas de la mente",
+    "pagina": 30
+   },
+   {
+    "titulo": "UMMO: El mensaje cifrado",
+    "pagina": 59
+   },
+   {
+    "titulo": "El enigma de María Magdalena",
+    "pagina": 67
+   },
+   {
+    "titulo": "OVNIs: El testimonio inédito del Cte. Romero",
+    "pagina": 78
+   },
+   {
+    "titulo": "TCI: Estudio estadístico de percepción",
+    "pagina": 81
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 91
+   },
+   {
+    "titulo": "TABLÓN DE ANUNCIOS",
+    "pagina": 95
+   },
+   {
+    "titulo": "El primer cazavampiros hispano",
+    "pagina": 97
+   },
+   {
+    "titulo": "Mellon, el caso Kingnon y Kona Blue Proyect",
+    "pagina": 101
+   },
+   {
+    "titulo": "Uchumataqu Chapa y la droga secreta",
+    "pagina": 106
+   },
+   {
+    "titulo": "El falso scramble en Morón y otros fraudes",
+    "pagina": 114
+   },
+   {
+    "titulo": "“El otro lado” del periodismo del misterio",
+    "pagina": 119
+   },
+   {
+    "titulo": "El informe AARO 2024 a examen",
+    "pagina": 130
+   },
+   {
+    "titulo": "Manuel Carballal, sin filtros",
+    "pagina": 137
+   },
+   {
+    "titulo": "Las cartas de Charles Fort ven la luz",
+    "pagina": 153
+   },
+   {
+    "titulo": "Calingasta X File: Antropología y OVNIs",
+    "pagina": 156
+   },
+   {
+    "titulo": "Reflexiones de Jacques Vallée",
+    "pagina": 167
+   },
+   {
+    "titulo": "Nuevas informaciones del caso Calvine",
+    "pagina": 173
+   },
+   {
+    "titulo": "Europa no prioriza la investigación OVNI",
+    "pagina": 178
+   }
+  ]
+ },
+ {
+  "slug": "99",
+  "numero": "99",
+  "fecha": "Enero 2025",
+  "paginas": 193,
+  "pdf": "eoc-099.pdf",
+  "portada": "eoc-099.jpg",
+  "mb": 28.8,
+  "indice": [
+   {
+    "titulo": "Anomalist: crónica de un fracaso",
+    "pagina": 3
+   },
+   {
+    "titulo": "Las mentiras de Garabandal",
+    "pagina": 4
+   },
+   {
+    "titulo": "La iglesia católica y lo sobrenatural",
+    "pagina": 5
+   },
+   {
+    "titulo": "Garabandal y el misterio",
+    "pagina": 13
+   },
+   {
+    "titulo": "Liberato de Caro y la Sábana Santa",
+    "pagina": 16
+   },
+   {
+    "titulo": "Gómez Serrano: el detective del misterio",
+    "pagina": 20
+   },
+   {
+    "titulo": "Agramonte: el misterio zombi del Moncayo",
+    "pagina": 23
+   },
+   {
+    "titulo": "La cara oculta de… Una crítica personal",
+    "pagina": 36
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 122
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 125
+   },
+   {
+    "titulo": "Misterios por la DANA",
+    "pagina": 126
+   },
+   {
+    "titulo": "Informe de campo: El Cerro Uritorco",
+    "pagina": 130
+   },
+   {
+    "titulo": "La gran mentira OVNI: El caso Bennewitz",
+    "pagina": 138
+   },
+   {
+    "titulo": "¿Dónde está Vilcabamba?",
+    "pagina": 149
+   },
+   {
+    "titulo": "El Bertrand Meheust que no conocías",
+    "pagina": 155
+   },
+   {
+    "titulo": "DROVNIS: Siete semanas para la historia",
+    "pagina": 170
+   },
+   {
+    "titulo": "El legado de Paco Máñez: el investigador",
+    "pagina": 174
+   },
+   {
+    "titulo": "Satanismo: una historia del mal",
+    "pagina": 184
+   },
+   {
+    "titulo": "CNI, Casa Real, Justicia, Defensa y misterio",
+    "pagina": 187
+   },
+   {
+    "titulo": "Los últimos humanoides: pedimos tu ayuda",
+    "pagina": 190
+   }
+  ]
+ },
+ {
+  "slug": "100",
+  "numero": "100",
+  "fecha": "Diciembre 2025",
+  "paginas": 178,
+  "pdf": "eoc-100.pdf",
+  "portada": "eoc-100.jpg",
+  "mb": 19.1,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: Resolver misterios o fomentarlos",
+    "pagina": 3
+   },
+   {
+    "titulo": "Carta al Gallego Sabio",
+    "pagina": 4
+   },
+   {
+    "titulo": "75 años de cafés-tertulias del misterio",
+    "pagina": 11
+   },
+   {
+    "titulo": "Investigación: Cómo se hizo la esfera de Buga",
+    "pagina": 21
+   },
+   {
+    "titulo": "El caso OVNI más importante de España",
+    "pagina": 31
+   },
+   {
+    "titulo": "Las patrañas sobre la Gran Pirámide",
+    "pagina": 35
+   },
+   {
+    "titulo": "Marcahuasi: anatomía de la meseta extraordinaria",
+    "pagina": 40
+   },
+   {
+    "titulo": "Se apagó la voz del misterio",
+    "pagina": 46
+   },
+   {
+    "titulo": "Ozzy Osborne o el mito del rock satánico",
+    "pagina": 47
+   },
+   {
+    "titulo": "Urgente: se buscan investigadores de campo",
+    "pagina": 50
+   },
+   {
+    "titulo": "UAPs: la ingeniería del engaño",
+    "pagina": 52
+   },
+   {
+    "titulo": "Entrevista: Lo paranormal y el comisario Villarejo",
+    "pagina": 77
+   },
+   {
+    "titulo": "Los platillos volantes del infierno",
+    "pagina": 83
+   },
+   {
+    "titulo": "La masa (roja) devoradora",
+    "pagina": 87
+   },
+   {
+    "titulo": "Investigación: Nigeria, violencia ritual",
+    "pagina": 90
+   },
+   {
+    "titulo": "Abrir la mente: El caso Sierra/Carballal",
+    "pagina": 100
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 116
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 119
+   },
+   {
+    "titulo": "Almansa: la pericia criminológica y policial",
+    "pagina": 120
+   },
+   {
+    "titulo": "El Informe UnHiden 2025",
+    "pagina": 126
+   },
+   {
+    "titulo": "Dr. Sans Segarra: el último gran fake",
+    "pagina": 132
+   },
+   {
+    "titulo": "El Mirador: Arqueología y misterio",
+    "pagina": 134
+   },
+   {
+    "titulo": "Los archivos OVNI del Capitán Ramírez",
+    "pagina": 139
+   },
+   {
+    "titulo": "La política de lo paranormal",
+    "pagina": 147
+   },
+   {
+    "titulo": "Investigación de campo vs. de gabinete: el dilema",
+    "pagina": 151
+   },
+   {
+    "titulo": "Las brujas y su mundo",
+    "pagina": 159
+   },
+   {
+    "titulo": "3I/ATLAS y los traficantes de ilusiones",
+    "pagina": 165
+   },
+   {
+    "titulo": "La teología OVNI de Diana Pasulka",
+    "pagina": 166
+   },
+   {
+    "titulo": "Se descubre que son los fuegos fátuos",
+    "pagina": 170
+   },
+   {
+    "titulo": "Fraudes, CESID y OVNIS: 35 años de las Cañadas",
+    "pagina": 171
+   },
+   {
+    "titulo": "En recuerdo de Carlos Alvarado",
+    "pagina": 176
+   }
+  ]
+ },
+ {
+  "slug": "101",
+  "numero": "101",
+  "fecha": "Julio 2026",
+  "paginas": 213,
+  "pdf": "eoc-101.pdf",
+  "portada": "eoc-101.jpg",
+  "mb": 30.1,
+  "indice": [
+   {
+    "titulo": "EDITORIAL: Lo mejor está en los libros",
+    "pagina": 3
+   },
+   {
+    "titulo": "Vudú y trata de seres humanos",
+    "pagina": 4
+   },
+   {
+    "titulo": "Conspiranoia, NASA y antigravedad",
+    "pagina": 9
+   },
+   {
+    "titulo": "El problema OVNI en la Asamblea Nacional francesa",
+    "pagina": 17
+   },
+   {
+    "titulo": "La vida secreta de Germán de Argumosa",
+    "pagina": 18
+   },
+   {
+    "titulo": "Los secretos de The Horror Country",
+    "pagina": 26
+   },
+   {
+    "titulo": "Los OVNIs de Franco: de Horten a Shapiro",
+    "pagina": 32
+   },
+   {
+    "titulo": "Radiografía a El Ojo Crítico",
+    "pagina": 40
+   },
+   {
+    "titulo": "Encuentro de colaboradores de EOC 2026",
+    "pagina": 44
+   },
+   {
+    "titulo": "INFORME: Los OVNIs triangulares",
+    "pagina": 51
+   },
+   {
+    "titulo": "Rodrigo Cortés y los nueve de Irak",
+    "pagina": 57
+   },
+   {
+    "titulo": "Crónicas de la Tanzania invisible",
+    "pagina": 58
+   },
+   {
+    "titulo": "Medjugorje: ¿Y si sí?",
+    "pagina": 70
+   },
+   {
+    "titulo": "La ermita de San Benito de Orante",
+    "pagina": 76
+   },
+   {
+    "titulo": "Ballester Olmos y la ufología del siglo XXI",
+    "pagina": 80
+   },
+   {
+    "titulo": "Carta abierta de Ballester Olmos al G. A. O",
+    "pagina": 81
+   },
+   {
+    "titulo": "UAPs: ciencia, política y la lucha por la narrativa",
+    "pagina": 82
+   },
+   {
+    "titulo": "DOSSIER: Expedición científica al Tassili",
+    "pagina": 88
+   },
+   {
+    "titulo": "El Gran Silencio y el origen de la consciencia",
+    "pagina": 123
+   },
+   {
+    "titulo": "El caso Varginha",
+    "pagina": 132
+   },
+   {
+    "titulo": "Los CONFIDENCIALES de EOC",
+    "pagina": 140
+   },
+   {
+    "titulo": "Tablón de anuncios",
+    "pagina": 143
+   },
+   {
+    "titulo": "El caso Jordi Boronat",
+    "pagina": 145
+   },
+   {
+    "titulo": "El primer Encuentro en la Tercera Fase",
+    "pagina": 152
+   },
+   {
+    "titulo": "Última entrevista y el regreso de Francisco Máñez",
+    "pagina": 156
+   },
+   {
+    "titulo": "De extraterrestres, la luna y otras cuestiones",
+    "pagina": 172
+   },
+   {
+    "titulo": "OVNI: los testigos “perfectos”",
+    "pagina": 174
+   },
+   {
+    "titulo": "Eduardo Buelta: historia de un pionero",
+    "pagina": 182
+   },
+   {
+    "titulo": "El secreto del OVNI de Vorónezh",
+    "pagina": 189
+   },
+   {
+    "titulo": "El OVNI de Montserrat",
+    "pagina": 196
+   },
+   {
+    "titulo": "Roswell enfrenta a la ufología francesa",
+    "pagina": 203
+   },
+   {
+    "titulo": "El hombre que inventó el Area 51",
+    "pagina": 209
+   },
+   {
+    "titulo": "El fin de una era",
+    "pagina": 210
+   }
+  ]
+ }
+]

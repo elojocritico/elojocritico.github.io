@@ -1,0 +1,70 @@
+[
+ {
+  "slug": "fraudes",
+  "nombre": "Fraudes"
+ },
+ {
+  "slug": "ufologia",
+  "nombre": "Ufología"
+ },
+ {
+  "slug": "parapsicologia",
+  "nombre": "Parapsicología"
+ },
+ {
+  "slug": "escepticismo",
+  "nombre": "Escepticismo"
+ },
+ {
+  "slug": "historia",
+  "nombre": "Historia"
+ },
+ {
+  "slug": "religiones",
+  "nombre": "Religiones"
+ },
+ {
+  "slug": "psicologia",
+  "nombre": "Psicología"
+ },
+ {
+  "slug": "criminologia",
+  "nombre": "Criminología"
+ },
+ {
+  "slug": "espionaje",
+  "nombre": "Espionaje"
+ },
+ {
+  "slug": "conspiracion",
+  "nombre": "Conspiración"
+ },
+ {
+  "slug": "entrevistas",
+  "nombre": "Entrevistas"
+ },
+ {
+  "slug": "libros",
+  "nombre": "Libros"
+ },
+ {
+  "slug": "editoriales",
+  "nombre": "Editoriales"
+ },
+ {
+  "slug": "taller-del-investigador",
+  "nombre": "Taller del investigador"
+ },
+ {
+  "slug": "confidenciales",
+  "nombre": "Confidenciales"
+ },
+ {
+  "slug": "cronicas-del-misterio",
+  "nombre": "Crónicas del misterio"
+ },
+ {
+  "slug": "humor",
+  "nombre": "Humor"
+ }
+]

@@ -1,0 +1,23 @@
+[
+ {
+  "id": "1983",
+  "autor": "Juan Antonio",
+  "fecha": "2018-02-02T10:10",
+  "html": "<p>Hola , necesito ponerme en contacto con el ufólogo Javier Sierra para contarle una vivencia creo que poco común acerca del tema ovni. Si no quiere hablar conmigo que no lo haga pero mi historia es real y desearía encontrar algún día respuesta si no es con su ayuda con alguien que esté interesado en ayudarme.<br/>\nUn saludo.</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "2002",
+  "autor": "Natalia Sánchez",
+  "fecha": "2018-03-06T21:50",
+  "html": "<p>Hola Juan Antonio,</p><p>Me llamo Natalia, vivo en Granada. Si quieres hablar conmigo sobre tema OVNI o cualquier tema de parapsicología, te escucharé y ayudaré en lo que pueda. Tengo amplia experiencia en esos temas. Solamente quiero adelantarte que no siempre tienen respuesta. Un saludo.</p>",
+  "respuestaA": "1983"
+ },
+ {
+  "id": "2001",
+  "autor": "Natalia Sánchez",
+  "fecha": "2018-03-06T21:48",
+  "html": "<p>Hola Juan Antonio,</p><p>Me llamo Natalia, vivo en Granada. Si quieres hablar conmigo sobre tema OVNI o cualquier tema de parapsicología, te escucharé y ayudaré en lo que pueda. Tengo amplia experiencia en esos temas. Solamente quiero adelantarte que no siempre tienen respuesta. Un saludo.</p>",
+  "respuestaA": null
+ }
+]

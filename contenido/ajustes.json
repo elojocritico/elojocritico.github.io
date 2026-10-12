@@ -1,0 +1,30 @@
+{
+ "destacado": null,
+ "enlaces": [
+  {
+   "nombre": "Ediciones Cydonia",
+   "url": "http://www.edicionescydonia.com/"
+  },
+  {
+   "nombre": "Dimensión Límite",
+   "url": "https://www.dimensionlimite.com/"
+  },
+  {
+   "nombre": "Canal EOC (afín)",
+   "url": "https://www.youtube.com/@eoc.elojocritico.5419"
+  },
+  {
+   "nombre": "Clave 45",
+   "url": "https://www.clave45.com/"
+  },
+  {
+   "nombre": "Facebook EOC",
+   "url": "https://www.facebook.com/elojoc"
+  }
+ ],
+ "adsense": {
+  "activo": false,
+  "cliente": "",
+  "bloque": ""
+ }
+}

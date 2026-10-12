@@ -1,0 +1,102 @@
+[
+ {
+  "desde": "/category/fraudes/",
+  "hacia": "/tema/fraudes/"
+ },
+ {
+  "desde": "/category/ufologia/",
+  "hacia": "/tema/ufologia/"
+ },
+ {
+  "desde": "/category/parapsicologia/",
+  "hacia": "/tema/parapsicologia/"
+ },
+ {
+  "desde": "/category/pseudoescepticismo/",
+  "hacia": "/tema/escepticismo/"
+ },
+ {
+  "desde": "/category/historia/",
+  "hacia": "/tema/historia/"
+ },
+ {
+  "desde": "/category/religiones/",
+  "hacia": "/tema/religiones/"
+ },
+ {
+  "desde": "/category/piscologia-anomala/",
+  "hacia": "/tema/psicologia/"
+ },
+ {
+  "desde": "/category/criminologia/",
+  "hacia": "/tema/criminologia/"
+ },
+ {
+  "desde": "/category/servicios-secretos/",
+  "hacia": "/tema/espionaje/"
+ },
+ {
+  "desde": "/category/conspiracion/",
+  "hacia": "/tema/conspiracion/"
+ },
+ {
+  "desde": "/category/entrevistas/",
+  "hacia": "/tema/entrevistas/"
+ },
+ {
+  "desde": "/category/libros/",
+  "hacia": "/tema/libros/"
+ },
+ {
+  "desde": "/category/editoriales/",
+  "hacia": "/tema/editoriales/"
+ },
+ {
+  "desde": "/category/taller-del-investigador/",
+  "hacia": "/tema/taller-del-investigador/"
+ },
+ {
+  "desde": "/category/confidenciales/",
+  "hacia": "/tema/confidenciales/"
+ },
+ {
+  "desde": "/category/cronicas-del-misterio/",
+  "hacia": "/tema/cronicas-del-misterio/"
+ },
+ {
+  "desde": "/category/humor/",
+  "hacia": "/tema/humor/"
+ },
+ {
+  "desde": "/category/que-es-el-ojo-critico/",
+  "hacia": "/que-es-eoc/"
+ },
+ {
+  "desde": "/category/carrusel/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/category/portada/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/category/uncategorized/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/category/fernando-jimenez-del-oso/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/category/juan-jose-benitez/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/category/javier-sierra/",
+  "hacia": "/articulos/"
+ },
+ {
+  "desde": "/feed/",
+  "hacia": "/rss.xml"
+ }
+]

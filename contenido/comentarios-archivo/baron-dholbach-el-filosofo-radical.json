@@ -1,0 +1,16 @@
+[
+ {
+  "id": "1617",
+  "autor": "Marc",
+  "fecha": "2016-07-20T15:43",
+  "html": "<p>Magnífico artículo.</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "1627",
+  "autor": "Moisés Garrido",
+  "fecha": "2016-07-27T11:49",
+  "html": "<p>Gracias Marc.</p>",
+  "respuestaA": "1617"
+ }
+]

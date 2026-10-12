@@ -1,0 +1,44 @@
+[
+ {
+  "id": "3309",
+  "autor": "Félix",
+  "fecha": "2023-06-16T08:46",
+  "html": "<p>Buen día. Los enlaces a la compra están caídos.</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "3397",
+  "autor": "Marlene Mursuli",
+  "fecha": "2023-07-28T20:40",
+  "html": "<p>Vivo en Miami y no puedo comprar el libro porque no está disponible en Amazon.com, no se si es solo para los que vivimos en USA que no dan acceso a la compra o si es que se agotaron.<br/>\nSaludos</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "3398",
+  "autor": "elojocri",
+  "fecha": "2023-07-29T05:55",
+  "html": "<p>Para EEUU esta disponible en: <a href=\"https://www.ebay.com/itm/325749717017\">https://www.ebay.com/itm/325749717017</a>, también en <a href=\"https://www.todocoleccion.net/buscador?bu=manuel+carballal&amp;identificadorvendedor=museode\">https://www.todocoleccion.net/buscador?bu=manuel+carballal&amp;identificadorvendedor=museode</a> y en <a href=\"http://www.coleccioncuadernodecampo.blogspot.com\">http://www.coleccioncuadernodecampo.blogspot.com</a>, <a href=\"http://www.editorialelojocritico.com\">http://www.editorialelojocritico.com</a>, etc. O puedes escribir directamente a las distribuidoras: <a href=\"mailto:secretshopxxi@gmail.com\">secretshopxxi@gmail.com</a> que no cobran ninguna comisión y es más económico.</p>",
+  "respuestaA": "3397"
+ },
+ {
+  "id": "3411",
+  "autor": "Marlene Mursuli",
+  "fecha": "2023-08-13T13:58",
+  "html": "<p>Gracias, ya estoy en contacto con secret shop y espero tener muy pronto el libro de Manu en mi poder. Gracias por su ayuda. Saludos desde Miami.</p>",
+  "respuestaA": "3398"
+ },
+ {
+  "id": "3875",
+  "autor": "Jordi Farrés Sabater",
+  "fecha": "2024-09-09T18:09",
+  "html": "<p>Como puedo comprar el libro de Manuel Carballal<br/>\nInvestigación PSI. Una historia de la parapsicologia científica y universitaria en España.</p><p>Gracias.</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "3876",
+  "autor": "elojocri",
+  "fecha": "2024-09-10T08:08",
+  "html": "<p>Lo tienes en todas las plataformas: TodoColeccion.net, Ebay, Amazon… tambien en secrestshop.info y si lo prefieres puedes escribir directamente a <a href=\"mailto:secretshopxxi@gmail.com\">secretshopxxi@gmail.com</a> y ellas te lo mandan. Muchas gracias.</p>",
+  "respuestaA": "3875"
+ }
+]

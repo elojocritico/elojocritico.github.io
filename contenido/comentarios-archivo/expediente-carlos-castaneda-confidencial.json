@@ -1,0 +1,23 @@
+[
+ {
+  "id": "2706",
+  "autor": "Fernando",
+  "fecha": "2021-03-14T20:20",
+  "html": "<p>Hola<br/>\nIntento adquirir el monográfico nº 3 pero al intentar acceder al enlace de pago simplemente abre la página de paypal pero no el esperado formulario de pago o similar. Creo que algo no funciona.<br/>\ncomo hago? Gracias</p>",
+  "respuestaA": null
+ },
+ {
+  "id": "2709",
+  "autor": "elojocri",
+  "fecha": "2021-03-15T16:09",
+  "html": "<p>Muchas gracias por avisarnos. Creo que ahora ya funciona correctamente.</p>",
+  "respuestaA": "2706"
+ },
+ {
+  "id": "3565",
+  "autor": "maribel bayer",
+  "fecha": "2023-12-17T15:33",
+  "html": "<p>Hola! acabo de hacer el pago para contenido monográfico nro. 3 con envío para Sant Cugat del Vallès, Barcelona, podrías indicarme un estimado de la fecha de entrega. Muchas gracias</p>",
+  "respuestaA": null
+ }
+]
