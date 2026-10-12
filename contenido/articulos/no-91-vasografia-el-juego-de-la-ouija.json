@@ -8,9 +8,13 @@
   "cronicas-del-misterio"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2014/12/ouija-board-historical-gallery-png-600x0-q85-upscale.webp",
+  "tarjeta": "/img/2014/12/ouija-board-historical-gallery-png-600x0-q85-upscale-640.webp",
+  "alt": "ouija-board-historical-gallery.png__600x0_q85_upscale"
+ },
  "extracto": "Manuel Carballal y Lorenzo Fernández nos hablan del origen del “juego” de la OUI-JA, su uso terapeutico y también sus riesgos. Más audios en Onda Cero",
- "cuerpoHtml": "<p><span class=\"img-perdida\">Imagen no recuperada</span>Manuel Carballal y Lorenzo Fernández nos hablan del origen del “juego” de la OUI-JA, su uso terapeutico y también sus riesgos.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
+ "cuerpoHtml": "<p><a href=\"/img/2014/12/ouija-board-historical-gallery-png-600x0-q85-upscale.webp\"><img alt=\"ouija-board-historical-gallery.png__600x0_q85_upscale\" class=\"izq\" height=\"450\" loading=\"lazy\" src=\"/img/2014/12/ouija-board-historical-gallery-png-600x0-q85-upscale.webp\" width=\"600\"/></a>Manuel Carballal y Lorenzo Fernández nos hablan del origen del “juego” de la OUI-JA, su uso terapeutico y también sus riesgos.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/no-91-vasografia-el-juego-de-la-ouija/",
  "enlacesExternos": [
