@@ -9,7 +9,7 @@ const { page, titulo, temaActual, anioActual } = Astro.props;
 ---
 <Base titulo={titulo} actual="articulos">
   <section class="contenedor" style="padding-top:28px">
-    <h1 class="seccion-titulo" style="font-size:14px">{titulo} · {page.total} artículos</h1>
+    <h1 class="seccion-titulo" style="font-size:14px">{titulo} · {page.total} {page.total === 1 ? "artículo" : "artículos"}</h1>
     <div class="chips" style="margin-bottom:10px">
       <a href="/articulos/" aria-current={!temaActual && !anioActual ? "page" : undefined}>Todos</a>
       {secciones().map((s) => <a href={`/tema/${s.slug}/`} aria-current={s.slug === temaActual ? "page" : undefined}>{s.nombre}</a>)}
