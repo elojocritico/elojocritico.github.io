@@ -1,0 +1,8 @@
+---
+import Base from "../layouts/Base.astro";
+import { paginaQueEs } from "../lib/contenido";
+const p = paginaQueEs();
+---
+<Base titulo="Qué es El Ojo Crítico" actual="que-es">
+  <article class="articulo"><h1>{p.titulo}</h1><div class="cuerpo" set:html={p.cuerpoHtml} /></article>
+</Base>

@@ -1,0 +1,42 @@
+---
+import Base from "../layouts/Base.astro";
+import { numeros } from "../lib/revista";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { RAIZ_CONTENIDO, articulos, anios } from "../lib/contenido";
+const pdfs = numeros().map((n) => n.pdf);
+const categorias = Object.fromEntries(
+  (JSON.parse(readFileSync(join(RAIZ_CONTENIDO(), "redirecciones.json"), "utf-8")) as { desde: string; hacia: string }[])
+    .filter((r) => r.desde.startsWith("/category/")).map((r) => [r.desde.split("/")[2], r.hacia]));
+const aniosValidos = anios(articulos());
+---
+<Base titulo="Página no encontrada">
+  <section class="articulo">
+    <h1>Esta página no existe</h1>
+    <p class="cuerpo">Puede que el enlace sea de la web antigua. Prueba a buscar el artículo:</p>
+    <form action="/buscar/" method="get"><input type="search" name="q" placeholder="Buscar artículos" style="width:100%;padding:12px;background:transparent;border:1px solid #3a414a;color:var(--texto);border-radius:4px;font:16px var(--sans)" /></form>
+    <p><a href="/" style="color:var(--ambar)">← Volver al inicio</a></p>
+  </section>
+  <script is:inline define:vars={{ pdfs, categorias, aniosValidos }}>
+    const p = decodeURIComponent(location.pathname);
+    const pad = (n) => String(n).padStart(3, "0");
+    const m = p.match(/\/wp-content\/uploads\/.*?eoc[\s_-]*(\d{1,3})(?:[\s_-]+(\d{1,3}))?[^/]*\.pdff?$/i);
+    if (m) {
+      const a = parseInt(m[1]);
+      const cand = [m[2] ? `eoc-${pad(a)}-${pad(parseInt(m[2]))}.pdf` : null, `eoc-${pad(a)}.pdf`,
+                    `eoc-${pad(a)}-${pad(a + 1)}.pdf`, `eoc-${pad(a - 1)}-${pad(a)}.pdf`].filter(Boolean);
+      const pdf = cand.find((c) => pdfs.includes(c));
+      if (pdf) location.replace("https://laspitesdegrao.github.io/el-ojo-critico/pdf/" + pdf);
+    }
+    const c = p.match(/^\/category\/([^/]+)\/(?:page\/(\d+)\/?)?/);
+    if (c && categorias[c[1]]) {
+      const h = categorias[c[1]];
+      location.replace(h + (h.startsWith("/tema/") && c[2] && c[2] !== "1" ? c[2] + "/" : ""));
+    }
+    const t = p.match(/^\/tag\/([^/]+)/);
+    if (t) location.replace("/buscar/?q=" + encodeURIComponent(t[1].replace(/-/g, " ")));
+    if (/^\/author\//.test(p)) location.replace("/articulos/");
+    const y = p.match(/^\/(\d{4})(?:\/\d{2})?\/?$/);
+    if (y && aniosValidos.includes(Number(y[1]))) location.replace("/anio/" + y[1] + "/");
+  </script>
+</Base>

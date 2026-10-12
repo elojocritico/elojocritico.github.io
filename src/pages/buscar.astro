@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base titulo="Buscar" actual="articulos">
+  <section class="articulo">
+    <h1>Buscar</h1>
+    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <div id="buscador"></div>
+    <noscript><p class="meta">El buscador necesita JavaScript.</p></noscript>
+    <script is:inline src="/pagefind/pagefind-ui.js"></script>
+    <script is:inline>
+      window.addEventListener("DOMContentLoaded", () => {
+        const ui = new PagefindUI({ element: "#buscador", showSubResults: false, showImages: false,
+          translations: { placeholder: "Buscar en los artículos", zero_results: "No hay resultados para [SEARCH_TERM]" } });
+        const q = new URLSearchParams(location.search).get("q");
+        if (q) ui.triggerSearch(q);
+      });
+    </script>
+    <style is:global>
+      #buscador { --pagefind-ui-primary: #e8b33a; --pagefind-ui-text: #e7e9ec; --pagefind-ui-background: #0f1114; --pagefind-ui-border: #3a414a; --pagefind-ui-tag: #1a1e23; --pagefind-ui-font: Inter, sans-serif; }
+    </style>
+  </section>
+</Base>
