@@ -1,0 +1,12 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Listado from "../../../components/Listado.astro";
+import { articulos, anios } from "../../../lib/contenido";
+export function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  const todos = articulos();
+  return anios(todos).flatMap((y) =>
+    paginate(todos.filter((a) => a.fecha.startsWith(String(y))), { params: { anio: String(y) }, pageSize: 24 }));
+}
+const { page } = Astro.props;
+---
+<Listado page={page} titulo={`Artículos de ${Astro.params.anio}`} anioActual={Number(Astro.params.anio)} />

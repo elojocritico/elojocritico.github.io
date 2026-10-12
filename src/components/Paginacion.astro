@@ -1,0 +1,12 @@
+---
+import type { Page } from "astro";
+interface Props { page: Page<unknown> }
+const { page } = Astro.props;
+---
+{page.lastPage > 1 && (
+  <nav class="meta" aria-label="Páginas" style="display:flex;justify-content:space-between;margin:32px 0">
+    {page.url.prev ? <a href={page.url.prev} style="color:var(--ambar)">← Más recientes</a> : <span></span>}
+    <span>Página {page.currentPage} de {page.lastPage}</span>
+    {page.url.next ? <a href={page.url.next} style="color:var(--ambar)">Más antiguos →</a> : <span></span>}
+  </nav>
+)}

@@ -1,0 +1,11 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Listado from "../../../components/Listado.astro";
+import { articulos, secciones } from "../../../lib/contenido";
+export function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  return secciones().flatMap((s) =>
+    paginate(articulos().filter((a) => a.secciones.includes(s.slug)), { params: { tema: s.slug }, props: { nombre: s.nombre }, pageSize: 24 }));
+}
+const { page, nombre } = Astro.props;
+---
+<Listado page={page} titulo={nombre} temaActual={Astro.params.tema} />

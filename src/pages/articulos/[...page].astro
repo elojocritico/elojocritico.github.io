@@ -1,0 +1,10 @@
+---
+import type { GetStaticPathsOptions } from "astro";
+import Listado from "../../components/Listado.astro";
+import { articulos } from "../../lib/contenido";
+export function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+  return paginate(articulos(), { pageSize: 24 });
+}
+const { page } = Astro.props;
+---
+<Listado page={page} titulo="Artículos" />
