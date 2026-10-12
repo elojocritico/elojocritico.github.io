@@ -1,0 +1,18 @@
+---
+import Base from "../../layouts/Base.astro";
+import { numeros, urlPortada } from "../../lib/revista";
+const lista = numeros();
+---
+<Base titulo="La Revista" actual="revista" descripcion="Todos los números de El Ojo Crítico, para leer gratis.">
+  <section class="contenedor" style="padding-top:28px">
+    <h1 class="seccion-titulo" style="font-size:14px">La Revista · {lista.length} números para leer gratis</h1>
+    <ul style="list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:20px">
+      {lista.map((n) => (
+        <li><a href={`/revista/${n.slug}/`} style="text-decoration:none">
+          <img src={urlPortada(n)} alt={`Portada de El Ojo Crítico nº ${n.numero}`} width="400" height="566" loading="lazy" style="width:100%;border-radius:2px;box-shadow:0 0 0 1px var(--linea)" />
+          <div style="font-weight:700;margin-top:6px">Nº {n.numero}</div><div class="meta">{n.fecha}</div>
+        </a></li>
+      ))}
+    </ul>
+  </section>
+</Base>

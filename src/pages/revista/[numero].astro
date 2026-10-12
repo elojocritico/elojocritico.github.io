@@ -1,0 +1,32 @@
+---
+import Base from "../../layouts/Base.astro";
+import { numeros, urlPdf, urlPortada, urlVisor, type Numero } from "../../lib/revista";
+export function getStaticPaths() {
+  return numeros().map((n) => ({ params: { numero: n.slug }, props: { n } }));
+}
+const { n } = Astro.props as { n: Numero };
+---
+<Base titulo={`El Ojo Crítico nº ${n.numero}`} actual="revista" imagen={urlPortada(n)}>
+  <section class="contenedor ficha" style="padding-top:28px;display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:32px">
+    <img src={urlPortada(n)} alt={`Portada de El Ojo Crítico nº ${n.numero}`} width="400" height="566" style="width:100%;border-radius:3px" />
+    <div>
+      <div class="etiqueta">La Revista</div>
+      <h1 style="font:700 36px/1.1 var(--serif);margin:8px 0">El Ojo Crítico nº {n.numero}</h1>
+      <div class="meta">{n.fecha} · {n.paginas} páginas · {n.mb} MB</div>
+      <p style="display:flex;gap:12px;flex-wrap:wrap;margin:22px 0">
+        <a href={urlVisor(n)} target="_blank" rel="noopener" style="background:var(--ambar);color:#111;padding:10px 18px;border-radius:4px;text-decoration:none;font-weight:600">Leer en el visor</a>
+        <a href={urlPdf(n)} download style="border:1px solid var(--ambar);color:var(--ambar);padding:10px 18px;border-radius:4px;text-decoration:none;font-weight:600">Descargar PDF</a>
+      </p>
+      {n.indice.length > 0 && (
+        <>
+          <h2 class="seccion-titulo">Índice</h2>
+          <ol style="padding-left:0;list-style:none;font:17px/1.5 var(--serif)">
+            {n.indice.map((i) => <li style="display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--linea);padding:8px 0"><span>{i.titulo}</span><span class="meta">p. {i.pagina}</span></li>)}
+          </ol>
+        </>
+      )}
+      <p><a class="meta" href="/revista/" style="color:var(--ambar)">← Todos los números</a></p>
+    </div>
+  </section>
+  <style>@media (max-width: 700px) { .ficha { grid-template-columns: 1fr !important; } }</style>
+</Base>
