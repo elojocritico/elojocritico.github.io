@@ -18,7 +18,9 @@ const aniosValidos = anios(articulos());
     <p><a href="/" style="color:var(--ambar)">← Volver al inicio</a></p>
   </section>
   <script is:inline define:vars={{ pdfs, categorias, aniosValidos }}>
-    const p = decodeURIComponent(location.pathname);
+    try {
+    let p;
+    try { p = decodeURIComponent(location.pathname); } catch (e) { p = location.pathname; }
     const pad = (n) => String(n).padStart(3, "0");
     const m = p.match(/\/wp-content\/uploads\/.*?eoc[\s_-]*(\d{1,3})(?:[\s_-]+(\d{1,3}))?[^/]*\.pdff?$/i);
     if (m) {
@@ -38,5 +40,6 @@ const aniosValidos = anios(articulos());
     if (/^\/author\//.test(p)) location.replace("/articulos/");
     const y = p.match(/^\/(\d{4})(?:\/\d{2})?\/?$/);
     if (y && aniosValidos.includes(Number(y[1]))) location.replace("/anio/" + y[1] + "/");
+    } catch (e) {}
   </script>
 </Base>
