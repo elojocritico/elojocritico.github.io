@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<itunes:author>El Ojo Crítico</itunes:author>
+<copyright>&#xA9; 2026 El Ojo Crítico</copyright>
+<title><![CDATA[Podcast EL OJO CRITICO]]></title>
+<link>https://www.ivoox.com/podcast-podcast-el-ojo-critico_sq_f127567_1.html</link>
+<language>es-ES</language>
+<description><![CDATA[EL OJO CRITICO "Cuadernos de Investigación para Investigadores", es la única revista escéptica editada en castellano, dedicada a la investigación objetiva de los fenómenos anómalos, y los aspectos criminológicos del misterio.]]></description>
+<generator>iVoox</generator>
+<image><url>https://static-1.ivoox.com/canales/2/5/2/4/3741470904252_XXL.jpg</url>
+<title><![CDATA[Podcast EL OJO CRITICO]]></title>
+<link>https://www.ivoox.com/podcast-podcast-el-ojo-critico_sq_f127567_1.html</link>
+</image>
+<atom:link href="https://feeds.ivoox.com/feed_fg_f127567_filtro_1.xml" rel="self" type="application/rss+xml"/>
+<itunes:explicit>false</itunes:explicit>
+<itunes:image href="https://static-1.ivoox.com/canales/2/5/2/4/3741470904252_XXL.jpg"/>
+<itunes:category text="Society &amp; Culture">
+<itunes:category text="Documentary"/>
+</itunes:category>
+<itunes:type>episodic</itunes:type>
+<item>
+<title><![CDATA[Manuel Carballal. El Argonauta del Misterio nº 5. Apariciones de la Virgen María en Zeitum. La Rosa de los Vientos, 2026]]></title>
+<link>https://www.ivoox.com/manuel-carballal-el-argonauta-del-misterio-n-5-audios-mp3_rf_182002206_1.html</link>
+<enclosure url="https://www.ivoox.com/manuel-carballal-el-argonauta-del-misterio-n-5_mf_182002206_feed_1.mp3" type="audio/mpeg" length="18826465"/>
+<description><![CDATA[Manuel Carballal. 
+El Argonauta del Misterio nº 5.
+Las apariciones de la Virgen María en Zeitum. L
+a Rosa de los Vientos, 2026]]></description>
+<pubDate>Sun, 11 Oct 2026 15:07:38 +0200</pubDate>
+<itunes:duration>19:36</itunes:duration>
+<guid>https://www.ivoox.com/182002206</guid>
+<itunes:episodeType>full</itunes:episodeType>
+<itunes:image href="https://static-1.ivoox.com/audios/a/1/3/0/a13006d58e22f2dd435d39a98f4ea867_XXL.jpg"/>
+</item>
+<item>
+<title><![CDATA[Dr. Fernando Jiménez del Oso y Ricardo Fernández Deu. La Radiestesia. 1989]]></title>
+<link>https://www.ivoox.com/dr-fernando-jimenez-del-oso-ricardo-fernandez-audios-mp3_rf_182002095_1.html</link>
+<enclosure url="https://www.ivoox.com/dr-fernando-jimenez-del-oso-ricardo-fernandez_mf_182002095_feed_1.mp3" type="audio/mpeg" length="16364685"/>
+<description><![CDATA[Dr. Fernando Jiménez del Oso y Ricardo Fernández Deu. 
+La Radiestesia. 
+1989]]></description>
+<pubDate>Sun, 11 Oct 2026 15:02:06 +0200</pubDate>
+<itunes:duration>17:02</itunes:duration>
+<guid>https://www.ivoox.com/182002095</guid>
+<itunes:episodeType>full</itunes:episodeType>
+<itunes:image href="https://static-1.ivoox.com/audios/c/d/2/0/cd20f9b7e4259730a7144d4edd104ff3_XXL.jpg"/>
+</item>
+<item>
+<title><![CDATA[Enrique de Vicente. Estreno de Alien el 8º Pasajero. 1989]]></title>
+<link>https://www.ivoox.com/enrique-vicente-estreno-alien-8-audios-mp3_rf_182002050_1.html</link>
+<enclosure url="https://www.ivoox.com/enrique-vicente-estreno-alien-8_mf_182002050_feed_1.mp3" type="audio/mpeg" length="8220333"/>
+<description><![CDATA[Enrique de Vicente. 
+Estreno de Alien el 8º Pasajero. 
+1989]]></description>
+<pubDate>Sun, 11 Oct 2026 14:58:58 +0200</pubDate>
+<itunes:duration>08:33</itunes:duration>
+<guid>https://www.ivoox.com/182002050</guid>
+<itunes:episodeType>full</itunes:episodeType>
+<itunes:image href="https://static-1.ivoox.com/audios/6/a/1/0/6a104290dc0a528e6782e3f6726c45fd_XXL.jpg"/>
+</item>
+</channel>
+</rss>

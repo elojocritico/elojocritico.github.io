@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "imagenes": "node scripts/copiar-imagenes.mjs",
+    "sincronizar": "node scripts/sincronizar-medios.mjs",
     "dev": "astro dev",
     "build": "astro build && pagefind --site dist",
     "verificar": "node scripts/verificar.mjs",
@@ -21,6 +22,7 @@
     "@fontsource/inter": "^5.3.0",
     "@fontsource/source-serif-4": "^5.3.1",
     "astro": "^5.18.2",
+    "fast-xml-parser": "^4.5.7",
     "pagefind": "^1.5.2"
   },
   "devDependencies": {

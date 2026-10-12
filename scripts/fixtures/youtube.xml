@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCvXlGvuefNBjBN8c11_4BBQ"/>
+ <id>yt:channel:vXlGvuefNBjBN8c11_4BBQ</id>
+ <yt:channelId>vXlGvuefNBjBN8c11_4BBQ</yt:channelId>
+ <title>EOC EOC</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCvXlGvuefNBjBN8c11_4BBQ"/>
+ <author>
+  <name>EOC EOC</name>
+  <uri>https://www.youtube.com/channel/UCvXlGvuefNBjBN8c11_4BBQ</uri>
+ </author>
+ <published>2016-09-27T06:36:18+00:00</published>
+ <entry>
+  <id>yt:video:qWYlprZyqac</id>
+  <yt:videoId>qWYlprZyqac</yt:videoId>
+  <yt:channelId>UCvXlGvuefNBjBN8c11_4BBQ</yt:channelId>
+  <title>ArchivoEOC Santa Compaña, Vudú, Estigmas... En los Limites de la Realidad, 1993</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=qWYlprZyqac"/>
+  <author>
+   <name>EOC EOC</name>
+   <uri>https://www.youtube.com/channel/UCvXlGvuefNBjBN8c11_4BBQ</uri>
+  </author>
+  <published>2026-10-10T17:29:18+00:00</published>
+  <updated>2026-10-10T20:17:30+00:00</updated>
+  <media:group>
+   <media:title>ArchivoEOC Santa Compaña, Vudú, Estigmas... En los Limites de la Realidad, 1993</media:title>
+   <media:content url="https://www.youtube.com/v/qWYlprZyqac?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i2.ytimg.com/vi/qWYlprZyqac/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Los Archivos de El Ojo Crítico
+santa compaña, vudu, estigmas A3 en los limites de la realidad (1h 4min 5seg)
+Emitido el 12 de Julio de 1993
+PROGRAMA 5. EN LOS LIMITES DE LA REALIDAD
+Presentado por Andres Aberasturi
+(A) LA SANTA COMPAÑA: Josefa Romero, con 8 años en 1958, fue testigo de La Santa Compaña en San Salvador de Boudiño. 
+Charla con:
+- Javier Akerman, psicologo
+- Marcos Conde, investigador.
+(B) VUDU: En noviembre de 1980, Guilane Barnadiun subre una maldicion vudú.
+Charla con 
+- Jose Rafael Abascal, antropólogo
+- Manuela do Brasil, sacerdotisa de magia. 
+Visualizacion de un Video de ritu vudú.
+(C) ESTIGMAS: Caso de la hemana Ivonne Amada, monja agustina estigmatizada. Sucesos extraordinarios en su vida.
+- Charla con Francisco Guijarro, fiscal del arzobispado de Madrid
+- Javier Bravo, dermatólogo
+- Carlos Berché, médico.</media:description>
+   <media:community>
+    <media:starRating count="6" average="5.00" min="1" max="5"/>
+    <media:statistics views="285"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:2PEhAuXnaI8</id>
+  <yt:videoId>2PEhAuXnaI8</yt:videoId>
+  <yt:channelId>UCvXlGvuefNBjBN8c11_4BBQ</yt:channelId>
+  <title>ArchivoEOC Combustión espontánea y la fuerza del amor. Limites de la Realidad. 1992</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=2PEhAuXnaI8"/>
+  <author>
+   <name>EOC EOC</name>
+   <uri>https://www.youtube.com/channel/UCvXlGvuefNBjBN8c11_4BBQ</uri>
+  </author>
+  <published>2026-10-10T17:04:59+00:00</published>
+  <updated>2026-10-10T20:11:57+00:00</updated>
+  <media:group>
+   <media:title>ArchivoEOC Combustión espontánea y la fuerza del amor. Limites de la Realidad. 1992</media:title>
+   <media:content url="https://www.youtube.com/v/2PEhAuXnaI8?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i3.ytimg.com/vi/2PEhAuXnaI8/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Los Archivos de El Ojo Crítico
+la fuerza del amor, combustion espontanea A3 en los limites de la realidad (43min 52seg)
+Emitido el 5 de Julio de 1993
+PROGRAMA 4. EN LOS LIMITES DE LA REALIDAD
+Presentado por Andres Aberasturi.
+(A) LA FUERZA DEL AMOR:Grupo de terapia de oración y de curación. Caso de Jacques Brossier, enfermo de cáncer, con su directora de grupo Maguy Lebrun. 
+Charla con:
+- Jose Luis Paniagua, bioquímico
+- Marta García Fernández, terapetura de bioenergía.
+(B) COMBUSTION ESPONTÁNEA: Reportaje con André Laurain, experto en incendios, y M.Durignon, forense. Caso de mayo de 1977 en Uruffe (Francia). 
+Charla con: 
+- Jose Manuel Rodriguez Delgado, neurobiologo
+- Rafael Ribera, investigador. 
+- Testimonio del periodista Rafael González, sobre un caso en la calle Buenos Aires, en Valencia.</media:description>
+   <media:community>
+    <media:starRating count="3" average="5.00" min="1" max="5"/>
+    <media:statistics views="153"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:7xLVC0aNDv0</id>
+  <yt:videoId>7xLVC0aNDv0</yt:videoId>
+  <yt:channelId>UCvXlGvuefNBjBN8c11_4BBQ</yt:channelId>
+  <title>ArchivoEOC Dr. Fernando Jiménez del Oso. Poltergeist y casas encantadas. Más Allá, 1976</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=7xLVC0aNDv0"/>
+  <author>
+   <name>EOC EOC</name>
+   <uri>https://www.youtube.com/channel/UCvXlGvuefNBjBN8c11_4BBQ</uri>
+  </author>
+  <published>2026-10-10T16:48:42+00:00</published>
+  <updated>2026-10-10T22:20:59+00:00</updated>
+  <media:group>
+   <media:title>ArchivoEOC Dr. Fernando Jiménez del Oso. Poltergeist y casas encantadas. Más Allá, 1976</media:title>
+   <media:content url="https://www.youtube.com/v/7xLVC0aNDv0?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i4.ytimg.com/vi/7xLVC0aNDv0/hqdefault.jpg" width="480" height="360"/>
+   <media:description>Los Archivos de El Ojo Crítico
+Dr. Fernando Jiménez del Oso. 
+Poltergeist y casas encantadas. 
+Más Allá, 1976</media:description>
+   <media:community>
+    <media:starRating count="8" average="5.00" min="1" max="5"/>
+    <media:statistics views="236"/>
+   </media:community>
+  </media:group>
+ </entry>
+</feed>
