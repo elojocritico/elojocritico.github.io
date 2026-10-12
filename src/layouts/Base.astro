@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+interface Props { titulo: string; descripcion?: string; actual?: string; imagen?: string }
+const { titulo, descripcion = "El Ojo Crítico: Cuadernos de Investigación para Investigadores de Anomalías", actual = "", imagen } = Astro.props;
+const menu = [
+  { href: "/", texto: "Inicio", id: "inicio" },
+  { href: "/articulos/", texto: "Artículos", id: "articulos" },
+  { href: "/revista/", texto: "La Revista", id: "revista" },
+  { href: "/podcast/", texto: "Podcast", id: "podcast" },
+  { href: "/videos/", texto: "Vídeos", id: "videos" },
+  { href: "/que-es-eoc/", texto: "Qué es EOC", id: "que-es" },
+];
+const tituloCompleto = titulo === "El Ojo Crítico" ? titulo : `${titulo} · El Ojo Crítico`;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="El Ojo Crítico" href="/rss.xml" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    {imagen && <meta property="og:image" content={new URL(imagen, Astro.site)} />}
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="fila contenedor">
+        <a class="logo" href="/" aria-label="El Ojo Crítico, inicio"><img src="/logo/eoc-cabecera-blanca.svg" alt="El Ojo Crítico" width="978" height="65" /></a>
+        <form class="buscador" action="/buscar/" method="get" role="search">
+          <input type="search" name="q" placeholder="⌕ buscar artículos" aria-label="Buscar artículos" />
+        </form>
+      </div>
+    </header>
+    <nav class="menu" aria-label="Principal">
+      <ul>{menu.map((m) => <li><a href={m.href} aria-current={m.id === actual ? "page" : undefined}>{m.texto}</a></li>)}</ul>
+    </nav>
+    <main><slot /></main>
+    <footer class="pie">
+      <div class="contenedor">El Ojo Crítico · Cuadernos de Investigación para Investigadores de Anomalías · <a href="/rss.xml">RSS</a></div>
+    </footer>
+  </body>
+</html>

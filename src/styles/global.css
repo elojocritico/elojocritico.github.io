@@ -1,0 +1,67 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/800.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/source-serif-4/400.css";
+@import "@fontsource/source-serif-4/700.css";
+
+:root {
+  --fondo: #0f1114; --fondo-2: #1a1e23; --texto: #e7e9ec; --texto-2: #c9cdd2; --gris: #7d8791;
+  --linea: #2a2f36; --ambar: #e8b33a;
+  --serif: "Source Serif 4", Georgia, serif; --mono: "IBM Plex Mono", ui-monospace, monospace; --sans: Inter, system-ui, sans-serif;
+  --ancho: 1120px; --lectura: 720px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--fondo); }
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.5 var(--sans); }
+a { color: inherit; }
+a:hover { color: var(--ambar); }
+img { max-width: 100%; height: auto; }
+.contenedor { max-width: var(--ancho); margin: 0 auto; padding: 0 16px; }
+.etiqueta { font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ambar); }
+.etiqueta::before { content: "// "; }
+.meta { font: 11px var(--mono); color: var(--gris); text-transform: uppercase; letter-spacing: .05em; }
+.rayas { background: repeating-linear-gradient(0deg, #262b31 0 2px, #1a1e23 2px 5px); }
+.seccion-titulo { font: 600 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ambar); margin: 0 0 16px; }
+
+.cabecera { border-bottom: 1px solid var(--linea); }
+.cabecera .fila { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; }
+.cabecera .logo img { display: block; height: 44px; width: auto; }
+.buscador input { background: transparent; border: 1px solid #3a414a; color: var(--texto); border-radius: 4px; padding: 7px 10px; font: 12px var(--mono); width: 230px; }
+.menu { border-bottom: 1px solid var(--linea); }
+.menu ul { list-style: none; display: flex; gap: 26px; margin: 0 auto; padding: 11px 16px; max-width: var(--ancho); overflow-x: auto; }
+.menu a { text-decoration: none; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .07em; color: #9aa3ad; white-space: nowrap; }
+.menu a[aria-current="page"] { color: var(--ambar); }
+
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+.tarjeta { text-decoration: none; display: block; }
+.tarjeta .imagen { aspect-ratio: 16/9; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
+.tarjeta .imagen img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tarjeta h3 { font: 700 18px/1.25 var(--serif); margin: 6px 0 4px; }
+.tarjeta p { color: var(--texto-2); font-size: 14px; margin: 0; }
+
+.articulo { max-width: var(--lectura); margin: 0 auto; padding: 32px 16px 48px; }
+.articulo h1 { font: 700 clamp(28px, 5vw, 42px)/1.12 var(--serif); margin: 10px 0 12px; }
+.cuerpo { font: 19px/1.7 var(--serif); color: var(--texto-2); }
+.cuerpo a { color: var(--ambar); }
+.cuerpo blockquote { border-left: 3px solid var(--ambar); margin: 1.2em 0; padding: .2em 1em; color: var(--texto); }
+.cuerpo figure { margin: 1.4em 0; } .cuerpo figcaption { font: 13px var(--mono); color: var(--gris); }
+.cuerpo .izq { float: left; margin: .3em 1.2em .8em 0; max-width: 45%; }
+.cuerpo .der { float: right; margin: .3em 0 .8em 1.2em; max-width: 45%; }
+.cuerpo .centro { display: block; margin: 1em auto; }
+.cuerpo iframe { width: 100%; aspect-ratio: 16/9; height: auto; border: 0; }
+.cuerpo .img-perdida { display: block; padding: 14px; border: 1px dashed #3a414a; font: 12px var(--mono); color: var(--gris); text-align: center; }
+.cuerpo a.roto { color: var(--gris); text-decoration: line-through; }
+.cuerpo a.archivado::after { content: " [archivado]"; font: 11px var(--mono); color: var(--gris); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips a { border: 1px solid #3a414a; border-radius: 14px; padding: 5px 12px; font: 12px var(--mono); text-decoration: none; color: var(--texto-2); }
+.chips a[aria-current="page"] { border-color: var(--ambar); color: var(--ambar); }
+.pie { border-top: 1px solid var(--linea); margin-top: 48px; padding: 24px 16px; color: var(--gris); font-size: 13px; }
+@media (max-width: 640px) {
+  .cabecera .fila { flex-direction: column; align-items: stretch; }
+  .cabecera .logo img { height: auto; width: 100%; }
+  .buscador input { width: 100%; }
+  .cuerpo .izq, .cuerpo .der { float: none; max-width: 100%; margin: 1em 0; }
+}

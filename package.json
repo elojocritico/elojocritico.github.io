@@ -1,0 +1,29 @@
+{
+  "name": "sitio",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "imagenes": "node scripts/copiar-imagenes.mjs",
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "verificar": "node scripts/verificar.mjs",
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/source-serif-4": "^5.3.1",
+    "astro": "^5.18.2",
+    "pagefind": "^1.5.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.7"
+  }
+}
