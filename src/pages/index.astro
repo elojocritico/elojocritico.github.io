@@ -1,0 +1,55 @@
+---
+import Base from "../layouts/Base.astro";
+import Tarjeta from "../components/Tarjeta.astro";
+import Anuncio from "../components/Anuncio.astro";
+import { articulos, destacado, ajustes, secciones, fechaLarga, minutosLectura, nombreSeccion } from "../lib/contenido";
+import { numeros, urlPortada } from "../lib/revista";
+const todos = articulos();
+const aj = ajustes();
+const dest = destacado(todos, aj);
+const ultimos = todos.filter((a) => a.slug !== dest.slug).slice(0, 6);
+const revista = numeros();
+---
+<Base titulo="El Ojo Crítico" actual="inicio">
+  <section class="contenedor" style="padding-top:28px">
+    <h2 class="seccion-titulo">Destacado</h2>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:28px" class="portada-hero">
+      <a href={`/${dest.slug}/`} style="text-decoration:none">
+        <div class="rayas" style="aspect-ratio:16/9;border-radius:3px;overflow:hidden">{dest.portada && <img src={dest.portada.src} alt={dest.portada.alt} style="width:100%;height:100%;object-fit:cover" />}</div>
+        {dest.secciones[0] && <div class="etiqueta" style="margin-top:12px">{nombreSeccion(dest.secciones[0])}</div>}
+        <h1 style="font:700 clamp(26px,4vw,38px)/1.1 var(--serif);margin:8px 0">{dest.titulo}</h1>
+        <div class="meta">{dest.autor} · {fechaLarga(dest.fecha)} · {minutosLectura(dest.cuerpoHtml)} min</div>
+      </a>
+      {revista[0] && (
+        <a href={`/revista/${revista[0].slug}/`} style="text-decoration:none">
+          <img src={urlPortada(revista[0])} alt={`Portada de El Ojo Crítico nº ${revista[0].numero}`} width="400" height="566" style="width:100%;border-radius:3px" />
+          <div class="meta" style="margin-top:8px"><span style="color:var(--ambar)">Último número</span> · EOC nº {revista[0].numero} · <span style="color:var(--ambar)">Leer gratis →</span></div>
+        </a>
+      )}
+    </div>
+  </section>
+  <section class="contenedor" style="padding-top:40px">
+    <h2 class="seccion-titulo">Últimos artículos</h2>
+    <div class="rejilla">{ultimos.map((a) => <Tarjeta articulo={a} />)}</div>
+    <p><a class="meta" href="/articulos/" style="color:var(--ambar)">Ver todos los artículos →</a></p>
+  </section>
+  <Anuncio />
+  <section class="contenedor" style="padding-top:32px">
+    <h2 class="seccion-titulo">La Revista · {revista.length} números</h2>
+    <div style="display:flex;gap:12px;overflow-x:auto;padding-bottom:8px">
+      {revista.slice(0, 14).map((n) => (
+        <a href={`/revista/${n.slug}/`} style="flex:none;width:96px"><img src={urlPortada(n)} alt={`EOC nº ${n.numero}`} width="400" height="566" loading="lazy" style="width:96px;border-radius:2px" /></a>
+      ))}
+    </div>
+    <p><a class="meta" href="/revista/" style="color:var(--ambar)">Ver todos los números →</a></p>
+  </section>
+  <section class="contenedor" style="padding-top:32px">
+    <h2 class="seccion-titulo">Explorar por tema</h2>
+    <div class="chips">{secciones().map((s) => <a href={`/tema/${s.slug}/`}>{s.nombre}</a>)}</div>
+  </section>
+  <section class="contenedor" style="padding-top:32px">
+    <h2 class="seccion-titulo">Editoriales y canales afines</h2>
+    <div class="chips">{aj.enlaces.map((e) => <a href={e.url} rel="noopener" target="_blank">{e.nombre} ↗</a>)}</div>
+  </section>
+  <style>@media (max-width: 760px) { .portada-hero { grid-template-columns: 1fr !important; } }</style>
+</Base>

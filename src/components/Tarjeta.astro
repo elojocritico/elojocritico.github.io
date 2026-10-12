@@ -1,0 +1,12 @@
+---
+import { fechaLarga, nombreSeccion, type Articulo } from "../lib/contenido";
+interface Props { articulo: Articulo; extracto?: boolean }
+const { articulo: a, extracto = false } = Astro.props;
+---
+<a class="tarjeta" href={`/${a.slug}/`}>
+  <div class="imagen rayas">{a.portada && <img src={a.portada.tarjeta} alt={a.portada.alt} loading="lazy" width="640" height="360" />}</div>
+  {a.secciones[0] && <div class="etiqueta">{nombreSeccion(a.secciones[0])}</div>}
+  <h3>{a.titulo}</h3>
+  <div class="meta">{fechaLarga(a.fecha)}</div>
+  {extracto && <p>{a.extracto}</p>}
+</a>
