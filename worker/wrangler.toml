@@ -1,6 +1,9 @@
 name = "eoc-publicar"
 main = "index.js"
 compatibility_date = "2024-11-01"
+# Dirección pública del Worker: https://eoc-publicar.<subdominio>.workers.dev
+workers_dev = true
+preview_urls = false
 
 [vars]
 # Proyecto de Firebase (público). El token debe tener aud = este id e iss = https://securetoken.google.com/<id>.
