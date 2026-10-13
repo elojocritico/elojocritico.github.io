@@ -58,7 +58,7 @@ const falsoFetch = (mapa, llamadas = []) => async (url) => {
 };
 
 beforeEach(async () => {
-  for (const c of ["articulos", "comentarios", "archivoOcultos", "ajustes", "estado", "indices"]) await db.recursiveDelete(db.collection(c));
+  for (const c of ["articulos", "comentarios", "archivoOcultos", "ajustes", "estado", "indices", "borrados"]) await db.recursiveDelete(db.collection(c));
   const base = join(raiz, "t" + ++n);
   dir = join(base, "contenido");
   img = join(base, "imagenes");
@@ -659,5 +659,64 @@ describe("correcciones de la revisión", () => {
     const r = await correr({ completo: true });
     expect(existsSync(J("articulos", "x.json.tmp-123"))).toBe(false);
     expect(r.salida.join("\n")).toMatch(/1 foto.*sin usar/);
+  });
+});
+
+describe("correcciones de la ronda 2", () => {
+  const com = (slug) => db.collection("comentarios").add({ articuloSlug: slug, nombre: "N", correo: "", texto: "t", respuestaA: null, estado: "aprobado", origen: "nuevo", creadoEn: "2024-05-12T10:00:00.000Z" });
+
+  it("una dirección con lápida que se vuelve a crear y a borrar se retira otra vez", async () => {
+    await db.doc("borrados/a").set({ borradoEn: "2024-01-01T00:00:00.000Z", borradoPor: "x" });
+    await poner("a");
+    await correr();
+    expect(existsSync(J("articulos", "a.json"))).toBe(true);
+    await db.doc("articulos/a").delete();
+    await db.doc("borrados/a").set({ borradoEn: "2024-06-02T00:00:00.000Z", borradoPor: "y" });
+    await correr({ ahora: new Date(dias(2)) });
+    expect(existsSync(J("articulos", "a.json"))).toBe(false);
+  });
+
+  it("las lápidas de más de 90 días, sin artículo y sin ficheros, se borran; las demás se conservan", async () => {
+    await db.doc("borrados/vieja").set({ borradoEn: dias(-100), borradoPor: "x" });
+    await db.doc("borrados/reciente").set({ borradoEn: dias(-10), borradoPor: "x" });
+    await db.doc("borrados/con-fichero").set({ borradoEn: dias(-100), borradoPor: "x" });
+    escribir("articulos/con-fichero.json", { slug: "con-fichero", titulo: "C", fecha: "2020-01-01", cuerpoHtml: "<p>c</p>" });
+    await db.doc("borrados/reutilizada").set({ borradoEn: dias(-100), borradoPor: "x" });
+    await poner("reutilizada");
+    await correr();
+    expect((await db.doc("borrados/vieja").get()).exists).toBe(false);
+    expect((await db.doc("borrados/reciente").get()).exists).toBe(true);
+    expect((await db.doc("borrados/reutilizada").get()).exists).toBe(true);
+    // con fichero: primero se retira la página y la lápida se conserva; en la pasada siguiente, ya sin ficheros, se borra
+    expect(existsSync(J("articulos", "con-fichero.json"))).toBe(false);
+    expect((await db.doc("borrados/con-fichero").get()).exists).toBe(true);
+    await correr({ ahora: new Date(dias(1)) });
+    expect((await db.doc("borrados/con-fichero").get()).exists).toBe(false);
+  });
+
+  it("completa: el 90 % se calcula con los artículos publicados o programados, no con borradores ni papelera", async () => {
+    for (let i = 0; i < 10; i++) escribir(`articulos/f${i}.json`, { slug: "f" + i, titulo: "F", fecha: "2020-01-01", cuerpoHtml: "<p>f</p>" });
+    await poner("f0");
+    for (let i = 0; i < 20; i++) await poner("b" + i, { estado: "borrador" });
+    const r = await correr({ completo: true });
+    expect(existsSync(J("articulos", "f5.json"))).toBe(true); // 1 publicado frente a 10 ficheros: no se retira nada
+    expect(r.avisos.join()).toMatch(/90/);
+  });
+
+  it("no escribe ficheros de comentarios para direcciones reservadas", async () => {
+    await poner("admin");
+    await com("admin");
+    await poner("normal");
+    await com("normal");
+    await correr();
+    expect(readdirSync(J("comentarios"))).toEqual(["normal.json"]);
+  });
+
+  it("limpia también los .tmp- de la carpeta de imágenes", async () => {
+    mkdirSync(join(img, "2020", "01"), { recursive: true });
+    writeFileSync(join(img, "2020", "01", "a.webp.tmp-99"), "x");
+    await poner("a");
+    await correr();
+    expect(existsSync(join(img, "2020", "01", "a.webp.tmp-99"))).toBe(false);
   });
 });

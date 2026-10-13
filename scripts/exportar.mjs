@@ -132,7 +132,8 @@ export async function exportar({
     cambiados.forEach((s) => articulos.set(s.id, s.data()));
     programados.forEach((s) => articulos.set(s.id, s.data()));
   }
-  const lapidas = (await db.collection("borrados").get()).docs.map((x) => x.id);
+  const lapidasDocs = (await db.collection("borrados").get()).docs;
+  const lapidas = lapidasDocs.map((x) => x.id);
   const rutaManifiestoPrevio = join(dirContenido, "imagenes-cloudinary.json");
   const pendientesFotos = existsSync(rutaManifiestoPrevio) && Array.isArray(leerJson(rutaManifiestoPrevio)._pendientes) ? leerJson(rutaManifiestoPrevio)._pendientes.filter(slugSeguro) : [];
   const faltanPend = pendientesFotos.filter((x) => !articulos.has(x));
@@ -374,8 +375,10 @@ export async function exportar({
 
   // --- Lápidas: artículos borrados del todo desde el panel. Se retira su página y sus comentarios; la lápida se conserva.
   await estadoDe(lapidas);
+  const lapidaConFicheros = new Set(); // lápidas que en esta pasada aún tenían páginas que retirar: se borrarán en una pasada posterior
   for (const slug of lapidas) {
     if (!slugSeguro(slug) || conocido.get(slug)?.existe) continue; // si la dirección se ha vuelto a usar, manda el artículo nuevo
+    if (existsSync(ruta("articulos", `${slug}.json`)) || existsSync(ruta("comentarios", `${slug}.json`))) lapidaConFicheros.add(slug);
     if (existsSync(ruta("articulos", `${slug}.json`))) resumen.retirados++;
     quitar(ruta("articulos", `${slug}.json`));
     quitar(ruta("comentarios", `${slug}.json`));
@@ -387,13 +390,14 @@ export async function exportar({
     const ficheros = existsSync(dirArt) ? readdirSync(dirArt).filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5)) : [];
     const huerfanos = ficheros.filter((f) => slugSeguro(f) && !articulos.has(f));
     if (huerfanos.length) {
-      if (articulos.size >= 0.9 * ficheros.length) {
+      const publicablesEnFirestore = [...articulos.values()].filter((d) => d.estado === "publicado" || d.estado === "programado").length;
+      if (publicablesEnFirestore >= 0.9 * ficheros.length) {
         for (const f of huerfanos) {
           quitar(ruta("articulos", `${f}.json`));
           quitar(ruta("comentarios", `${f}.json`));
           resumen.retirados++;
         }
-      } else aviso(`Hay ${huerfanos.length} artículo(s) en contenido/ que no están en Firestore, pero Firestore tiene menos del 90 % de los artículos de contenido/ (${articulos.size} de ${ficheros.length}); no se retira nada por precaución.`);
+      } else aviso(`Hay ${huerfanos.length} artículo(s) en contenido/ que no están en Firestore, pero Firestore tiene menos del 90 % de los artículos publicados o programados que hay en contenido/ (${publicablesEnFirestore} de ${ficheros.length}); no se retira nada por precaución.`);
     }
   }
 
@@ -415,6 +419,10 @@ export async function exportar({
   });
   await estadoDe(candidatos);
   for (const slug of candidatos) {
+    if (RESERVADAS.includes(slug)) {
+      if (porArticulo.has(slug)) aviso(`Los comentarios de "${slug}" no se publican: es una dirección reservada para la web.`);
+      continue;
+    }
     const info = conocido.get(slug);
     if (!info?.existe) {
       if (porArticulo.has(slug)) aviso(`Hay comentarios para "${slug}", pero ese artículo no existe; no se publican.`);
@@ -508,6 +516,7 @@ export async function exportar({
     for (const [id, c] of Object.entries(mover)) await db.collection("archivoOcultos").doc(slug).collection("textos").doc(id).set(c); // antes de vaciar el fichero del repositorio
   }
   limpiarTemporales(dirContenido);
+  limpiarTemporales(dirImagenes);
   for (const [r, datos] of imagenes) escribirAtomico(r, datos);
   if (pendientes.length) manifiestoNuevo._pendientes = pendientes;
   if (JSON.stringify(manifiestoNuevo) !== JSON.stringify(manifiesto) && (Object.keys(manifiestoNuevo).length || existsSync(rutaManifiesto))) textos.set(rutaManifiesto, json(manifiestoNuevo));
@@ -538,6 +547,13 @@ export async function exportar({
   }
   for (const id of purgados) delete titulos[id];
   if (!indiceSnap.exists || indiceAntes !== estable(titulos)) await db.doc("indices/titulos").set(titulos);
+  // Lápidas de más de 90 días, sin artículo y con la página y los comentarios ya retirados: la colección no crece sin fin.
+  for (const l of lapidasDocs) {
+    const t = Date.parse(l.data().borradoEn ?? "");
+    if (!slugSeguro(l.id) || isNaN(t) || t >= ahoraMs - 90 * 86400000) continue;
+    if (conocido.get(l.id)?.existe || lapidaConFicheros.has(l.id)) continue;
+    await l.ref.delete();
+  }
   if (!sinConfirmar) await confirmarExportacion(db, inicio);
 
   let fotosSinUsar = 0;

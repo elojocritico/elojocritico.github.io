@@ -218,8 +218,13 @@ describe("editor", () => {
       await assertFails(setDoc(doc(auth(ADMIN), "borrados/z"), { ...L, extra: 1 }));
       await assertFails(setDoc(doc(auth(ADMIN), "borrados/z"), { borradoEn: 5, borradoPor: ADMIN }));
       await env.withSecurityRulesDisabled(async (ctx) => { await setDoc(doc(ctx.firestore(), "borrados/x"), L); });
-      await assertFails(updateDoc(doc(auth(ADMIN), "borrados/x"), { borradoPor: "otro" }));
       await assertFails(deleteDoc(doc(auth(ADMIN), "borrados/x")));
+      await assertFails(setDoc(doc(auth(EDITOR), "borrados/x"), { borradoEn: "2025-01-01T00:00:00.000Z", borradoPor: EDITOR }));
+      await assertFails(updateDoc(doc(auth(ADMIN), "borrados/x"), { extra: 1 }));
+      await assertFails(setDoc(doc(auth(ADMIN), "borrados/x"), { ...L, extra: 1 }));
+      await assertFails(setDoc(doc(auth(ADMIN), "borrados/x"), { borradoEn: 5, borradoPor: ADMIN }));
+      // Una direccion reutilizada y borrada otra vez actualiza su lapida.
+      await assertSucceeds(setDoc(doc(auth(ADMIN), "borrados/x"), { borradoEn: "2025-01-01T00:00:00.000Z", borradoPor: ADMIN }));
       await assertSucceeds(getDoc(doc(auth(EDITOR), "borrados/x")));
       await assertFails(getDoc(doc(anon(), "borrados/x")));
     });

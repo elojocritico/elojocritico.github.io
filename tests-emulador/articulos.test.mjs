@@ -183,6 +183,16 @@ describe("acciones", () => {
     await expect(enviarAPapelera(como(EDITOR), "no-hay", EDITOR)).rejects.toMatchObject({ code: "articulo/no-existe" });
   });
 
+  it("borrar definitivamente una dirección que ya tenía lápida la actualiza", async () => {
+    await sembrar((db) => setDoc(doc(db, "borrados/a1"), { borradoEn: "2020-01-01T00:00:00.000Z", borradoPor: "viejo@x.es" }));
+    await sembrarUno({ estado: "papelera" });
+    await borrarDefinitivamente(como(ADMIN), "a1", "admin", ADMIN);
+    expect(await leer("articulos/a1")).toBeUndefined();
+    const l = await leer("borrados/a1");
+    expect(l.borradoPor).toBe(ADMIN);
+    expect(l.borradoEn > "2024-01-01").toBe(true);
+  });
+
   it("borrar definitivamente: solo admin, solo desde la papelera; borra también las versiones", async () => {
     await sembrarUno({ estado: "papelera" });
     await sembrar(async (db) => {

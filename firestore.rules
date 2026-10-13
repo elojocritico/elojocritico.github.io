@@ -89,7 +89,12 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['borradoEn', 'borradoPor'])
         && request.resource.data.borradoEn is string
         && request.resource.data.borradoPor is string;
-      allow update, delete: if false;
+      // Si la direccion se reutilizo y se borra otra vez, el panel actualiza la lapida (misma forma exacta). Nadie la borra desde un cliente.
+      allow update: if esAdmin()
+        && request.resource.data.keys().hasOnly(['borradoEn', 'borradoPor'])
+        && request.resource.data.borradoEn is string
+        && request.resource.data.borradoPor is string;
+      allow delete: if false;
     }
 
     // Valores de ajustes/global que acaban en la web publica: se vuelven a comprobar aqui (y otra vez en la web).
