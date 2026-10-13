@@ -21,8 +21,16 @@ on:
     - cron: "7 * * * *"
     - cron: "0 21,22 * * *"
   workflow_dispatch:
+    inputs:
+      forzar:
+        description: Compilar y desplegar aunque no haya cambios
+        type: boolean
+        default: false
 
-# Un solo flujo a la vez; los demás esperan su turno y ninguno se cancela a medias.
+# Un solo flujo a la vez; el que está en marcha nunca se cancela. Ojo: GitHub guarda como mucho UNO en espera por grupo,
+# así que si llega otro mientras hay uno esperando, el que esperaba se cancela (puede perderse el disparo nocturno).
+# Por eso el trabajo nocturno se recupera solo: si la última copia (estado/sistema.ultimaCopia) falta o tiene más de 25 h,
+# el flujo horario hace el trabajo de la noche. Un Publicar perdido también lo cubre el flujo horario (publicarPendiente).
 concurrency:
   group: publicar
   cancel-in-progress: false
@@ -88,21 +96,32 @@ jobs:
           (umask 077; printf '%s' "$CLAVE" > "$RUTA")
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUTA" >> "$GITHUB_ENV"
 
-      # Cada hora: si no hay nada que hacer, el flujo termina aquí (1 lectura de estado/sistema + 1 consulta de programados + 1 de solicitudes).
+      # Cada hora: si no hay nada que hacer, el flujo termina aquí (pocas lecturas de Firestore).
+      # Se ejecuta en todos los modos para saber si lo desplegado es este commit (AL_DIA) y si toca el trabajo de la noche (NOCHE).
       - name: Ver si hay trabajo
         id: hay
+        if: steps.modo.outputs.modo != 'ninguno'
         env:
           MODO: ${{ steps.modo.outputs.modo }}
+          FORZAR: ${{ github.event.inputs.forzar }}
         run: |
+          export EOC_COMMIT_ACTUAL=$(git rev-parse HEAD)
+          node scripts/hay-trabajo.mjs --real > "$RUNNER_TEMP/trabajo.txt"
+          cat "$RUNNER_TEMP/trabajo.txt"
           ACTUAR=1
-          if [ "$MODO" = "ninguno" ]; then
-            ACTUAR=0
+          NOCHE=0
+          AL_DIA=0
+          grep -q '^AL_DIA=1$' "$RUNNER_TEMP/trabajo.txt" && AL_DIA=1
+          if [ "$MODO" = "noche" ]; then
+            NOCHE=1
           elif [ "$MODO" = "hora" ]; then
-            node scripts/hay-trabajo.mjs --real > "$RUNNER_TEMP/trabajo.txt"
-            cat "$RUNNER_TEMP/trabajo.txt"
-            if grep -q '^TRABAJO=1$' "$RUNNER_TEMP/trabajo.txt"; then ACTUAR=1; else ACTUAR=0; fi
+            grep -q '^NOCHE=1$' "$RUNNER_TEMP/trabajo.txt" && NOCHE=1
+            grep -q '^TRABAJO=1$' "$RUNNER_TEMP/trabajo.txt" || ACTUAR=0
           fi
           echo "actuar=$ACTUAR" >> "$GITHUB_OUTPUT"
+          echo "noche=$NOCHE" >> "$GITHUB_OUTPUT"
+          echo "forzar=$([ "$FORZAR" = "true" ] && echo 1 || echo 0)" >> "$GITHUB_OUTPUT"
+          echo "al_dia=$AL_DIA" >> "$GITHUB_OUTPUT"
 
       - name: Descargar las imágenes
         if: steps.hay.outputs.actuar == '1'
@@ -124,7 +143,7 @@ jobs:
 
       # De noche: iVoox y YouTube. Si un feed falla (sale con 1) no se aborta: se publica lo demás.
       - name: Sincronizar iVoox y YouTube
-        if: steps.hay.outputs.actuar == '1' && steps.modo.outputs.modo == 'noche'
+        if: steps.hay.outputs.actuar == '1' && steps.hay.outputs.noche == '1'
         run: |
           if npm run sincronizar; then
             echo "MEDIOS_OK=1" >> "$GITHUB_ENV"
@@ -136,11 +155,13 @@ jobs:
         id: exportar
         if: steps.hay.outputs.actuar == '1'
         env:
-          MODO: ${{ steps.modo.outputs.modo }}
+          NOCHE: ${{ steps.hay.outputs.noche }}
+          FORZAR: ${{ steps.hay.outputs.forzar }}
+          AL_DIA: ${{ steps.hay.outputs.al_dia }}
         run: |
           set -o pipefail
           OPCIONES="--sin-confirmar"
-          if [ "$MODO" = "noche" ]; then OPCIONES="--completo --sin-confirmar"; fi
+          if [ "$NOCHE" = "1" ]; then OPCIONES="--completo --sin-confirmar"; fi
           npx tsx scripts/exportar.mjs --real $OPCIONES | tee "$RUNNER_TEMP/exportar.txt"
           INICIO=$(grep '^INICIO=' "$RUNNER_TEMP/exportar.txt" | tail -n 1 | cut -d= -f2-)
           CAMBIOS=$(grep '^CAMBIOS=' "$RUNNER_TEMP/exportar.txt" | tail -n 1 | cut -d= -f2-)
@@ -149,13 +170,17 @@ jobs:
           if [ -n "$(git status --porcelain contenido)" ]; then CAMBIOS=1; fi
           echo "inicio=$INICIO" >> "$GITHUB_OUTPUT"
           echo "cambios=$CAMBIOS" >> "$GITHUB_OUTPUT"
+          # Se compila y despliega si hay cambios, si se fuerza o si lo desplegado no es este commit (p. ej. falló GitHub Pages la vez anterior).
+          DESPLEGAR=0
+          if [ "$CAMBIOS" = "1" ] || [ "$FORZAR" = "1" ] || [ "$AL_DIA" != "1" ]; then DESPLEGAR=1; fi
+          echo "desplegar=$DESPLEGAR" >> "$GITHUB_OUTPUT"
 
       - name: Compilar la web
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         run: npm run build
 
       - name: Comprobar la compilación
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         run: |
           node scripts/comprobar-dist.mjs dist ../imagenes
           npm run verificar
@@ -188,19 +213,24 @@ jobs:
           fi
 
       - name: Preparar GitHub Pages
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
       - name: Desplegar en GitHub Pages
         id: pages
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         uses: actions/deploy-pages@v4
+
+      # Se anota el commit desplegado nada más salir bien GitHub Pages (solo lo escribe el flujo): si falla algo antes, la siguiente ejecución vuelve a desplegar.
+      - name: Anotar el commit desplegado
+        if: steps.exportar.outputs.desplegar == '1'
+        run: node scripts/estado-sistema.mjs --real --despliegue "$(git rev-parse HEAD)"
 
       # La web gemela de Cloudflare lleva las imágenes dentro (en /img/), porque allí no hay repositorio img.
       - name: Preparar la copia de Cloudflare
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         run: |
           mkdir dist-cloudflare
           cp -r dist/. dist-cloudflare/
@@ -211,7 +241,7 @@ jobs:
       # Si Cloudflare falla no se deja sin confirmar: GitHub Pages ya está publicado. El último paso hace fallar el flujo para que llegue el correo.
       - name: Desplegar en Cloudflare Pages
         id: cloudflare
-        if: steps.exportar.outputs.cambios == '1'
+        if: steps.exportar.outputs.desplegar == '1'
         continue-on-error: true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -228,12 +258,13 @@ jobs:
       - name: Anotar el estado
         if: steps.hay.outputs.actuar == '1'
         env:
-          MODO: ${{ steps.modo.outputs.modo }}
-          CAMBIOS: ${{ steps.exportar.outputs.cambios }}
+          NOCHE: ${{ steps.hay.outputs.noche }}
+          DESPLEGADO: ${{ steps.exportar.outputs.desplegar }}
         run: |
           ANOTAR=""
-          if [ "$CAMBIOS" = "1" ]; then ANOTAR="$ANOTAR --publicacion"; fi
-          if [ "$MODO" = "noche" ]; then ANOTAR="$ANOTAR --copia"; fi
+          if [ "$DESPLEGADO" = "1" ]; then ANOTAR="$ANOTAR --publicacion"; fi
+          # La copia solo se anota si todo lo anterior (incluida la exportación completa) ha ido bien.
+          if [ "$NOCHE" = "1" ]; then ANOTAR="$ANOTAR --copia"; fi
           if [ "$MEDIOS_OK" = "1" ]; then ANOTAR="$ANOTAR --medios"; fi
           if [ -n "$ANOTAR" ]; then node scripts/estado-sistema.mjs --real $ANOTAR; else echo "Nada que anotar."; fi
 
