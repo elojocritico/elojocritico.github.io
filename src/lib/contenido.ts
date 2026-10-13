@@ -6,7 +6,7 @@ import { esBloque, esCliente, esUrlWeb } from "./validacion";
 export const RAIZ_CONTENIDO = () => process.env.EOC_CONTENIDO ?? resolve(process.cwd(), "contenido");
 const leer = (rel: string) => JSON.parse(readFileSync(join(RAIZ_CONTENIDO(), rel), "utf-8"));
 
-const ArticuloZ = z.object({
+export const ArticuloZ = z.object({
   slug: z.string().regex(/^[^/\s]+$/),
   titulo: z.string().min(1),
   subtitulo: z.string().default(""),

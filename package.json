@@ -14,7 +14,8 @@
     "test:reglas": "node scripts/con-java.mjs firebase emulators:exec --only firestore --project demo-elojocritico \"vitest run -c vitest.reglas.config.mjs\"",
     "test:emulador": "node scripts/con-java.mjs firebase emulators:exec --only auth,firestore --project demo-elojocritico \"vitest run -c vitest.emulador.config.mjs\"",
     "admin:dev": "node scripts/admin-dev.mjs",
-    "importar": "node scripts/importar.mjs"
+    "importar": "node scripts/importar.mjs",
+    "exportar": "tsx scripts/exportar.mjs"
   },
   "keywords": [],
   "author": "",
@@ -58,6 +59,8 @@
     "firebase-admin": "^13.10.0",
     "firebase-tools": "^13.35.1",
     "jsdom": "^30.1.2",
+    "sharp": "^0.34.5",
+    "tsx": "^4.23.15",
     "vitest": "^3.2.7"
   }
 }
