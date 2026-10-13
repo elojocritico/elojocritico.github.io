@@ -12,6 +12,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getApp, deleteApp } from "firebase-admin/app";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { mediodiaMadridUtc } from "../src/lib/madrid.js";
+import { tituloParaIndice, limpiarIndice } from "./indice-titulos.mjs";
 import { crearEscritor } from "./lotes.mjs";
 import { iniciarAdmin, AJUSTES_POR_DEFECTO, ESTADO_POR_DEFECTO } from "./crear-admin.mjs";
 
@@ -47,6 +48,7 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   const nuevos = ficheros.map((f) => docArticulo(leer(join(dirArt, f))));
   const r = { total: nuevos.length, creados: 0, actualizados: 0, sinCambios: 0, editadosEnPanel: 0 };
   const w = crearEscritor(db);
+  const editados = new Set();
   const escribir = (ref, datos, opciones) => w.set(ref, datos, opciones);
 
   for (let i = 0; i < nuevos.length; i += 300) {
@@ -63,6 +65,7 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
       const actual = snap.data();
       if (actual.actualizadoPor !== MIGRACION) {
         r.editadosEnPanel++;
+        editados.add(trozo[j].slug);
         continue;
       }
       const propios = Object.fromEntries(Object.keys(trozo[j]).map((k) => [k, actual[k]]));
@@ -74,6 +77,14 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
       await escribir(refs[j], trozo[j], { merge: true });
     }
   }
+
+  // Índice de títulos para el buscador del panel (misma forma que el del exportador). Se fusiona con lo que ya hay.
+  const refIndice = db.doc("indices/titulos");
+  const indiceSnap = await refIndice.get();
+  const indice = { ...(indiceSnap.data() ?? {}) };
+  for (const d of nuevos) if (!editados.has(d.slug) && tituloParaIndice(d)) indice[d.slug] = tituloParaIndice(d);
+  limpiarIndice(indice);
+  if (!indiceSnap.exists || estable(indiceSnap.data()) !== estable(indice)) await escribir(refIndice, indice);
 
   // Ajustes: solo se rellena lo que falta; después manda el panel. Nunca se toca "usuarios".
   const ajustesJson = existsSync(join(dirContenido, "ajustes.json")) ? leer(join(dirContenido, "ajustes.json")) : {};

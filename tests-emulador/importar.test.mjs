@@ -30,6 +30,7 @@ beforeEach(async () => {
   await db.recursiveDelete(db.collection("articulos"));
   await db.recursiveDelete(db.collection("ajustes"));
   await db.recursiveDelete(db.collection("estado"));
+  await db.recursiveDelete(db.collection("indices"));
 });
 
 describe("importar (simulador)", () => {
@@ -169,4 +170,16 @@ describe("lotes grandes y salida de los comandos", () => {
       rmSync(out, { recursive: true, force: true });
     }
   }, 120000);
+});
+
+describe("índice de títulos", () => {
+  it("importar escribe indices/titulos con slug -> título y la segunda vez no lo reescribe", async () => {
+    await db.doc("indices/titulos").set({ previo: "Ya estaba" });
+    await importar({ db, dirContenido: dir, log: callar });
+    expect((await db.doc("indices/titulos").get()).data()).toEqual({ previo: "Ya estaba", uno: "T uno", dos: "T dos", "ñandú-tres": "T ñandú-tres" });
+    const antes = (await db.doc("indices/titulos").get()).updateTime.toMillis();
+    const r = await importar({ db, dirContenido: dir, log: callar });
+    expect(r.escrituras).toBe(0);
+    expect((await db.doc("indices/titulos").get()).updateTime.toMillis()).toBe(antes);
+  });
 });

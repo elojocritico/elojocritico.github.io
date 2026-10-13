@@ -281,4 +281,6 @@ Esta sección es técnica. Los comandos se ejecutan en la carpeta `sitio`, con N
 2. Si hay cambios, hacer commit y push.
 3. `npm run exportar -- --real --confirmar <INICIO>` avanza la marca de la última exportación.
 
+**Solo en desarrollo.** Con `npm run admin:dev` (`astro dev`), la dirección `/comentarios-archivo/<dirección>.json` devuelve 404, así que la pestaña Archivo de un artículo dice que no tiene comentarios. Es una peculiaridad del servidor de desarrollo con `trailingSlash: "always"`; en la web generada (`npm run build`) funciona bien. No afecta a la web publicada.
+
 **Comentarios ocultos y el historial de git.** Al ocultar un comentario del archivo, el exportador mueve su texto a la base de datos (solo lo leen los editores) y lo vacía en `contenido/comentarios-archivo`. Pero el historial de git conserva el texto antiguo en los commits anteriores, y el repositorio es público. Si por motivos legales hay que retirarlo del todo, hay que reescribir el historial (por ejemplo con `git filter-repo`), forzar el push y pedir a los servicios que guardan copias que las limpien. Es una operación delicada que cambia todos los identificadores de commit: consúltese con alguien con experiencia antes de hacerla.

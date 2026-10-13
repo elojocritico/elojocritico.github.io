@@ -18,6 +18,7 @@ import { fileURLToPath } from "node:url";
 import sharp from "sharp";
 import { getApp, deleteApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
+import { tituloParaIndice, limpiarIndice } from "./indice-titulos.mjs";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
 import { estable } from "./importar.mjs";
@@ -501,14 +502,14 @@ export async function exportar({
   if (!titulos) {
     titulos = {};
     const todos = todo ? [...articulos.entries()] : (await db.collection("articulos").select("titulo", "estado").get()).docs.map((s) => [s.id, s.data()]);
-    for (const [id, d] of todos) if (d.estado !== "papelera" && esTexto(d.titulo) && d.titulo.trim()) titulos[id] = d.titulo.trim();
+    for (const [id, d] of todos) if (tituloParaIndice(d)) titulos[id] = tituloParaIndice(d);
   } else {
     for (const [id, d] of articulos) {
-      if (d.estado !== "papelera" && esTexto(d.titulo) && d.titulo.trim()) titulos[id] = d.titulo.trim();
+      if (tituloParaIndice(d)) titulos[id] = tituloParaIndice(d);
       else delete titulos[id];
     }
   }
-  for (const id of Object.keys(titulos)) if (/^__.*__$/.test(id) || id.includes("/") || !esTexto(titulos[id])) delete titulos[id];
+  limpiarIndice(titulos);
   const indiceAntes = estable(indiceSnap.data() ?? {});
 
   // ---------------------------------------------------------------------------------------------------------
