@@ -10,6 +10,7 @@ import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getFirestore } from "firebase-admin/firestore";
 import { resolverDestino } from "./destino-firebase.mjs";
+import { mediodiaMadridUtc } from "../src/lib/madrid.js";
 import { iniciarAdmin, AJUSTES_POR_DEFECTO, ESTADO_POR_DEFECTO } from "./crear-admin.mjs";
 
 const LOTE = 400;
@@ -25,7 +26,9 @@ export function estable(v) {
 }
 
 export function docArticulo(a) {
-  const iso = `${a.fecha}T12:00:00+02:00`;
+  // Mediodía de España de ese día, en UTC ("...Z") con el desfase correcto (invierno +1, verano +2).
+  const iso = mediodiaMadridUtc(a.fecha);
+  if (!iso) throw new Error(`Fecha no válida en el artículo ${a.slug}: ${a.fecha}`);
   return {
     slug: a.slug, titulo: a.titulo ?? "", subtitulo: a.subtitulo ?? "", cuerpoHtml: a.cuerpoHtml ?? "", extracto: a.extracto ?? "",
     portada: a.portada ?? null, autor: a.autor ?? "", secciones: a.secciones ?? [], etiquetas: a.etiquetas ?? [],

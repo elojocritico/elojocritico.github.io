@@ -7,7 +7,7 @@ import { spawnSync } from "node:child_process";
 import { getFirestore } from "firebase-admin/firestore";
 import { resolverDestino } from "../scripts/destino-firebase.mjs";
 import { iniciarAdmin } from "../scripts/crear-admin.mjs";
-import { importar } from "../scripts/importar.mjs";
+import { importar, docArticulo } from "../scripts/importar.mjs";
 
 iniciarAdmin();
 const db = getFirestore();
@@ -38,8 +38,8 @@ describe("importar (simulador)", () => {
     expect(r.articulos).toMatchObject({ total: 3, creados: 3, actualizados: 0, sinCambios: 0, editadosEnPanel: 0 });
     const d = (await db.doc("articulos/uno").get()).data();
     expect(d).toMatchObject({
-      slug: "uno", estado: "publicado", fechaPublicacion: "2020-03-04T12:00:00+02:00",
-      creadoEn: "2020-03-04T12:00:00+02:00", actualizadoEn: "2020-03-04T12:00:00+02:00",
+      slug: "uno", estado: "publicado", fechaPublicacion: "2020-03-04T11:00:00.000Z",
+      creadoEn: "2020-03-04T11:00:00.000Z", actualizadoEn: "2020-03-04T11:00:00.000Z",
       actualizadoPor: "migración", enPapeleraDesde: null, origen: "wp",
     });
     expect(d.enlacesExternos).toBeUndefined();
@@ -51,6 +51,14 @@ describe("importar (simulador)", () => {
     const r2 = await importar({ db, dirContenido: dir, log: callar });
     expect(r2.escrituras).toBe(0);
     expect(r2.articulos).toMatchObject({ creados: 0, actualizados: 0, sinCambios: 3 });
+  });
+
+  it("guarda las fechas en UTC (Z) como el mediodía de España de ese día, con el desfase de invierno o de verano", () => {
+    const invierno = docArticulo({ slug: "i", fecha: "2020-01-10" });
+    const verano = docArticulo({ slug: "v", fecha: "2020-07-10" });
+    expect(invierno.fechaPublicacion).toBe("2020-01-10T11:00:00.000Z");
+    expect(verano.fechaPublicacion).toBe("2020-07-10T10:00:00.000Z");
+    for (const c of ["fechaPublicacion", "creadoEn", "actualizadoEn"]) expect(verano[c]).toMatch(/Z$/);
   });
 
   it("actualiza un artículo cambiado y respeta los editados en el panel", async () => {
