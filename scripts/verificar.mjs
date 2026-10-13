@@ -77,6 +77,14 @@ const slugs = (contenido) => readdirSync(join(contenido, "articulos")).filter((f
 export const paginasDeArticulosQueFaltan = (dist, contenido) => slugs(contenido).filter((s) => !existsSync(join(dist, s, "index.html")));
 export const slugsReservados = (contenido) => slugs(contenido).filter((s) => RESERVADOS.has(s));
 
+/** Umbral de bajada: falla si hay más de un 5 % menos de artículos que en la versión publicada. Sin dato publicado, no se aplica. */
+export function bajadaDeArticulos(actual, publicados, maxPorcentaje = 5) {
+  const p = Number(publicados);
+  if (publicados === undefined || publicados === "" || !Number.isFinite(p) || p <= 0) return null;
+  if (actual >= p * (1 - maxPorcentaje / 100)) return null;
+  return `Hay ${actual} artículos y la versión publicada tiene ${p}: bajan más de un ${maxPorcentaje} %`;
+}
+
 export function tamanoMB(dir, excluir) {
   let total = 0;
   for (const f of ficheros(dir)) {
@@ -104,6 +112,8 @@ if (esProgramaPrincipal()) {
   const { errores: rotos, avisos } = revisarEnlaces(dist);
   if (avisos.length) console.log(`AVISO: ${avisos.length} enlaces internos rotos dentro del texto de artículos (no impiden publicar):\n  ${avisos.slice(0, 50).join("\n  ")}`);
   if (rotos.length) problemas.push(`Enlaces internos rotos (${rotos.length}):\n  ${rotos.slice(0, 50).join("\n  ")}`);
+  const bajada = bajadaDeArticulos(slugs(contenido).length, process.env.EOC_ARTICULOS_PUBLICADOS);
+  if (bajada) problemas.push(bajada);
   const mb = tamanoMB(dist, ["img"]);
   if (mb > LIMITE_MB) problemas.push(`La web ocupa ${mb.toFixed(0)} MB (límite ${LIMITE_MB} MB)`);
   if (problemas.length) {

@@ -1,0 +1,248 @@
+# Publicación de la web de El Ojo Crítico. Un solo flujo para todos los disparadores.
+#
+#  - repository_dispatch "publicar": el botón "Publicar cambios" del panel (vía el Worker eoc-publicar).
+#  - schedule 7 * * * *: cada hora; solo actúa si hay publicación pendiente, artículos programados vencidos o solicitudes de cuenta.
+#  - schedule 0 21,22 * * *: nocturno; solo actúa cuando en Madrid son las 23 (así sirve en horario de verano y de invierno).
+#    De noche se sincronizan iVoox y YouTube y se hace una exportación completa (copia de seguridad).
+#  - workflow_dispatch: a mano desde GitHub.
+#
+# Si algo falla a mitad (compilación, comprobaciones, push, GitHub Pages): no se confirma la exportación y GitHub manda un correo.
+# La web publicada no cambia y la siguiente ejecución lo recupera solo.
+#
+# Secretos: FIREBASE_SERVICE_ACCOUNT (JSON de la cuenta de servicio), IMG_TOKEN (token con permiso de escritura en elojocritico/img),
+#           CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID.
+# Variables (públicas): PUBLIC_FIREBASE_CONFIG, PUBLIC_RECAPTCHA_V3, PUBLIC_CLOUDINARY_NUBE, PUBLIC_CLOUDINARY_PRESET, PUBLIC_URL_PUBLICAR.
+name: Publicar
+
+on:
+  repository_dispatch:
+    types: [publicar]
+  schedule:
+    - cron: "7 * * * *"
+    - cron: "0 21,22 * * *"
+  workflow_dispatch:
+
+# Un solo flujo a la vez; los demás esperan su turno y ninguno se cancela a medias.
+concurrency:
+  group: publicar
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    env:
+      GCLOUD_PROJECT: elojocritico-87f48
+      PUBLIC_FIREBASE_CONFIG: ${{ vars.PUBLIC_FIREBASE_CONFIG }}
+      PUBLIC_RECAPTCHA_V3: ${{ vars.PUBLIC_RECAPTCHA_V3 }}
+      PUBLIC_CLOUDINARY_NUBE: ${{ vars.PUBLIC_CLOUDINARY_NUBE }}
+      PUBLIC_CLOUDINARY_PRESET: ${{ vars.PUBLIC_CLOUDINARY_PRESET }}
+      PUBLIC_URL_PUBLICAR: ${{ vars.PUBLIC_URL_PUBLICAR }}
+      BOT_NOMBRE: El Ojo Crítico
+      BOT_CORREO: 261278578+LaspitesdeGrao@users.noreply.github.com
+    steps:
+      - name: Descargar la web
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # modo: noche | hora | directo (botón o manual) | ninguno (disparo nocturno fuera de las 23:00 de Madrid)
+      - name: Elegir el modo
+        id: modo
+        env:
+          EVENTO: ${{ github.event_name }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          HORA_MADRID=$(TZ=Europe/Madrid date +%H)
+          if [ "$EVENTO" = "schedule" ] && [ "$CRON" = "0 21,22 * * *" ]; then
+            if [ "$HORA_MADRID" = "23" ]; then MODO=noche; else MODO=ninguno; fi
+          elif [ "$EVENTO" = "schedule" ]; then
+            MODO=hora
+          else
+            MODO=directo
+          fi
+          echo "Evento: $EVENTO · hora en Madrid: $HORA_MADRID · modo: $MODO"
+          echo "modo=$MODO" >> "$GITHUB_OUTPUT"
+
+      - name: Preparar la clave de Firebase
+        if: steps.modo.outputs.modo != 'ninguno'
+        env:
+          CLAVE: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$CLAVE" ]; then echo "::error::Falta el secreto FIREBASE_SERVICE_ACCOUNT"; exit 1; fi
+          RUTA="$RUNNER_TEMP/firebase-clave.json"
+          (umask 077; printf '%s' "$CLAVE" > "$RUTA")
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUTA" >> "$GITHUB_ENV"
+
+      # Cada hora: si no hay nada que hacer, el flujo termina aquí (1 lectura de estado/sistema + 1 consulta de programados + 1 de solicitudes).
+      - name: Ver si hay trabajo
+        id: hay
+        env:
+          MODO: ${{ steps.modo.outputs.modo }}
+        run: |
+          ACTUAR=1
+          if [ "$MODO" = "ninguno" ]; then
+            ACTUAR=0
+          elif [ "$MODO" = "hora" ]; then
+            node scripts/hay-trabajo.mjs --real > "$RUNNER_TEMP/trabajo.txt"
+            cat "$RUNNER_TEMP/trabajo.txt"
+            if grep -q '^TRABAJO=1$' "$RUNNER_TEMP/trabajo.txt"; then ACTUAR=1; else ACTUAR=0; fi
+          fi
+          echo "actuar=$ACTUAR" >> "$GITHUB_OUTPUT"
+
+      - name: Descargar las imágenes
+        if: steps.hay.outputs.actuar == '1'
+        uses: actions/checkout@v4
+        with:
+          repository: elojocritico/img
+          token: ${{ secrets.IMG_TOKEN }}
+          path: imagenes-repo
+
+      # Los scripts esperan las imágenes en ../imagenes.
+      - name: Colocar las imágenes en ../imagenes
+        if: steps.hay.outputs.actuar == '1'
+        run: ln -s "$GITHUB_WORKSPACE/imagenes-repo" ../imagenes
+
+      # Artículos de la versión publicada (antes de exportar): referencia del umbral de bajada de verificar.
+      - name: Contar los artículos publicados
+        if: steps.hay.outputs.actuar == '1'
+        run: echo "EOC_ARTICULOS_PUBLICADOS=$(find contenido/articulos -name '*.json' | wc -l)" >> "$GITHUB_ENV"
+
+      # De noche: iVoox y YouTube. Si un feed falla (sale con 1) no se aborta: se publica lo demás.
+      - name: Sincronizar iVoox y YouTube
+        if: steps.hay.outputs.actuar == '1' && steps.modo.outputs.modo == 'noche'
+        run: |
+          if npm run sincronizar; then
+            echo "MEDIOS_OK=1" >> "$GITHUB_ENV"
+          else
+            echo "::warning::La sincronización de medios ha fallado en parte; se sigue con la publicación."
+          fi
+
+      - name: Exportar desde Firestore
+        id: exportar
+        if: steps.hay.outputs.actuar == '1'
+        env:
+          MODO: ${{ steps.modo.outputs.modo }}
+        run: |
+          set -o pipefail
+          OPCIONES="--sin-confirmar"
+          if [ "$MODO" = "noche" ]; then OPCIONES="--completo --sin-confirmar"; fi
+          npx tsx scripts/exportar.mjs --real $OPCIONES | tee "$RUNNER_TEMP/exportar.txt"
+          INICIO=$(grep '^INICIO=' "$RUNNER_TEMP/exportar.txt" | tail -n 1 | cut -d= -f2-)
+          CAMBIOS=$(grep '^CAMBIOS=' "$RUNNER_TEMP/exportar.txt" | tail -n 1 | cut -d= -f2-)
+          if [ -z "$INICIO" ] || [ -z "$CAMBIOS" ]; then echo "::error::El exportador no ha dado INICIO y CAMBIOS"; exit 1; fi
+          # También cuenta lo que haya cambiado la sincronización de medios en contenido/.
+          if [ -n "$(git status --porcelain contenido)" ]; then CAMBIOS=1; fi
+          echo "inicio=$INICIO" >> "$GITHUB_OUTPUT"
+          echo "cambios=$CAMBIOS" >> "$GITHUB_OUTPUT"
+
+      - name: Compilar la web
+        if: steps.exportar.outputs.cambios == '1'
+        run: npm run build
+
+      - name: Comprobar la compilación
+        if: steps.exportar.outputs.cambios == '1'
+        run: |
+          node scripts/comprobar-dist.mjs dist ../imagenes
+          npm run verificar
+
+      # Primero las imágenes (la web las enlaza) y después la web. Si algo falla antes de desplegar, no se confirma nada.
+      - name: Subir las imágenes nuevas
+        if: steps.exportar.outputs.cambios == '1'
+        run: |
+          git -C ../imagenes config user.name "$BOT_NOMBRE"
+          git -C ../imagenes config user.email "$BOT_CORREO"
+          git -C ../imagenes add -A
+          if git -C ../imagenes diff --cached --quiet; then
+            echo "No hay imágenes nuevas."
+          else
+            git -C ../imagenes commit -m "Imágenes nuevas $(date -u +%Y-%m-%d)"
+            git -C ../imagenes push
+          fi
+
+      - name: Subir los cambios de la web
+        if: steps.exportar.outputs.cambios == '1'
+        run: |
+          git config user.name "$BOT_NOMBRE"
+          git config user.email "$BOT_CORREO"
+          git add contenido
+          if git diff --cached --quiet; then
+            echo "No hay cambios de contenido que subir."
+          else
+            git commit -m "Publicación automática $(date -u +%Y-%m-%d\ %H:%M) UTC"
+            git push
+          fi
+
+      - name: Preparar GitHub Pages
+        if: steps.exportar.outputs.cambios == '1'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Desplegar en GitHub Pages
+        id: pages
+        if: steps.exportar.outputs.cambios == '1'
+        uses: actions/deploy-pages@v4
+
+      # La web gemela de Cloudflare lleva las imágenes dentro (en /img/), porque allí no hay repositorio img.
+      - name: Preparar la copia de Cloudflare
+        if: steps.exportar.outputs.cambios == '1'
+        run: |
+          mkdir dist-cloudflare
+          cp -r dist/. dist-cloudflare/
+          mkdir -p dist-cloudflare/img
+          cp -r ../imagenes/. dist-cloudflare/img/
+          rm -rf dist-cloudflare/img/.git
+
+      # Si Cloudflare falla no se deja sin confirmar: GitHub Pages ya está publicado. El último paso hace fallar el flujo para que llegue el correo.
+      - name: Desplegar en Cloudflare Pages
+        id: cloudflare
+        if: steps.exportar.outputs.cambios == '1'
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || vars.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@3 pages deploy dist-cloudflare --project-name=elojocritico --branch=main --commit-dirty=true
+
+      # Se confirma también cuando no hubo cambios (CAMBIOS=0): así la exportación avanza y "publicar pendiente" se resuelve.
+      - name: Confirmar la exportación
+        if: steps.hay.outputs.actuar == '1'
+        env:
+          INICIO: ${{ steps.exportar.outputs.inicio }}
+        run: npx tsx scripts/exportar.mjs --real --confirmar "$INICIO"
+
+      - name: Anotar el estado
+        if: steps.hay.outputs.actuar == '1'
+        env:
+          MODO: ${{ steps.modo.outputs.modo }}
+          CAMBIOS: ${{ steps.exportar.outputs.cambios }}
+        run: |
+          ANOTAR=""
+          if [ "$CAMBIOS" = "1" ]; then ANOTAR="$ANOTAR --publicacion"; fi
+          if [ "$MODO" = "noche" ]; then ANOTAR="$ANOTAR --copia"; fi
+          if [ "$MEDIOS_OK" = "1" ]; then ANOTAR="$ANOTAR --medios"; fi
+          if [ -n "$ANOTAR" ]; then node scripts/estado-sistema.mjs --real $ANOTAR; else echo "Nada que anotar."; fi
+
+      - name: Avisar si Cloudflare ha fallado
+        if: steps.cloudflare.outcome == 'failure'
+        run: |
+          echo "::error::GitHub Pages está publicado, pero el despliegue en Cloudflare Pages ha fallado."
+          exit 1
+
+      - name: Borrar la clave de Firebase
+        if: always()
+        run: rm -f "$RUNNER_TEMP/firebase-clave.json"

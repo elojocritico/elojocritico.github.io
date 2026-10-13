@@ -13,3 +13,5 @@ firebase-debug.log
 *-firebase-adminsdk-*.json
 serviceAccount*.json
 claves/
+dist-cloudflare/
+imagenes-repo/
