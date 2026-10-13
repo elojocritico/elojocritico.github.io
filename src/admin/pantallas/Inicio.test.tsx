@@ -10,10 +10,8 @@ vi.mock("firebase/firestore", () => ({
   query: () => ({}),
   where: () => ({}),
   getDoc: async () => { if (f.fallo) throw { code: "permission-denied" }; return { exists: () => f.estado !== null, data: () => f.estado }; },
-  onSnapshot: (_q: unknown, ok: (s: { size: number }) => void) => {
-    ok({ size: f.pendientes });
-    return () => {};
-  },
+  getCountFromServer: async () => ({ data: () => ({ count: f.pendientes }) }),
+  onSnapshot: () => { throw new Error("no debe haber escuchas en tiempo real"); },
 }));
 
 import { Inicio } from "./Inicio";
@@ -76,5 +74,19 @@ describe("Inicio: administración", () => {
     expect(screen.queryByRole("button", { name: "Ajustes de la web" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Usuarios" })).toBeNull();
     expect(await screen.findByText("Aún no hay datos")).toBeInTheDocument();
+  });
+});
+
+describe("Inicio: contador de comentarios pendientes", () => {
+  it("muestra 99+ cuando hay más de 99 y el número exacto en 99", async () => {
+    f.estado = null;
+    f.pendientes = 250;
+    const { unmount } = render(<Inicio usuario={usuario} papel="admin" />);
+    expect(await screen.findByRole("button", { name: /Comentarios pendientes\s*\(99\+\)/ })).toBeInTheDocument();
+    unmount();
+    f.pendientes = 99;
+    render(<Inicio usuario={usuario} papel="admin" />);
+    expect(await screen.findByRole("button", { name: /Comentarios pendientes\s*\(99\)/ })).toBeInTheDocument();
+    f.pendientes = 3;
   });
 });

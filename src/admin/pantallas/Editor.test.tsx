@@ -152,7 +152,8 @@ describe("Editor: programar", () => {
   it("una fecha futura se guarda como programada, pasando la hora de España a UTC (verano e invierno)", async () => {
     await escribirNuevo();
     await programar("2099-07-01T09:30");
-    expect(await screen.findByText(/Programado para el/)).toBeInTheDocument();
+    expect(await screen.findByText(/Programado\. Saldrá solo en la web el .*2099.*\(hora de España\)\./)).toBeInTheDocument();
+    expect(screen.queryByText(/Pulsa «Publicar cambios»/)).toBeNull();
     expect(g.guardarArticulo.mock.calls[0][1]).toMatchObject({ estado: "programado", fechaPublicacion: "2099-07-01T07:30:00.000Z" });
     g.guardarArticulo.mockClear();
     await userEvent.click(screen.getByRole("button", { name: "Programar" }));

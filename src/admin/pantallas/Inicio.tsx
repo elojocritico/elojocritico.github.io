@@ -6,7 +6,7 @@ import { Boton } from "../componentes/Boton";
 import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Ayuda } from "../componentes/Ayuda";
-import { suscribirPendientes } from "../datos/comentarios";
+import { contarPendientes } from "../datos/comentarios";
 import { calcularSemaforo, type Color } from "../semaforo";
 import { irA } from "../ruta";
 import type { Papel } from "../sesion";
@@ -32,11 +32,12 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
         setNoConsultable(true);
         setEstado(null);
       });
-    // Unica escucha en tiempo real del panel: el contador de comentarios pendientes.
-    const cancelar = suscribirPendientes(db, setPendientes, () => setPendientes(null));
+    // El contador de comentarios pendientes se consulta una vez al abrir el inicio (sin escuchas en tiempo real: cada una lee todos los pendientes).
+    contarPendientes(db)
+      .then((n) => vigente && setPendientes(n))
+      .catch(() => vigente && setPendientes(null));
     return () => {
       vigente = false;
-      cancelar();
     };
   }, []);
 
@@ -64,7 +65,7 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
           Mis artículos
         </Boton>
         <Boton className="grande" onClick={() => irA("comentarios")}>
-          Comentarios pendientes{pendientes !== null && <span className="contador">{` (${pendientes})`}</span>}
+          Comentarios pendientes{pendientes !== null && <span className="contador">{` (${pendientes > 99 ? "99+" : pendientes})`}</span>}
         </Boton>
         <Boton className="grande" onClick={() => irA("publicar")}>
           Publicar cambios{estado !== undefined && <span className="contador">{publicarPendiente ? " (hay cambios)" : " (al día)"}</span>}

@@ -5,6 +5,7 @@ import {
   type DocumentSnapshot, type Firestore, type QueryConstraint, type QuerySnapshot, type Transaction,
 } from "firebase/firestore";
 import type { Papel } from "../sesion";
+import { marcarPublicarPendiente } from "./publicar";
 
 export const POR_PAGINA = 25;
 /** Con más coincidencias que esto en el índice de títulos, se pide al usuario que afine la búsqueda. */
@@ -155,6 +156,7 @@ async function cambiar(db: Firestore, id: string, usuario: string, calcular: (ac
     escribirVersion(tx, db, id, actual, ahora, quien);
     tx.update(ref, { ...cambios, actualizadoEn: ahora, actualizadoPor: quien });
   });
+  await marcarPublicarPendiente(db); // despublicar, papelera, restaurar y mover cambian lo que se ve en la web
 }
 
 export const despublicar = (db: Firestore, id: string, usuario: string) =>
@@ -202,4 +204,5 @@ export async function borrarDefinitivamente(db: Firestore, id: string, papel: Pa
   lote.delete(ref);
   lote.set(doc(db, "borrados", id), { borradoEn: new Date().toISOString(), borradoPor: usuario || "administrador" });
   await lote.commit();
+  await marcarPublicarPendiente(db);
 }

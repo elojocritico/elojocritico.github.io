@@ -1,9 +1,10 @@
 // Subida de fotos. Adaptado de Clave 45 (lib/cloudinary-upload.ts): se comprime en el navegador y se sube a Cloudinary
-// con un preset sin firma, así que en el código no hay ninguna clave. Sin configuración, o con el simulador, la foto se
-// queda dentro de la propia página (URL "data:") y se avisa claramente.
+// con un preset sin firma, así que en el código no hay ninguna clave. Solo con el simulador (PUBLIC_EMULADOR=1) la foto se
+// queda dentro de la propia página (URL "data:") y se avisa claramente. En producción sin configurar, se da un error y no se inserta nada.
 import imageCompression from "browser-image-compression";
 
 export const AVISO_PRUEBA = "Modo de prueba: la foto no se guarda en internet";
+export const SIN_CONFIGURAR = "Las fotos aún no están configuradas. Avisa a la persona que administra la web.";
 export const CARPETA = "elojocritico";
 const MAX_ANCHO = 1920;
 const MAX_MB = 1.5;
@@ -39,7 +40,9 @@ export async function subirImagen(file: File): Promise<Subida> {
   const nube = import.meta.env.PUBLIC_CLOUDINARY_NUBE;
   const preset = import.meta.env.PUBLIC_CLOUDINARY_PRESET;
 
-  if (import.meta.env.PUBLIC_EMULADOR === "1" || !nube || !preset) {
+  if (import.meta.env.PUBLIC_EMULADOR !== "1" && (!nube || !preset)) throw new ErrorSubida(SIN_CONFIGURAR);
+
+  if (import.meta.env.PUBLIC_EMULADOR === "1") {
     const pequena = await comprimir(file, MAX_PRUEBA_BYTES / 1048576, 1280);
     if (pequena.size > MAX_PRUEBA_BYTES) throw new ErrorSubida("En modo de prueba la foto es demasiado grande. Elige una más pequeña.");
     return { url: await aDataUrl(pequena), aviso: AVISO_PRUEBA };

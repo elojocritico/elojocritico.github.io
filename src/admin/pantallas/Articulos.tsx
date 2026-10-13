@@ -14,6 +14,7 @@ import {
 import { SECCIONES, nombreDeSeccion } from "../datos/secciones";
 import { mensajeDeCambio, mensajeDeError } from "../mensajes";
 import { irA } from "../ruta";
+import { autorEnLlano, esAutorDeSistema } from "../utiles/autor";
 import type { Papel } from "../sesion";
 
 type Accion =
@@ -201,7 +202,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
                 {a.actualizadoEn && (
                   <span>
                     Cambiado el {fechaLlana(a.actualizadoEn)}
-                    {a.actualizadoPor ? ` por ${a.actualizadoPor}` : ""}
+                    {a.actualizadoPor ? (esAutorDeSistema(a.actualizadoPor) ? ` · ${autorEnLlano(a.actualizadoPor)}` : ` por ${a.actualizadoPor}`) : ""}
                   </span>
                 )}
               </p>

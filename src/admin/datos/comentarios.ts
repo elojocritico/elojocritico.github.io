@@ -1,8 +1,9 @@
 // Capa de datos de la moderación de comentarios. Recibe la base de datos como parámetro para poder probarse con el simulador.
 import {
-  collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query, runTransaction, startAfter, updateDoc, where,
-  type DocumentSnapshot, type Firestore, type Unsubscribe,
+  collection, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, runTransaction, startAfter, updateDoc, where,
+  type DocumentSnapshot, type Firestore,
 } from "firebase/firestore";
+import { marcarPublicarPendiente } from "./publicar";
 
 export const POR_PAGINA = 25;
 const TROZO_IN = 30;
@@ -42,9 +43,15 @@ export async function listarPendientes(db: Firestore, cursor: Cursor | null = nu
   return { comentarios: docs.map((d) => aPendiente(d.id, d.data())), cursor: hayMas ? docs[docs.length - 1] : null, hayMas };
 }
 
-/** Aprobar, rechazar o marcar como spam: solo cambia el estado (es lo único que permiten las reglas). */
+/**
+ * Aprobar, rechazar o marcar como spam: solo cambia el estado (es lo único que permiten las reglas).
+ * Si el comentario se aprueba, o ya estaba aprobado y cambia, la web publicada cambia: se deja la marca de publicación pendiente.
+ */
 export async function moderar(db: Firestore, id: string, estado: Exclude<EstadoComentario, "pendiente">) {
-  await updateDoc(doc(db, "comentarios", id), { estado });
+  const ref = doc(db, "comentarios", id);
+  const antes = (await getDoc(ref)).data()?.estado;
+  await updateDoc(ref, { estado });
+  if (estado === "aprobado" || antes === "aprobado") await marcarPublicarPendiente(db);
 }
 
 /** Títulos de los artículos a partir de sus direcciones; los que no se encuentren quedan sin título. */
@@ -58,9 +65,10 @@ export async function titulosDe(db: Firestore, slugs: string[]): Promise<Record<
   return r;
 }
 
-/** Única escucha en tiempo real del panel: el número de comentarios pendientes. */
-export function suscribirPendientes(db: Firestore, alCambiar: (n: number) => void, alFallar: () => void): Unsubscribe {
-  return onSnapshot(query(collection(db, "comentarios"), where("estado", "==", "pendiente")), (s) => alCambiar(s.size), alFallar);
+/** Cuántos comentarios hay pendientes (consulta de recuento: no descarga los comentarios). */
+export async function contarPendientes(db: Firestore): Promise<number> {
+  const c = await getCountFromServer(query(collection(db, "comentarios"), where("estado", "==", "pendiente")));
+  return c.data().count;
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -75,13 +83,15 @@ export async function leerOcultos(db: Firestore, slug: string): Promise<string[]
 /** Oculta o vuelve a mostrar un comentario del archivo. Devuelve la lista de ocultos que ha quedado. */
 export async function cambiarOculto(db: Firestore, slug: string, id: string, ocultar: boolean): Promise<string[]> {
   const ref = doc(db, "archivoOcultos", slug);
-  return runTransaction(db, async (tx) => {
+  const resultado = await runTransaction(db, async (tx) => {
     const s = await tx.get(ref);
     const actual: string[] = s.exists() && Array.isArray(s.data().ids) ? s.data().ids.map(String) : [];
     const nuevos = ocultar ? (actual.includes(id) ? actual : [...actual, id]) : actual.filter((x) => x !== id);
     tx.set(ref, { ids: nuevos }, { merge: true }); // merge: no pisa "textos" (copia del texto de los ocultos, la escribe el exportador)
     return nuevos;
   });
+  await marcarPublicarPendiente(db); // los comentarios del archivo ocultos dejan de salir en la web
+  return resultado;
 }
 
 /** Lee los comentarios del archivo de un artículo (fichero estático de la web). Sin fichero = ninguno. */

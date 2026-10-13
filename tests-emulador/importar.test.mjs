@@ -31,9 +31,23 @@ beforeEach(async () => {
   await db.recursiveDelete(db.collection("ajustes"));
   await db.recursiveDelete(db.collection("estado"));
   await db.recursiveDelete(db.collection("indices"));
+  await db.recursiveDelete(db.collection("borrados"));
 });
 
 describe("importar (simulador)", () => {
+  it("no resucita un artículo borrado del todo desde el panel (lápida en borrados)", async () => {
+    await db.doc("borrados/dos").set({ borradoEn: "2024-01-01T00:00:00.000Z", borradoPor: "admin@eoc.test" });
+    const r = await importar({ db, dirContenido: dir, log: callar });
+    expect(r.articulos).toMatchObject({ total: 3, creados: 2, conLapida: 1 });
+    expect((await db.doc("articulos/dos").get()).exists).toBe(false);
+    expect((await db.doc("articulos/uno").get()).exists).toBe(true);
+    expect((await db.doc("indices/titulos").get()).data()).not.toHaveProperty("dos");
+    expect((await db.doc("borrados/dos").get()).exists).toBe(true); // la lápida se conserva
+    const r2 = await importar({ db, dirContenido: dir, log: callar });
+    expect(r2.escrituras).toBe(0);
+    expect((await db.doc("articulos/dos").get()).exists).toBe(false);
+  });
+
   it("crea artículos, ajustes y estado; la segunda vez no escribe nada", async () => {
     const r = await importar({ db, dirContenido: dir, log: callar });
     expect(r.articulos).toMatchObject({ total: 3, creados: 3, actualizados: 0, sinCambios: 0, editadosEnPanel: 0 });

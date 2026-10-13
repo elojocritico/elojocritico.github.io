@@ -35,6 +35,18 @@ describe("Publicar cambios", () => {
     expect(await screen.findByText("Todavía no se ha publicado ningún cambio")).toBeInTheDocument();
   });
 
+  it("con 0 cambios de artículos pero publicación pendiente (comentarios o ajustes) avisa de que hay cambios", async () => {
+    d.contarCambios.mockResolvedValue({ nunca: false, cambios: 0, pendiente: true });
+    render(<Publicar usuario={usuario} />);
+    expect(await screen.findByText("Hay cambios sin publicar (comentarios o ajustes)")).toBeInTheDocument();
+  });
+
+  it("con 0 cambios y sin pendiente: no hay cambios", async () => {
+    d.contarCambios.mockResolvedValue({ nunca: false, cambios: 0, pendiente: false });
+    render(<Publicar usuario={usuario} />);
+    expect(await screen.findByText("No hay cambios sin publicar en la web")).toBeInTheDocument();
+  });
+
   it("sin dirección de publicación: «Se publicará en menos de 1 hora»", async () => {
     vi.stubEnv("PUBLIC_URL_PUBLICAR", "");
     render(<Publicar usuario={usuario} />);

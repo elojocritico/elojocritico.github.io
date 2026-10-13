@@ -46,17 +46,24 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   const dirArt = join(dirContenido, "articulos");
   const ficheros = existsSync(dirArt) ? readdirSync(dirArt).filter((f) => f.endsWith(".json")).sort() : [];
   const nuevos = ficheros.map((f) => docArticulo(leer(join(dirArt, f))));
-  const r = { total: nuevos.length, creados: 0, actualizados: 0, sinCambios: 0, editadosEnPanel: 0 };
+  const r = { total: nuevos.length, creados: 0, actualizados: 0, sinCambios: 0, editadosEnPanel: 0, conLapida: 0 };
   const w = crearEscritor(db);
   const editados = new Set();
+  const conLapida = new Set(); // borrados del todo desde el panel: no se vuelven a crear
   const escribir = (ref, datos, opciones) => w.set(ref, datos, opciones);
 
   for (let i = 0; i < nuevos.length; i += 300) {
     const trozo = nuevos.slice(i, i + 300);
     const refs = trozo.map((d) => db.collection("articulos").doc(d.slug));
     const existentes = await db.getAll(...refs);
+    const lapidas = await db.getAll(...trozo.map((d) => db.collection("borrados").doc(d.slug)));
     for (let j = 0; j < trozo.length; j++) {
       const snap = existentes[j];
+      if (!snap.exists && lapidas[j].exists) {
+        r.conLapida++;
+        conLapida.add(trozo[j].slug);
+        continue;
+      }
       if (!snap.exists) {
         r.creados++;
         await escribir(refs[j], trozo[j]);
@@ -82,7 +89,7 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   const refIndice = db.doc("indices/titulos");
   const indiceSnap = await refIndice.get();
   const indice = { ...(indiceSnap.data() ?? {}) };
-  for (const d of nuevos) if (!editados.has(d.slug) && tituloParaIndice(d)) indice[d.slug] = tituloParaIndice(d);
+  for (const d of nuevos) if (!editados.has(d.slug) && !conLapida.has(d.slug) && tituloParaIndice(d)) indice[d.slug] = tituloParaIndice(d);
   limpiarIndice(indice);
   if (!indiceSnap.exists || estable(indiceSnap.data()) !== estable(indice)) await escribir(refIndice, indice);
 
@@ -107,7 +114,8 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   await w.vaciar();
   log(
     `${r.total} artículos: ${r.creados} creados, ${r.actualizados} actualizados, ${r.sinCambios} sin cambios` +
-      (r.editadosEnPanel ? `, ${r.editadosEnPanel} editado(s) en el panel, no se toca` : ""),
+      (r.editadosEnPanel ? `, ${r.editadosEnPanel} editado(s) en el panel, no se toca` : "") +
+      (r.conLapida ? `, ${r.conLapida} borrado(s) del todo desde el panel, no se vuelven a crear` : ""),
   );
   log(`Ajustes: ${Object.keys(faltan).length ? "completados (" + Object.keys(faltan).join(", ") + ")" : "sin cambios"}. Escrituras totales: ${w.escrituras}.`);
   return { articulos: r, escrituras: w.escrituras, commits: w.commits, ajustes: faltan };

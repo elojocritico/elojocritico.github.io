@@ -1,7 +1,8 @@
 // Capa de datos del editor de artículos. Recibe la base de datos como parámetro para poder probarse contra el simulador.
 // Todas las fechas que guarda son texto ISO en UTC ("...Z").
-import { collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction, updateDoc, type Firestore } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction, type Firestore } from "firebase/firestore";
 import { ErrorArticulo, escribirVersion, validarUsuario, type Estado } from "./articulos";
+import { marcarPublicarPendiente } from "./publicar";
 import { hayConflicto } from "../utiles/conflicto";
 
 export type Portada = { src: string; tarjeta: string; alt: string };
@@ -115,11 +116,4 @@ export async function listarVersiones(db: Firestore, id: string, maximo = 30): P
   return s.docs.map((d) => ({ ...aArticulo(d.data(), id), id: d.id, guardadoEn: String(d.data().guardadoEn ?? ""), guardadoPor: String(d.data().guardadoPor ?? "") }));
 }
 
-/** Avisa de que hay cambios por publicar. Si falla no pasa nada: el artículo ya está guardado. */
-export async function marcarPublicarPendiente(db: Firestore): Promise<void> {
-  try {
-    await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true, publicarPendienteEn: new Date().toISOString() });
-  } catch {
-    /* sin permiso o sin conexión: el exportador lo recalcula */
-  }
-}
+export { marcarPublicarPendiente };

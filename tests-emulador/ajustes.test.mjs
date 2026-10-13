@@ -39,6 +39,19 @@ beforeEach(async () => {
 });
 
 describe("ajustes", () => {
+  it("guardar ajustes deja la marca de publicación pendiente", async () => {
+    expect((await sembrar((db) => getDoc(doc(db, "estado/sistema")))).data().publicarPendiente).toBe(false);
+    await guardarAjustes(como(ADMIN), ADMIN, "", { destacado: "x" });
+    const e = (await sembrar((db) => getDoc(doc(db, "estado/sistema")))).data();
+    expect(e.publicarPendiente).toBe(true);
+    expect(e.publicarPendienteEn).toMatch(/^\d{4}-\d{2}-\d{2}T.*Z$/);
+  });
+
+  it("un guardado que falla (conflicto) no deja la marca", async () => {
+    await expect(guardarAjustes(como(ADMIN), ADMIN, "otra-version", { destacado: "x" })).rejects.toMatchObject({ code: "ajustes/conflicto" });
+    expect((await sembrar((db) => getDoc(doc(db, "estado/sistema")))).data().publicarPendiente).toBe(false);
+  });
+
   it("lee los ajustes con la marca de versión (vacía si nunca se han guardado desde el panel)", async () => {
     const a = await leerAjustes(como(ADMIN));
     expect(a.version).toBe("");
@@ -134,8 +147,8 @@ describe("publicar cambios", () => {
         await setDoc(doc(db, "articulos/a" + n), { slug: "a" + n, titulo: "T" + n, estado: e, actualizadoEn: f });
       }
     });
-    // los borradores no cuentan: no cambian la web
-    expect(await contarCambios(como(EDITOR))).toEqual({ nunca: false, cambios: 3, pendiente: true });
+    // cuenta en todos los estados: despublicar (pasar a borrador) también cambia la web
+    expect(await contarCambios(como(EDITOR))).toEqual({ nunca: false, cambios: 4, pendiente: true });
   });
 
   it("marca publicarPendiente (un editor puede) y, sin dirección, será en menos de 1 hora", async () => {

@@ -1,6 +1,15 @@
 // "Publicar cambios": cuántos cambios hay sin publicar y la petición de publicar.
 import { collection, doc, getCountFromServer, getDoc, query, updateDoc, where, type Firestore } from "firebase/firestore";
 
+/** Avisa de que hay cambios por publicar. Si falla no pasa nada: el cambio ya está guardado y el exportador lo recalcula. */
+export async function marcarPublicarPendiente(db: Firestore): Promise<void> {
+  try {
+    await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true, publicarPendienteEn: new Date().toISOString() });
+  } catch {
+    /* sin permiso o sin conexión: el exportador lo recalcula */
+  }
+}
+
 export type Cuenta = { nunca: boolean; cambios: number | null; pendiente: boolean };
 export type Resultado = { rapido: boolean };
 export const TIEMPO_ESPERA_MS = 10_000;
@@ -12,9 +21,9 @@ function aIso(v: unknown): string | null {
 }
 
 /**
- * Cambios sin publicar = artículos (sin contar borradores, que no están en la web) guardados después de la última exportación (estado/sistema.ultimaExportacion).
+ * Cambios sin publicar = artículos (en cualquier estado: despublicar también cambia la web) guardados después de la última exportación (estado/sistema.ultimaExportacion).
  * Si nunca ha habido exportación, no se puede contar: `nunca: true`.
- * (Los comentarios no se cuentan: no guardan la fecha en que se moderaron, y la cuenta sería inexacta.)
+ * Los comentarios y los ajustes no se cuentan (no guardan fecha por elemento): avisan con `pendiente` (publicarPendiente).
  */
 export async function contarCambios(db: Firestore): Promise<Cuenta> {
   const s = await getDoc(doc(db, "estado", "sistema"));
@@ -22,7 +31,7 @@ export async function contarCambios(db: Firestore): Promise<Cuenta> {
   const pendiente = d.publicarPendiente === true;
   const desde = aIso(d.ultimaExportacion);
   if (!desde) return { nunca: true, cambios: null, pendiente };
-  const c = await getCountFromServer(query(collection(db, "articulos"), where("estado", "in", ["publicado", "programado", "papelera"]), where("actualizadoEn", ">", desde)));
+  const c = await getCountFromServer(query(collection(db, "articulos"), where("actualizadoEn", ">", desde)));
   return { nunca: false, cambios: c.data().count, pendiente };
 }
 

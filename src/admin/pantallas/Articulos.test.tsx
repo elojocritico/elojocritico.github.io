@@ -51,6 +51,22 @@ describe("Articulos", () => {
     expect(irA).toHaveBeenCalledWith("editar/a");
   });
 
+  it("quien hizo el cambio: correo, o en llano si lo hizo un programa (nunca «migración»)", async () => {
+    d.listarArticulos.mockResolvedValue(pagina([
+      res("a"), res("m", { actualizadoPor: "migración" }), res("p", { actualizadoPor: "publicación programada" }),
+    ]));
+    render(<Articulos usuario={usuario} papel="editor" />);
+    await screen.findByRole("heading", { name: "Título a" });
+    expect(within(fila("Título a")).getByText(/por ana@x.es/)).toBeInTheDocument();
+    const m = within(fila("Título m"));
+    expect(m.getByText(/Importado de la web antigua/)).toBeInTheDocument();
+    expect(m.queryByText(/migración/)).toBeNull();
+    expect(m.queryByText(/ por /)).toBeNull();
+    const p = within(fila("Título p"));
+    expect(p.getByText(/Publicación programada/)).toBeInTheDocument();
+    expect(p.queryByText(/ por /)).toBeNull();
+  });
+
   it("cambiar el estado o la seccion o buscar aplica la consulta con esos filtros", async () => {
     render(<Articulos usuario={usuario} papel="editor" />);
     await screen.findByRole("heading", { name: "Título a" });

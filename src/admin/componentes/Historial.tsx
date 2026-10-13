@@ -4,6 +4,7 @@ import { listarVersiones, type Version } from "../datos/guardar";
 import { NOMBRE_ESTADO } from "../datos/articulos";
 import { mensajeDeError } from "../mensajes";
 import { fechaHoraLlana } from "../utiles/fechas";
+import { autorEnLlano } from "../utiles/autor";
 import { Aviso } from "./Aviso";
 import { Boton } from "./Boton";
 import { Cargando } from "./Cargando";
@@ -17,10 +18,7 @@ type Props = {
   alCerrar: () => void;
 };
 
-const autorDe = (v: Version) => {
-  const quien = v.actualizadoPor || v.guardadoPor;
-  return quien === "migración" ? "Importado de la web antigua" : quien || "autor desconocido";
-};
+const autorDe = (v: Version) => autorEnLlano(v.actualizadoPor || v.guardadoPor);
 
 /** Lista de versiones anteriores del artículo (cada guardado crea una). */
 export function Historial({ db, id, version, alVolver, alCerrar }: Props) {

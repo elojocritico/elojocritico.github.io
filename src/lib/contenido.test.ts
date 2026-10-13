@@ -40,6 +40,23 @@ describe("contenido", () => {
     expect(c.destacado(todos, c.ajustes()).slug).toBe("c");
     expect(c.destacado(todos, { ...c.ajustes(), destacado: "no-existe" }).slug).toBe("b");
   });
+  it("fechas de comentarios en hora de España: 23:30 UTC ya es el día siguiente", async () => {
+    const c = await import("./contenido");
+    expect(c.fechaLargaMadrid("2024-01-31T23:30:00.000Z")).toBe("1 feb 2024"); // invierno: UTC+1
+    expect(c.fechaLargaMadrid("2024-06-30T23:30:00.000Z")).toBe("1 jul 2024"); // verano: UTC+2
+    expect(c.fechaLargaMadrid("2024-06-30T21:30:00.000Z")).toBe("30 jun 2024");
+    expect(c.fechaHoraMadrid("2024-01-31T23:30:00.000Z")).toBe("1 feb 2024, 00:30");
+    expect(c.fechaHoraMadrid("2024-06-30T23:30:00.000Z")).toBe("1 jul 2024, 01:30");
+    expect(c.fechaLargaMadrid("2014-12-28")).toBe("28 dic 2014"); // sin hora: igual que fechaLarga
+    expect(c.fechaHoraMadrid("2014-12-28")).toBe("28 dic 2014");
+  });
+  it("hayAnuncio exige activo, cliente y bloque", async () => {
+    const { hayAnuncio } = await import("./contenido");
+    expect(hayAnuncio({ activo: true, cliente: "ca-pub-1234567890123456", bloque: "1234567890" })).toBe(true);
+    expect(hayAnuncio({ activo: true, cliente: "ca-pub-1234567890123456", bloque: "" })).toBe(false);
+    expect(hayAnuncio({ activo: true, cliente: "", bloque: "1234567890" })).toBe(false);
+    expect(hayAnuncio({ activo: false, cliente: "ca-pub-1234567890123456", bloque: "1234567890" })).toBe(false);
+  });
   it("árbol de comentarios, años, fecha larga y lectura", async () => {
     const c = await import("./contenido");
     const arbol = c.arbolComentarios(c.comentariosArchivo("a"));

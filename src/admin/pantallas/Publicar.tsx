@@ -17,7 +17,7 @@ type Mensaje = { tipo: "ok" | "error"; texto: string };
 
 export function textoCambios(c: Cuenta): string {
   if (c.nunca) return "Todavía no se ha publicado ningún cambio";
-  if (c.cambios === 0) return "No hay cambios sin publicar en la web";
+  if (c.cambios === 0) return c.pendiente ? "Hay cambios sin publicar (comentarios o ajustes)" : "No hay cambios sin publicar en la web";
   return c.cambios === 1 ? "1 cambio sin publicar en la web" : `${c.cambios} cambios sin publicar en la web`;
 }
 

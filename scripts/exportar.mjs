@@ -34,6 +34,8 @@ const DIAS_PAPELERA = 30;
 const PROGRAMADA = "publicación programada";
 const MAX_IMAGEN = 30 * 1024 * 1024;
 const RESERVADOS_WINDOWS = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+/** Nombres que la compilación de la web ya usa para sus propios ficheros: una dirección así los pisaría. */
+const SALIDAS_DE_LA_WEB = new Set(["robots.txt", "sitemap-index.xml", "sitemap-0.xml", "rss.xml", "favicon.svg", "404", "pagefind", "_astro"]);
 const CLOUDINARY = /^(?:https:)?\/\/res\.cloudinary\.com\//i;
 
 /** Dirección usable como nombre de fichero (y válida para la web). */
@@ -41,7 +43,8 @@ export function slugSeguro(s) {
   // eslint-disable-next-line no-control-regex
   return (
     typeof s === "string" && /^[^/\\]{1,200}$/.test(s) && !s.includes("..") && !/[\x00-\x1f]/.test(s) && /^[^/\s]+$/.test(s) &&
-    !/[:<>|?*"]/.test(s) && !RESERVADOS_WINDOWS.test(s.split(".")[0])
+    !/[:<>|?*"]/.test(s) && !RESERVADOS_WINDOWS.test(s.split(".")[0]) &&
+    !s.startsWith("_") && !s.startsWith(".") && !SALIDAS_DE_LA_WEB.has(s.toLowerCase())
   );
 }
 const json = (v) => JSON.stringify(v, null, 2).replace(/\n/g, "\r\n"); // igual que los ficheros de la migración
@@ -358,7 +361,8 @@ export async function exportar({
   const aPurgar = [];
   papelera.forEach((s) => {
     const t = Date.parse(s.data().enPapeleraDesde ?? "");
-    if (slugSeguro(s.id) && !isNaN(t) && t < limitePapelera) aPurgar.push(s.id);
+    // enPapeleraDesde lo escribe el navegador (se puede falsear); updateTime es la última escritura según el servidor.
+    if (slugSeguro(s.id) && !isNaN(t) && t < limitePapelera && s.updateTime.toMillis() < limitePapelera) aPurgar.push(s.id);
   });
   // (el JSON de un artículo en la papelera ya se retira arriba; el borrado real se confirma dentro de una transacción más abajo)
   const purgados = [];
@@ -533,7 +537,7 @@ export async function exportar({
     const borrado = await db.runTransaction(async (tx) => {
       const s = await tx.get(ref);
       const t = s.exists ? Date.parse(s.data().enPapeleraDesde ?? "") : NaN;
-      if (!s.exists || s.data().estado !== "papelera" || isNaN(t) || t >= limitePapelera) return false;
+      if (!s.exists || s.data().estado !== "papelera" || isNaN(t) || t >= limitePapelera || s.updateTime.toMillis() >= limitePapelera) return false;
       tx.delete(ref);
       tx.set(db.collection("borrados").doc(id), { borradoEn: inicio, borradoPor: "vaciado automático de la papelera" });
       return true;

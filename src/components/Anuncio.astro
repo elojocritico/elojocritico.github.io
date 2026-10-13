@@ -1,8 +1,8 @@
 ---
-import { ajustes } from "../lib/contenido";
+import { ajustes, hayAnuncio } from "../lib/contenido";
 const { adsense } = ajustes();
 ---
-{adsense.activo && adsense.cliente && (
+{hayAnuncio(adsense) && (
   <div class="contenedor" style="margin:24px auto;text-align:center">
     <ins class="adsbygoogle" style="display:block" data-ad-client={adsense.cliente} data-ad-slot={adsense.bloque} data-ad-format="auto" data-full-width-responsive="true"></ins>
     <script is:inline async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsense.cliente}`} crossorigin="anonymous"></script>

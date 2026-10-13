@@ -5,6 +5,7 @@ import { deleteField, doc, FieldPath, getDoc, runTransaction, type Firestore } f
 import { sanear } from "../../lib/sanear";
 import { esBloque, esCliente, esUrlWeb } from "../../lib/validacion";
 import type { Papel } from "../sesion";
+import { marcarPublicarPendiente } from "./publicar";
 
 export const MAX_ENLACES = 20;
 /** Valor reservado del importador: el panel nunca debe escribirlo en actualizadoPor. */
@@ -133,6 +134,7 @@ export async function guardarAjustes(db: Firestore, usuario: string, version: st
     if (aVersion(s.data().actualizadoEn) !== version) throw new ErrorAjustes("ajustes/conflicto");
     tx.update(ref, { ...datos, actualizadoEn: ahora, actualizadoPor: correo });
   });
+  await marcarPublicarPendiente(db); // destacado, enlaces, publicidad y «Qué es EOC» salen en la web
   return ahora;
 }
 

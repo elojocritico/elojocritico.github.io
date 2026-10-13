@@ -17,7 +17,8 @@ afterEach(() => {
 });
 
 describe("subirImagen sin configuración o con el simulador", () => {
-  it("sin Cloudinary devuelve una URL data: y el aviso de modo de prueba, sin llamar a internet", async () => {
+  it("en el simulador, sin Cloudinary devuelve una URL data: y el aviso de modo de prueba, sin llamar a internet", async () => {
+    vi.stubEnv("PUBLIC_EMULADOR", "1");
     vi.stubEnv("PUBLIC_CLOUDINARY_NUBE", "");
     vi.stubEnv("PUBLIC_CLOUDINARY_PRESET", "");
     const fetchFalso = vi.fn();
@@ -37,15 +38,34 @@ describe("subirImagen sin configuración o con el simulador", () => {
     expect((await subirImagen(foto())).aviso).toBe(AVISO_PRUEBA);
     expect(fetchFalso).not.toHaveBeenCalled();
   });
+  it("fuera del simulador y sin Cloudinary: error en llano y no se inserta nada", async () => {
+    for (const [nube, preset] of [["", ""], ["nube", ""], ["", "preset"]]) {
+      vi.stubEnv("PUBLIC_EMULADOR", "");
+      vi.stubEnv("PUBLIC_CLOUDINARY_NUBE", nube);
+      vi.stubEnv("PUBLIC_CLOUDINARY_PRESET", preset);
+      const fetchFalso = vi.fn();
+      vi.stubGlobal("fetch", fetchFalso);
+      await expect(subirImagen(foto())).rejects.toThrow("Las fotos aún no están configuradas. Avisa a la persona que administra la web.");
+      await expect(subirImagen(foto())).rejects.toBeInstanceOf(ErrorSubida);
+      expect(fetchFalso).not.toHaveBeenCalled();
+    }
+  });
+  it("con PUBLIC_EMULADOR sin definir tampoco hay modo de prueba", async () => {
+    vi.stubEnv("PUBLIC_CLOUDINARY_NUBE", "");
+    vi.stubEnv("PUBLIC_CLOUDINARY_PRESET", "");
+    await expect(subirImagen(foto())).rejects.toBeInstanceOf(ErrorSubida);
+  });
   it("rechaza lo que no es una foto, en llano", async () => {
     await expect(subirImagen(foto("a.pdf", "application/pdf"))).rejects.toThrow(/no es una foto/);
   });
   it("si la compresión falla usa la foto original", async () => {
+    vi.stubEnv("PUBLIC_EMULADOR", "1");
     vi.stubEnv("PUBLIC_CLOUDINARY_NUBE", "");
     vi.mocked(imageCompression).mockRejectedValueOnce(new Error("no"));
     expect((await subirImagen(foto())).url).toMatch(/^data:/);
   });
   it("en modo de prueba rechaza fotos que no caben en un artículo", async () => {
+    vi.stubEnv("PUBLIC_EMULADOR", "1");
     vi.stubEnv("PUBLIC_CLOUDINARY_NUBE", "");
     vi.mocked(imageCompression).mockResolvedValueOnce(new File([new Uint8Array(600 * 1024)], "g.jpg", { type: "image/jpeg" }));
     await expect(subirImagen(foto("g.jpg", "image/jpeg", 5_000_000))).rejects.toBeInstanceOf(ErrorSubida);

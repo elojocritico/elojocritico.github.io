@@ -216,3 +216,37 @@ describe("acciones", () => {
     expect(await leer("articulos/a1")).toBeDefined();
   });
 });
+
+describe("publicación pendiente", () => {
+  const pendiente = async () => (await getDoc(doc(como(ADMIN), "estado/sistema"))).data().publicarPendiente;
+  beforeEach(async () => {
+    await sembrar((db) => setDoc(doc(db, "estado/sistema"), { publicarPendiente: false }));
+  });
+  const acciones = {
+    despublicar: (db) => despublicar(db, "a1", EDITOR),
+    "mover de sección": (db) => moverSeccion(db, "a1", EDITOR, "fraudes"),
+    "enviar a la papelera": (db) => enviarAPapelera(db, "a1", EDITOR),
+  };
+  for (const [nombre, hacer] of Object.entries(acciones)) {
+    it(nombre + " deja la marca de publicación pendiente", async () => {
+      await sembrar((db) => setDoc(doc(db, "articulos/a1"), art(1)));
+      await hacer(como(EDITOR));
+      expect(await pendiente()).toBe(true);
+    });
+  }
+  it("restaurar deja la marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "articulos/a1"), art(1, { estado: "papelera", estadoAntesDePapelera: "publicado" })));
+    await restaurar(como(EDITOR), "a1", EDITOR);
+    expect(await pendiente()).toBe(true);
+  });
+  it("borrar definitivamente deja la marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "articulos/a1"), art(1, { estado: "papelera" })));
+    await borrarDefinitivamente(como(ADMIN), "a1", "admin", ADMIN);
+    expect(await pendiente()).toBe(true);
+  });
+  it("una acción rechazada no deja la marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "articulos/a1"), art(1, { estado: "borrador" })));
+    await expect(despublicar(como(EDITOR), "a1", EDITOR)).rejects.toBeInstanceOf(ErrorArticulo);
+    expect(await pendiente()).toBe(false);
+  });
+});

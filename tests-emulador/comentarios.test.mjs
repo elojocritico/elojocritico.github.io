@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { doc, getDoc, getDocs, setDoc, collection, setLogLevel } from "firebase/firestore";
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
-import { listarPendientes, moderar, titulosDe, leerOcultos, cambiarOculto, POR_PAGINA } from "../src/admin/datos/comentarios.ts";
+import { listarPendientes, contarPendientes, moderar, titulosDe, leerOcultos, cambiarOculto, POR_PAGINA } from "../src/admin/datos/comentarios.ts";
 import { enviarComentario, MENSAJE_FALLO } from "../src/lib/enviarComentario.ts";
 
 setLogLevel("silent");
@@ -67,6 +67,43 @@ describe("pendientes y moderación", () => {
       await setDoc(doc(db, "articulos/a2"), { slug: "art-2", titulo: "Segundo" });
     });
     expect(await titulosDe(como(EDITOR), ["art-1", "art-2", "art-1", "no-existe"])).toEqual({ "art-1": "Primero", "art-2": "Segundo" });
+  });
+});
+
+describe("publicación pendiente y contador", () => {
+  const pendiente = async () => (await getDoc(doc(como(ADMIN), "estado/sistema"))).data().publicarPendiente;
+  beforeEach(async () => {
+    await sembrar((db) => setDoc(doc(db, "estado/sistema"), { publicarPendiente: false }));
+  });
+
+  it("aprobar un comentario deja la marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "comentarios/c1"), com(1)));
+    await moderar(como(EDITOR), "c1", "aprobado");
+    expect(await pendiente()).toBe(true);
+  });
+  it("rechazar uno pendiente no cambia la web: sin marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "comentarios/c1"), com(1)));
+    await moderar(como(EDITOR), "c1", "rechazado");
+    expect(await pendiente()).toBe(false);
+  });
+  it("cambiar uno ya aprobado (a spam) sí deja la marca", async () => {
+    await sembrar((db) => setDoc(doc(db, "comentarios/c1"), com(1, { estado: "aprobado" })));
+    await moderar(como(EDITOR), "c1", "spam");
+    expect(await pendiente()).toBe(true);
+  });
+  it("ocultar o mostrar un comentario del archivo deja la marca", async () => {
+    await cambiarOculto(como(EDITOR), "art-1", "10", true);
+    expect(await pendiente()).toBe(true);
+    await sembrar((db) => setDoc(doc(db, "estado/sistema"), { publicarPendiente: false }));
+    await cambiarOculto(como(EDITOR), "art-1", "10", false);
+    expect(await pendiente()).toBe(true);
+  });
+  it("contarPendientes cuenta solo los pendientes, sin leerlos", async () => {
+    await sembrar(async (db) => {
+      for (let i = 0; i < 4; i++) await setDoc(doc(db, "comentarios/c" + i), com(i));
+      await setDoc(doc(db, "comentarios/ya"), com(0, { estado: "aprobado" }));
+    });
+    expect(await contarPendientes(como(EDITOR))).toBe(4);
   });
 });
 

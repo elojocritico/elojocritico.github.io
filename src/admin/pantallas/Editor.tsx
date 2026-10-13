@@ -297,9 +297,9 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
           (estado === "borrador"
             ? "Borrador guardado."
             : estado === "programado"
-              ? `Programado para el ${hasta} (hora de España).`
+              ? `Programado. Saldrá solo en la web el ${hasta} (hora de España).`
               : "Publicado.") +
-          (estado === "borrador" ? "" : " Pulsa «Publicar cambios» en el inicio para que se vea en la web."),
+          (estado === "borrador" || estado === "programado" ? "" : " Pulsa «Publicar cambios» en el inicio para que se vea en la web."),
       });
     } catch (e) {
       const otro = e instanceof ErrorArticulo && e.code === "articulo/conflicto" ? (e.detalle!.actual as Articulo) : null;

@@ -37,6 +37,9 @@ function arbol(base) {
 }
 
 const AHORA = new Date("2024-06-01T12:00:00.000Z");
+// La papelera solo se vacía si el documento lleva más de 30 días SIN TOCAR en el servidor (updateTime): como los documentos de
+// estas pruebas se escriben "ahora" de verdad, las pruebas de vaciado simulan que han pasado 60 días con un reloj en el futuro.
+const FUTURO = new Date(Date.now() + 60 * 86400000);
 const dias = (d, desde = AHORA) => new Date(desde.getTime() + d * 86400000).toISOString();
 const doc = (slug, extra = {}) => ({
   slug, titulo: "Título " + slug, subtitulo: "sub", cuerpoHtml: "<p>Hola " + slug + "</p>", extracto: "ext", portada: null, autor: "Ana",
@@ -128,16 +131,30 @@ describe("artículos", () => {
   });
 
   it("vacía la papelera de más de 30 días (artículo y versiones, en lotes) y deja la reciente", async () => {
-    await poner("vieja", { estado: "papelera", enPapeleraDesde: dias(-31) });
-    await poner("reciente", { estado: "papelera", enPapeleraDesde: dias(-29) });
+    await poner("vieja", { estado: "papelera", enPapeleraDesde: dias(-31, FUTURO) });
+    await poner("reciente", { estado: "papelera", enPapeleraDesde: dias(-29, FUTURO) });
     for (let i = 0; i < 5; i++) await db.doc(`articulos/vieja/versiones/v${i}`).set({ titulo: "v" + i });
     await db.doc("articulos/reciente/versiones/v0").set({ titulo: "v" });
-    const r = await correr();
+    const r = await correr({ ahora: FUTURO });
     expect(r.purgados).toEqual(["vieja"]);
     expect((await db.doc("articulos/vieja").get()).exists).toBe(false);
     expect((await db.collection("articulos/vieja/versiones").get()).size).toBe(0);
     expect((await db.doc("articulos/reciente").get()).exists).toBe(true);
     expect((await db.collection("articulos/reciente/versiones").get()).size).toBe(1);
+  });
+
+  it("papelera: un editor no puede adelantar el vaciado poniendo una fecha antigua; manda la fecha del servidor (updateTime)", async () => {
+    await poner("tramposo", { estado: "papelera", enPapeleraDesde: "2020-01-01T00:00:00.000Z" }); // fecha antigua, pero tocado ahora mismo
+    await db.doc("articulos/tramposo/versiones/v1").set({ titulo: "v" });
+    const ahora = new Date();
+    const r = await correr({ ahora });
+    expect(r.purgados).toEqual([]);
+    expect((await db.doc("articulos/tramposo").get()).exists).toBe(true);
+    expect((await db.doc("borrados/tramposo").get()).exists).toBe(false);
+    expect((await db.collection("articulos/tramposo/versiones").get()).size).toBe(1);
+    // pasados 30 días sin tocarlo, sí se vacía
+    const r2 = await correr({ ahora: FUTURO });
+    expect(r2.purgados).toEqual(["tramposo"]);
   });
 
   it("sanea el HTML: sin <script>, onerror ni javascript:", async () => {
@@ -548,7 +565,7 @@ describe("correcciones de la revisión", () => {
   });
 
   it("papelera: no se borra un artículo que se restauró entre la lectura y el borrado", async () => {
-    await poner("r", { estado: "papelera", enPapeleraDesde: dias(-40) });
+    await poner("r", { estado: "papelera", enPapeleraDesde: dias(-40, FUTURO) });
     let ya = false;
     const dbCarrera = new Proxy(db, {
       get(t, p) {
@@ -565,14 +582,14 @@ describe("correcciones de la revisión", () => {
         return typeof v === "function" ? v.bind(t) : v;
       },
     });
-    await exportar({ db: dbCarrera, dirContenido: dir, dirImagenes: img, ahora: AHORA, log: () => {} });
+    await exportar({ db: dbCarrera, dirContenido: dir, dirImagenes: img, ahora: FUTURO, log: () => {} });
     expect((await db.doc("articulos/r").get()).exists).toBe(true);
   });
 
   it("papelera: al vaciarla se borra el documento y luego sus versiones, y queda lápida", async () => {
-    await poner("v", { estado: "papelera", enPapeleraDesde: dias(-40) });
+    await poner("v", { estado: "papelera", enPapeleraDesde: dias(-40, FUTURO) });
     await db.doc("articulos/v/versiones/1").set({ titulo: "x" });
-    await correr();
+    await correr({ ahora: FUTURO });
     expect((await db.doc("articulos/v").get()).exists).toBe(false);
     expect((await db.collection("articulos/v/versiones").get()).size).toBe(0);
     expect((await db.doc("borrados/v").get()).exists).toBe(true);
@@ -638,6 +655,11 @@ describe("correcciones de la revisión", () => {
   it("slugSeguro rechaza caracteres de Windows y nombres reservados", () => {
     for (const mala of ["a:b", "a<b", "a>b", "a|b", "a?b", "a*b", 'a"b', "CON", "con", "nul.txt", "Aux", "com1", "LPT9", "prn.x"]) expect(slugSeguro(mala), mala).toBe(false);
     for (const buena of ["consola", "com10", "lpt0", "aux-1", "contacto"]) expect(slugSeguro(buena), buena).toBe(true);
+  });
+
+  it("slugSeguro rechaza nombres que empiezan por _ o . y los de los ficheros de la propia web", () => {
+    for (const mala of ["_astro", "_oculto", ".htaccess", ".well-known", "robots.txt", "Robots.txt", "sitemap-index.xml", "sitemap-0.xml", "rss.xml", "favicon.svg", "404", "pagefind"]) expect(slugSeguro(mala), mala).toBe(false);
+    for (const buena of ["robots", "mi-404", "sitemap", "astro", "a_b", "a.b"]) expect(slugSeguro(buena), buena).toBe(true);
   });
 
   it("un publicado que se omite por inválido conserva su fichero de comentarios", async () => {
