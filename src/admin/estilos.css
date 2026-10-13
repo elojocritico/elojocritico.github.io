@@ -50,3 +50,24 @@
 .dialogo { background: var(--fondo-2); border: 1px solid #3a414a; border-radius: 8px; padding: 24px; max-width: 480px; width: 100%; }
 .dialogo h2 { color: var(--texto); font: 700 22px var(--serif); text-transform: none; letter-spacing: 0; }
 .fila-botones { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; justify-content: flex-end; }
+
+/* Mis articulos */
+.fila-izquierda { justify-content: flex-start; margin: 16px 0; }
+.filtros { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; margin: 8px 0 16px; }
+.filtros label, .campo-dialogo { display: grid; gap: 6px; font-weight: 600; color: var(--texto-2); }
+.filtros label:first-child { flex: 1 1 240px; }
+#panel select, .dialogo select {
+  font: 18px var(--sans); padding: 13px 14px; border-radius: 6px; border: 1px solid #3a414a;
+  background: var(--fondo); color: var(--texto); min-height: 52px;
+}
+#panel select:focus-visible, .dialogo select:focus-visible { outline: 3px solid var(--ambar); outline-offset: 2px; }
+.lista-articulos { list-style: none; padding: 0; margin: 16px 0; display: grid; gap: 14px; }
+.articulo { border: 1px solid #3a414a; border-radius: 8px; padding: 16px; background: var(--fondo-2); }
+.articulo h3 { margin: 0 0 6px; font: 700 20px/1.25 var(--serif); color: var(--texto); }
+.meta-articulo { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin: 0 0 12px; font-size: 15px; }
+.etiqueta { font: 600 13px var(--mono); padding: 3px 9px; border-radius: 999px; border: 1px solid #3a414a; color: var(--texto); }
+.etiqueta-publicado { border-color: #2f7d4f; }
+.etiqueta-programado { border-color: #e8b33a; }
+.etiqueta-papelera { border-color: #a33342; }
+.acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+.acciones .boton { min-height: 48px; font-size: 16px; text-decoration: none; }

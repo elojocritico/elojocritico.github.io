@@ -6,6 +6,7 @@ import { Aviso } from "./componentes/Aviso";
 import { Boton } from "./componentes/Boton";
 import { Entrar } from "./pantallas/Entrar";
 import { Inicio } from "./pantallas/Inicio";
+import { Articulos } from "./pantallas/Articulos";
 import { SIN_CONFIGURAR } from "./mensajes";
 
 function Pronto() {
@@ -23,6 +24,7 @@ function Panel() {
   if (sesion.cargando) return <Cargando />;
   if (!sesion.usuario || !sesion.papel) return <Entrar errorInicial={sesion.error} />;
   if (ruta.pantalla === "inicio") return <Inicio usuario={sesion.usuario} papel={sesion.papel} />;
+  if (ruta.pantalla === "articulos") return <Articulos usuario={sesion.usuario} papel={sesion.papel} />;
   return <Pronto />;
 }
 

@@ -31,3 +31,19 @@ export function mensajeDeError(error: unknown): string {
       return "Algo no ha ido bien. Inténtalo de nuevo en un momento.";
   }
 }
+
+/** Errores de las acciones sobre artículos (códigos propios de la capa de datos). */
+export const AVISOS_ARTICULO: Record<string, string> = {
+  "articulo/no-existe": "Este artículo ya no existe. Actualiza la lista.",
+  "articulo/estado": "Este artículo ha cambiado desde que lo abriste. Actualiza la lista y vuelve a intentarlo.",
+  "articulo/solo-admin": "Solo un administrador puede borrar un artículo para siempre.",
+  "articulo/sin-usuario": "No se ha podido saber quién eres. Sal y vuelve a entrar.",
+};
+
+/** Mensaje para cuando un cambio no se ha podido guardar: nunca se da por hecho algo que no lo está. */
+export function mensajeDeCambio(error: unknown): string {
+  const codigo = String((error as { code?: string } | null)?.code ?? "");
+  if (AVISOS_ARTICULO[codigo]) return AVISOS_ARTICULO[codigo];
+  const m = mensajeDeError(error);
+  return m === SIN_CONEXION ? "No hay conexión con el servidor; tus cambios no se han guardado." : m;
+}

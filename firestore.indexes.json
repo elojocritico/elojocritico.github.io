@@ -1,1 +1,13 @@
-{ "indexes": [], "fieldOverrides": [] }
+{
+  "indexes": [
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "actualizadoEn", "order": "DESCENDING" } ] },
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "secciones", "arrayConfig": "CONTAINS" }, { "fieldPath": "actualizadoEn", "order": "DESCENDING" } ] },
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "titulo", "order": "ASCENDING" } ] },
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "secciones", "arrayConfig": "CONTAINS" }, { "fieldPath": "titulo", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}

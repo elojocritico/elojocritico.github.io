@@ -146,12 +146,17 @@ describe("autorizado sin papel de editor/admin", () => {
 });
 
 describe("editor", () => {
-  it("lee y escribe articulos y los borra", async () => {
+  it("lee y escribe articulos", async () => {
     const db = auth(EDITOR);
     await assertSucceeds(getDoc(doc(db, "articulos/a1")));
     await assertSucceeds(setDoc(doc(db, "articulos/a2"), { titulo: "Nuevo" }));
     await assertSucceeds(updateDoc(doc(db, "articulos/a1"), { titulo: "Editado" }));
-    await assertSucceeds(deleteDoc(doc(db, "articulos/a2")));
+  });
+  it("no puede borrar articulos del todo (ni siquiera en la papelera)", async () => {
+    const db = auth(EDITOR);
+    await assertFails(deleteDoc(doc(db, "articulos/a1")));
+    await env.withSecurityRulesDisabled(async (ctx) => { await setDoc(doc(ctx.firestore(), "articulos/p1"), { estado: "papelera" }); });
+    await assertFails(deleteDoc(doc(db, "articulos/p1")));
   });
   it("crea y lee versiones, pero no las modifica ni borra", async () => {
     const db = auth(EDITOR);
@@ -246,5 +251,39 @@ describe("sin ajustes/global (arranque)", () => {
     await env.withSecurityRulesDisabled(async (ctx) => { await deleteDoc(doc(ctx.firestore(), "ajustes/global")); });
     await assertFails(getDoc(doc(auth(ADMIN), "articulos/a1")));
     await assertFails(setDoc(doc(auth(ADMIN), "ajustes/global"), { usuarios: { [ADMIN]: "admin" } }));
+  });
+});
+
+describe("borrado definitivo y indice de titulos", () => {
+  const aPapelera = () => env.withSecurityRulesDisabled(async (ctx) => {
+    await setDoc(doc(ctx.firestore(), "articulos/p1"), { estado: "papelera" });
+    await setDoc(doc(ctx.firestore(), "articulos/p1/versiones/v1"), { titulo: "x" });
+    await setDoc(doc(ctx.firestore(), "indices/titulos"), { a1: "Hola" });
+  });
+  it("el admin borra un articulo de la papelera junto con sus versiones", async () => {
+    await aPapelera();
+    const db = auth(ADMIN);
+    await assertSucceeds(deleteDoc(doc(db, "articulos/p1/versiones/v1")));
+    await assertSucceeds(deleteDoc(doc(db, "articulos/p1")));
+  });
+  it("el admin no borra un articulo que no esta en la papelera, ni sus versiones", async () => {
+    const db = auth(ADMIN);
+    await assertFails(deleteDoc(doc(db, "articulos/a1")));
+    await assertFails(deleteDoc(doc(db, "articulos/a1/versiones/v1")));
+  });
+  it("el editor no borra versiones de un articulo en la papelera", async () => {
+    await aPapelera();
+    await assertFails(deleteDoc(doc(auth(EDITOR), "articulos/p1/versiones/v1")));
+  });
+  it("indices/titulos: lo leen los autorizados; nadie lo escribe desde el cliente", async () => {
+    await aPapelera();
+    await assertSucceeds(getDoc(doc(auth(EDITOR), "indices/titulos")));
+    await assertSucceeds(getDoc(doc(auth(ADMIN), "indices/titulos")));
+    await assertFails(getDoc(doc(anon(), "indices/titulos")));
+    await assertFails(getDoc(doc(auth(SINPAPEL), "indices/titulos")));
+    await assertFails(getDoc(doc(auth(FUERA), "indices/titulos")));
+    await assertFails(setDoc(doc(auth(ADMIN), "indices/titulos"), { x: "y" }));
+    await assertFails(updateDoc(doc(auth(EDITOR), "indices/titulos"), { x: "y" }));
+    await assertFails(deleteDoc(doc(auth(ADMIN), "indices/titulos")));
   });
 });

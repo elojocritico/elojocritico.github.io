@@ -19,13 +19,23 @@ service cloud.firestore {
     function esAdmin() { return autorizado() && papel() == 'admin'; }
     function esEditor() { return autorizado() && (papel() == 'editor' || papel() == 'admin'); }
 
-    // Articulos: solo editores y admins; las versiones son solo de alta.
+    // Articulos: editores y admins leen y escriben; borrar del todo solo lo hace un admin y solo desde la papelera.
+    // Las versiones son solo de alta; unicamente un admin las borra, junto con su articulo ya en la papelera.
     match /articulos/{id} {
-      allow read, write: if esEditor();
+      allow read, create, update: if esEditor();
+      allow delete: if esAdmin() && resource.data.get('estado', '') == 'papelera';
       match /versiones/{v} {
         allow create, read: if esEditor();
-        allow update, delete: if false;
+        allow update: if false;
+        allow delete: if esAdmin()
+          && get(/databases/$(database)/documents/articulos/$(id)).data.get('estado', '') == 'papelera';
       }
+    }
+
+    // Indice ligero de titulos para buscar: lo escribe el exportador (servidor), nunca un cliente.
+    match /indices/{nombre} {
+      allow read: if esEditor();
+      allow write: if false;
     }
 
     // Comentarios: el publico solo crea comentarios pendientes y validados.
