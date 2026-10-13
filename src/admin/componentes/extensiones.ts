@@ -92,6 +92,16 @@ export const PieDeFoto = Node.create({
 export const ImagenPerdida = Mark.create({
   name: "imagenPerdida",
   inclusive: false,
+  // data-original: nombre de la foto original (/wp-content/uploads/...). Se conserva al abrir y guardar; la interfaz para usarlo llega después.
+  addAttributes() {
+    return {
+      original: {
+        default: null,
+        parseHTML: (el: HTMLElement) => el.getAttribute("data-original"),
+        renderHTML: (a: Record<string, unknown>) => (a.original ? { "data-original": a.original } : {}),
+      },
+    };
+  },
   parseHTML: () => [{ tag: "span.img-perdida" }],
   renderHTML: ({ HTMLAttributes }) => ["span", mergeAttributes(HTMLAttributes, { class: "img-perdida" }), 0],
 });

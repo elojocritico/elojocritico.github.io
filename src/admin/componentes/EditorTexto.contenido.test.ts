@@ -54,3 +54,15 @@ describe("el editor no se come el contenido migrado", () => {
     expect(porElEditor('<p>a</p><iframe src="https://malo.example/x"></iframe>')).not.toContain("iframe");
   });
 });
+
+describe("el editor conserva el nombre de la foto perdida (data-original)", () => {
+  const html = '<p>Antes <span class="img-perdida" data-original="/wp-content/uploads/2014/12/foto-300x200.jpg">Imagen no recuperada</span> después</p>';
+  it("al abrir y sacar el HTML sigue en la marca", () => {
+    expect(sanear(porElEditor(html))).toBe(sanear(html));
+    expect(sanear(porElEditor(html))).toContain('data-original="/wp-content/uploads/2014/12/foto-300x200.jpg"');
+  });
+  it("una marca sin nombre sigue igual que antes", () => {
+    const vieja = '<p><span class="img-perdida">Imagen no recuperada</span></p>';
+    expect(sanear(porElEditor(vieja))).toBe(vieja);
+  });
+});

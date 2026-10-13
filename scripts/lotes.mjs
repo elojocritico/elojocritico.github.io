@@ -22,6 +22,16 @@ export function crearEscritor(db, { maxOps = 400, maxBytes = 2_000_000 } = {}) {
     bytes += peso;
     e.escrituras++;
   };
+  // Como set, pero para cambiar campos de un documento que ya existe; `precondicion` ({ lastUpdateTime }) hace fallar el lote si alguien lo tocó mientras tanto.
+  e.update = async (ref, datos, precondicion) => {
+    const peso = JSON.stringify(datos).length;
+    if (ops && (ops >= maxOps || bytes + peso > maxBytes)) await vaciar();
+    if (precondicion) lote.update(ref, datos, precondicion);
+    else lote.update(ref, datos);
+    ops++;
+    bytes += peso;
+    e.escrituras++;
+  };
   e.vaciar = vaciar;
   return e;
 }

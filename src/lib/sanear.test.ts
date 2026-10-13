@@ -136,3 +136,30 @@ describe("sanear: rendimiento con etiquetas repetidas", () => {
     expect(sanear("<p><br/><br /><br></p><p>ok</p>")).toBe("<p>ok</p>");
   });
 });
+
+describe("sanear: data-original de las fotos perdidas", () => {
+  const ok = "/wp-content/uploads/2014/12/foto-300x200.jpg";
+  it("conserva data-original en span.img-perdida con una ruta /wp-content/... y es idempotente", () => {
+    const html = `<p><span class="img-perdida" data-original="${ok}">Imagen no recuperada</span></p>`;
+    expect(sanear(html)).toBe(html);
+    expect(sanear(sanear(html))).toBe(html);
+    expect(sanear(`<p><span data-original="${ok}" class="img-perdida">x</span></p>`)).toBe(html.replace("Imagen no recuperada", "x"));
+  });
+  it("lo quita si la ruta no es válida (esquema, otra carpeta, .., espacios, comillas, vacío)", () => {
+    for (const mala of [
+      "https://elojocritico.info/wp-content/uploads/a.jpg", "//evil.example/wp-content/a.jpg", "javascript:alert(1)", "data:text/html,x",
+      "/otra/carpeta/a.jpg", "wp-content/uploads/a.jpg", "/wp-content/../etc/passwd", "/wp-content/uploads/%2e%2e/a.jpg",
+      "/wp-content/uploads/a b.jpg", "/wp-content/", "", "/wp-content/uploads\\a.jpg",
+    ]) {
+      expect(sanear(`<p><span class="img-perdida" data-original="${mala}">Imagen no recuperada</span></p>`), mala)
+        .toBe('<p><span class="img-perdida">Imagen no recuperada</span></p>');
+    }
+    expect(sanear(`<p><span class="img-perdida" data-original='/wp-content/a"onmouseover="x'>t</span></p>`)).toBe('<p><span class="img-perdida">t</span></p>');
+  });
+  it("solo vale en span.img-perdida: en otros span, enlaces, imágenes o párrafos se descarta", () => {
+    expect(sanear(`<p><span data-original="${ok}">texto</span></p>`)).toBe("<p>texto</p>");
+    expect(sanear(`<p data-original="${ok}">a</p>`)).toBe("<p>a</p>");
+    expect(sanear(`<p><a href="/x/" data-original="${ok}">a</a></p>`)).toBe('<p><a href="/x/">a</a></p>');
+    expect(sanear(`<p><img src="/a.jpg" data-original="${ok}"></p>`)).toBe('<p><img loading="lazy" src="/a.jpg" /></p>');
+  });
+});

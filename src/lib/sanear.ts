@@ -9,7 +9,7 @@ const ETIQUETAS = [
 ];
 const ATRIBUTOS: Record<string, string[]> = {
   a: ["href", "title", "class"],
-  span: ["class"],
+  span: ["class", "data-original"],
   img: ["src", "alt", "width", "height", "class", "loading"],
   figure: ["class"],
   iframe: ["src", "width", "height", "allowfullscreen", "loading"],
@@ -27,6 +27,19 @@ export function urlSegura(valor: string | undefined): boolean {
   if (!valor) return false;
   const v = valor.replace(CONTROL, "").toLowerCase();
   return v.startsWith("http:") || v.startsWith("https:") || v.startsWith("mailto:") || v.startsWith("/") || v.startsWith("#") || !v.includes(":");
+}
+
+/** Ruta original de una foto perdida (data-original): relativa a /wp-content/, sin esquema, sin espacios ni «..». */
+const RUTA_ORIGINAL = /^\/wp-content\/[^\s"'<>]+$/;
+// eslint-disable-next-line no-control-regex
+const CONTROL_RUTA = /[\x00-\x1f\x7f\\]/;
+export function rutaOriginalValida(valor: string | undefined | null): boolean {
+  if (typeof valor !== "string" || !RUTA_ORIGINAL.test(valor) || CONTROL_RUTA.test(valor) || valor.includes("..")) return false;
+  try {
+    return !decodeURIComponent(valor).includes(".."); // tampoco «%2e%2e»
+  } catch {
+    return false;
+  }
 }
 
 /** Etiqueta inventada que no está permitida: sanitize-html la quita y deja su texto. */
@@ -62,6 +75,8 @@ function transformar(tagName: string, attribs: Atributos) {
     if (clases.includes("img-perdida")) a.class = "img-perdida";
     else nombre = QUITAR; // un span suelto no se publica, pero se conserva su texto
   }
+  // data-original solo en span.img-perdida y solo con una ruta /wp-content/... válida; en cualquier otro sitio se descarta.
+  if (!(nombre === "span" && clases.includes("img-perdida") && rutaOriginalValida(a["data-original"]))) delete a["data-original"];
   if (nombre === "a" && !urlSegura(a.href)) nombre = QUITAR;
   if (nombre === "img") {
     if (!urlSegura(a.src)) a = {}; // sin dirección válida: se descarta en el filtro de abajo
