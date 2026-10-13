@@ -1,0 +1,11 @@
+name = "eoc-publicar"
+main = "index.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+# Proyecto de Firebase (público). El token debe tener aud = este id e iss = https://securetoken.google.com/<id>.
+FIREBASE_PROJECT_ID = "elojocritico-87f48"
+# Repositorio de la web (público) al que se lanza repository_dispatch.
+GITHUB_REPO = "elojocritico/elojocritico.github.io"
+
+# Secreto (NO va en este archivo): npx wrangler secret put GITHUB_TOKEN_PUBLICAR

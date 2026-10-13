@@ -39,6 +39,8 @@ type Opciones = {
   /** PUBLIC_URL_PUBLICAR; si falta o no es segura, solo se deja la marca y se publica en la siguiente ronda automática. */
   url: string | undefined;
   obtenerToken: () => Promise<string>;
+  /** Token de App Check (mejor esfuerzo): si devuelve algo, se envía en X-Firebase-AppCheck para que el Worker lo reenvíe a Firestore. */
+  obtenerAppCheck?: () => Promise<string | null | undefined>;
   fetchFn?: typeof fetch;
   tiempoMs?: number;
 };
@@ -59,7 +61,7 @@ export function urlPublicarSegura(url: string | undefined): url is string {
  * Después, si hay dirección segura, la avisa con el token del usuario (10 s como máximo, contando también el pedir el token):
  * `rapido: true` si respondió bien. Un fallo al avisar no es un error: la marca ya está puesta y se publicará en la siguiente ronda.
  */
-export async function publicarCambios(db: Firestore, { url, obtenerToken, fetchFn, tiempoMs = TIEMPO_ESPERA_MS }: Opciones): Promise<Resultado> {
+export async function publicarCambios(db: Firestore, { url, obtenerToken, obtenerAppCheck, fetchFn, tiempoMs = TIEMPO_ESPERA_MS }: Opciones): Promise<Resultado> {
   await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true, publicarPendienteEn: new Date().toISOString() });
   if (!urlPublicarSegura(url)) return { rapido: false };
   const control = new AbortController();
@@ -73,9 +75,12 @@ export async function publicarCambios(db: Firestore, { url, obtenerToken, fetchF
   limite.catch(() => {}); // evita el aviso de rechazo sin atender cuando todo va bien
   try {
     const token = await Promise.race([obtenerToken(), limite]);
+    const appCheck = obtenerAppCheck ? await Promise.race([obtenerAppCheck().catch(() => null), limite]) : null;
+    const cabeceras: Record<string, string> = { Authorization: `Bearer ${token}` };
+    if (appCheck) cabeceras["X-Firebase-AppCheck"] = appCheck;
     const llamar = fetchFn ?? fetch;
     const r = await Promise.race([
-      llamar(url, { method: "POST", headers: { Authorization: `Bearer ${token}` }, signal: control.signal, redirect: "error" }),
+      llamar(url, { method: "POST", headers: cabeceras, signal: control.signal, redirect: "error" }),
       limite,
     ]);
     return { rapido: r.ok === true };

@@ -10,8 +10,8 @@ export default defineConfig({
         test: {
           name: "nodo",
           environment: "node",
-          include: ["src/**/*.test.ts", "scripts/**/*.test.mjs"],
-          exclude: ["src/admin/**", "node_modules/**"],
+          include: ["src/**/*.test.ts", "scripts/**/*.test.mjs", "worker/**/*.test.js"],
+          exclude: ["src/admin/**", "node_modules/**", "worker/node_modules/**"],
         },
       },
       {

@@ -64,7 +64,7 @@ describe("Publicar cambios", () => {
     render(<Publicar usuario={usuario} />);
     await userEvent.click(await screen.findByRole("button", { name: "Publicar cambios ahora" }));
     expect(await screen.findByText(MSG_RAPIDO)).toBeInTheDocument();
-    expect(d.publicarCambios).toHaveBeenCalledWith(BD, expect.objectContaining({ url: "https://publicar.test/x" }));
+    expect(d.publicarCambios).toHaveBeenCalledWith(BD, expect.objectContaining({ url: "https://publicar.test/x", obtenerAppCheck: expect.any(Function) }));
   });
 
   it("con dirección pero fallo al avisar: «Se publicará en menos de 1 hora»", async () => {

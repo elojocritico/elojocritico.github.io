@@ -6,6 +6,7 @@ import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
 import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
+import { tokenAppCheck } from "../appcheckToken";
 import { contarCambios, publicarCambios, type Cuenta } from "../datos/publicar";
 import { mensajeDeCambio } from "../mensajes";
 import { irA } from "../ruta";
@@ -52,7 +53,7 @@ export function Publicar({ usuario }: { usuario: User }) {
     setMensaje(null);
     try {
       const url = (import.meta.env.PUBLIC_URL_PUBLICAR as string | undefined)?.trim() || undefined;
-      const r = await publicarCambios(db, { url, obtenerToken: () => usuario.getIdToken() });
+      const r = await publicarCambios(db, { url, obtenerToken: () => usuario.getIdToken(), obtenerAppCheck: tokenAppCheck });
       setMensaje({ tipo: "ok", texto: r.rapido ? MSG_RAPIDO : MSG_LENTO });
       setCuenta((c) => (c ? { ...c, pendiente: true } : c));
     } catch (e) {

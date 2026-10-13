@@ -1,0 +1,18 @@
+{
+  "name": "eoc-publicar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Worker de Cloudflare: verifica al usuario del panel y lanza la publicación en GitHub.",
+  "scripts": {
+    "test": "vitest run --root .. --project nodo worker/",
+    "dev": "wrangler dev",
+    "desplegar": "wrangler deploy"
+  },
+  "dependencies": {
+    "jose": "^5.10.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.114.0"
+  }
+}
