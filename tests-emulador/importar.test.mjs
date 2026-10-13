@@ -105,6 +105,25 @@ describe("importar como comando: protección del proyecto real", () => {
   });
 });
 
+describe("simulador a medias", () => {
+  const soloFirestore = () => {
+    const env = { ...process.env };
+    delete env.FIREBASE_AUTH_EMULATOR_HOST;
+    return env;
+  };
+  it("crear-admin con solo FIRESTORE_EMULATOR_HOST se niega y no escribe", async () => {
+    const r = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "mezcla@ejemplo.es", "clave-segura-1"], { encoding: "utf-8", env: soloFirestore() });
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain("Configuración mezclada");
+    expect((await db.doc("ajustes/global").get()).exists).toBe(false);
+  });
+  it("importar con solo FIRESTORE_EMULATOR_HOST funciona", async () => {
+    const r = spawnSync(process.execPath, ["scripts/importar.mjs", dir], { encoding: "utf-8", env: soloFirestore() });
+    expect(r.status, r.stderr).toBe(0);
+    expect((await db.collection("articulos").get()).size).toBe(3);
+  });
+});
+
 describe("resolverDestino", () => {
   it("anuncia el proyecto real solo con --real y credenciales", () => {
     const d = resolverDestino(["x", "--real"], { GOOGLE_APPLICATION_CREDENTIALS: "k.json", GCLOUD_PROJECT: "eoc" });

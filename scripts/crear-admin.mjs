@@ -67,7 +67,7 @@ export async function crearAdmin({ correo, contrasena, auth = getAuth(), db = ge
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   let destino;
   try {
-    destino = resolverDestino();
+    destino = resolverDestino(process.argv.slice(2), process.env, ["firestore", "auth"]);
   } catch (e) {
     console.error("✗", e.message);
     process.exit(1);
