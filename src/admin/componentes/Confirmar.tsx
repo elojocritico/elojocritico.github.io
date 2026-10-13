@@ -7,6 +7,8 @@ type Props = {
   textoSi?: string;
   textoNo?: string;
   peligro?: boolean;
+  /** Mientras la acción está en marcha, el botón de confirmar no se puede volver a pulsar. */
+  ocupado?: boolean;
   alConfirmar: () => void;
   alCancelar: () => void;
 };
@@ -17,7 +19,7 @@ const ENFOCABLES = 'a[href], button:not(:disabled), input:not(:disabled), select
  * Ventana de confirmacion para cualquier accion que no se pueda deshacer.
  * Mantiene el foco dentro mientras esta abierta, se cierra con Escape y devuelve el foco a donde estaba.
  */
-export function Confirmar({ titulo, children, textoSi = "Sí, continuar", textoNo = "No, cancelar", peligro, alConfirmar, alCancelar }: Props) {
+export function Confirmar({ titulo, children, textoSi = "Sí, continuar", textoNo = "No, cancelar", peligro, ocupado, alConfirmar, alCancelar }: Props) {
   const dialogo = useRef<HTMLDivElement>(null);
   const contenido = useRef<HTMLDivElement>(null);
   const botonNo = useRef<HTMLButtonElement>(null);
@@ -61,7 +63,7 @@ export function Confirmar({ titulo, children, textoSi = "Sí, continuar", textoN
           <Boton ref={botonNo} variante="secundario" onClick={alCancelar}>
             {textoNo}
           </Boton>
-          <Boton variante={peligro ? "peligro" : "principal"} onClick={alConfirmar}>
+          <Boton variante={peligro ? "peligro" : "principal"} disabled={ocupado} onClick={alConfirmar}>
             {textoSi}
           </Boton>
         </div>

@@ -7,6 +7,7 @@ import { Boton } from "./componentes/Boton";
 import { Entrar } from "./pantallas/Entrar";
 import { Inicio } from "./pantallas/Inicio";
 import { Articulos } from "./pantallas/Articulos";
+import { Editor } from "./pantallas/Editor";
 import { SIN_CONFIGURAR } from "./mensajes";
 
 function Pronto() {
@@ -25,6 +26,8 @@ function Panel() {
   if (!sesion.usuario || !sesion.papel) return <Entrar errorInicial={sesion.error} />;
   if (ruta.pantalla === "inicio") return <Inicio usuario={sesion.usuario} papel={sesion.papel} />;
   if (ruta.pantalla === "articulos") return <Articulos usuario={sesion.usuario} papel={sesion.papel} />;
+  if (ruta.pantalla === "nuevo") return <Editor key="nuevo" usuario={sesion.usuario} />;
+  if (ruta.pantalla === "editar" && ruta.id) return <Editor key={ruta.id} usuario={sesion.usuario} id={ruta.id} />;
   return <Pronto />;
 }
 

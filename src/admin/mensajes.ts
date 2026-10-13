@@ -24,6 +24,10 @@ export function mensajeDeError(error: unknown): string {
     case "auth/network-request-failed":
     case "unavailable":
       return SIN_CONEXION;
+    case "resource-exhausted":
+      return "El servidor ha llegado hoy a su límite de uso. Tus cambios no se han guardado; prueba más tarde o avisa a quien administra la web.";
+    case "invalid-argument":
+      return "No se ha podido guardar: el artículo es demasiado grande (¿demasiadas fotos pegadas dentro del texto?).";
     case "permission-denied":
     case "auth/unauthorized-user":
       return SIN_PERMISO;
@@ -38,6 +42,8 @@ export const AVISOS_ARTICULO: Record<string, string> = {
   "articulo/estado": "Este artículo ha cambiado desde que lo abriste. Actualiza la lista y vuelve a intentarlo.",
   "articulo/solo-admin": "Solo un administrador puede borrar un artículo para siempre.",
   "articulo/sin-usuario": "No se ha podido saber quién eres. Sal y vuelve a entrar.",
+  "articulo/sin-titulo": "Escribe un título para poder guardar.",
+  "articulo/direccion-ocupada": "Ya existe un artículo con esa dirección. Cambia la dirección de la página.",
 };
 
 /** Mensaje para cuando un cambio no se ha podido guardar: nunca se da por hecho algo que no lo está. */

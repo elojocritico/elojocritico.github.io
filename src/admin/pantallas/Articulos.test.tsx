@@ -101,6 +101,33 @@ describe("Articulos", () => {
     await waitFor(() => expect(d.listarArticulos).toHaveBeenCalledTimes(2)); // se vuelve a pedir la lista
   });
 
+  it("un doble clic en confirmar lanza la acción una sola vez y el botón queda desactivado mientras tanto", async () => {
+    let acabar!: () => void;
+    d.enviarAPapelera.mockReturnValue(new Promise<void>((ok) => (acabar = ok)));
+    render(<Articulos usuario={usuario} papel="editor" />);
+    await screen.findByRole("heading", { name: "Título a" });
+    await userEvent.click(within(fila("Título a")).getByRole("button", { name: "Enviar a la papelera" }));
+    const si = screen.getByRole("button", { name: "Sí, enviar a la papelera" });
+    await userEvent.dblClick(si);
+    expect(d.enviarAPapelera).toHaveBeenCalledTimes(1);
+    expect(si).toBeDisabled();
+    acabar();
+    expect(await screen.findByText(/está en la papelera/)).toBeInTheDocument();
+    expect(d.enviarAPapelera).toHaveBeenCalledTimes(1);
+  });
+
+  it("un doble clic en Restaurar tampoco lo repite", async () => {
+    d.listarArticulos.mockResolvedValue(pagina([res("p", { estado: "papelera" })]));
+    let acabar!: () => void;
+    d.restaurar.mockReturnValue(new Promise<void>((ok) => (acabar = ok)));
+    render(<Articulos usuario={usuario} papel="editor" />);
+    await userEvent.selectOptions(await screen.findByLabelText("Estado"), "papelera");
+    await userEvent.dblClick(await screen.findByRole("button", { name: "Restaurar" }));
+    expect(d.restaurar).toHaveBeenCalledTimes(1);
+    acabar();
+    await screen.findByText(/se ha recuperado/);
+  });
+
   it("despublicar pide confirmacion", async () => {
     render(<Articulos usuario={usuario} papel="editor" />);
     await screen.findByRole("heading", { name: "Título a" });

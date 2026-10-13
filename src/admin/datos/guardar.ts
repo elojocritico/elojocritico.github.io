@@ -38,6 +38,14 @@ export function aArticulo(d: Record<string, unknown>, id: string): Articulo {
   };
 }
 
+/** Solo los campos que se editan (sin estado, fechas ni autoría). */
+export function camposDe(a: Campos): Campos {
+  return {
+    titulo: a.titulo, subtitulo: a.subtitulo, cuerpoHtml: a.cuerpoHtml, extracto: a.extracto, portada: a.portada,
+    autor: a.autor, secciones: a.secciones, etiquetas: a.etiquetas, destacado: a.destacado,
+  };
+}
+
 export async function cargarArticulo(db: Firestore, id: string): Promise<Articulo | null> {
   const s = await getDoc(doc(db, "articulos", id));
   return s.exists() ? aArticulo(s.data(), id) : null;

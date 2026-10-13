@@ -42,6 +42,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
   const [ocupado, setOcupado] = useState(false);
   const [version, setVersion] = useState(0); // sube para volver a pedir la lista
   const peticion = useRef(0);
+  const enCurso = useRef(false); // evita que un doble clic lance la misma acción dos veces antes de que React repinte
 
   const filtros: Filtros = { estado, seccion, texto };
 
@@ -83,7 +84,8 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
   };
 
   async function ejecutar(a: Accion) {
-    if (!db || ocupado) return;
+    if (!db || enCurso.current) return;
+    enCurso.current = true;
     setOcupado(true);
     setError(null);
     setOk(null);
@@ -107,12 +109,14 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
       setAccion(null);
       setError(mensajeDeCambio(e));
     } finally {
+      enCurso.current = false;
       setOcupado(false);
     }
   }
 
   async function alRestaurar(a: Resumen) {
-    if (!db) return;
+    if (!db || enCurso.current) return;
+    enCurso.current = true;
     setOcupado(true);
     setError(null);
     setOk(null);
@@ -123,6 +127,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
     } catch (e) {
       setError(mensajeDeCambio(e));
     } finally {
+      enCurso.current = false;
       setOcupado(false);
     }
   }
@@ -257,6 +262,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
         <Confirmar
           titulo="¿Quitar de la web?"
           textoSi="Sí, despublicar"
+          ocupado={ocupado}
           alCancelar={() => setAccion(null)}
           alConfirmar={() => ejecutar(accion)}
         >
@@ -267,6 +273,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
         <Confirmar
           titulo="¿Enviar a la papelera?"
           textoSi="Sí, enviar a la papelera"
+          ocupado={ocupado}
           alCancelar={() => setAccion(null)}
           alConfirmar={() => ejecutar(accion)}
         >
@@ -277,6 +284,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
         <Confirmar
           titulo="Mover a otra sección"
           textoSi="Mover"
+          ocupado={ocupado}
           alCancelar={() => setAccion(null)}
           alConfirmar={() => ejecutar(accion)}
         >
@@ -298,6 +306,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
           titulo="¿Borrar para siempre?"
           textoSi="Sí, borrar para siempre"
           peligro
+          ocupado={ocupado}
           alCancelar={() => setAccion(null)}
           alConfirmar={() => ejecutar(accion)}
         >
