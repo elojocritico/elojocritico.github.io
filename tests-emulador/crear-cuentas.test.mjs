@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { spawnSync } from "node:child_process";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
-import { crearCuentas } from "../scripts/crear-cuentas.mjs";
+import { crearCuentas, ocultarCorreo } from "../scripts/crear-cuentas.mjs";
 import { iniciarAdmin } from "../scripts/crear-admin.mjs";
 
 iniciarAdmin();
@@ -72,11 +72,37 @@ describe("crear-cuentas (simulador)", () => {
     expect(await existe("otra@ejemplo.es")).toBe(false);
   });
 
+  it("ocultarCorreo no deja ver el correo entero", () => {
+    expect(ocultarCorreo("nueva@ejemplo.es")).toBe("n***@e***.es");
+    expect(ocultarCorreo("a.b@mail.co.uk")).toBe("a***@m***.uk");
+  });
+
+  it("ningún registro (ni de errores) contiene un correo completo", async () => {
+    await pedir("nueva@ejemplo.es");
+    await pedir("otra@ejemplo.es");
+    await pedir("intruso@ejemplo.es");
+    await auth.createUser({ email: "jefe@ejemplo.es" });
+    await pedir("jefe@ejemplo.es");
+    const authRoto = {
+      getUserByEmail: (c) => auth.getUserByEmail(c),
+      createUser: (d) => Promise.reject(Object.assign(new Error("fallo con " + d.email), { code: "auth/internal-error" })),
+    };
+    const salida = [];
+    const antes = console.error;
+    console.error = (...a) => salida.push(a.join(" "));
+    try { await crearCuentas({ auth: authRoto, log: (m) => salida.push(m) }); } finally { console.error = antes; }
+    const texto = salida.join(" | ");
+    expect(salida.length).toBeGreaterThanOrEqual(4);
+    expect(texto).not.toMatch(/ejemplo.es/);
+    expect(texto).toContain("auth/internal-error");
+  });
+
   it("como comando: crea la cuenta, sale con 0 y termina solo", async () => {
     await pedir("nueva@ejemplo.es");
     const r = spawnSync(process.execPath, ["scripts/crear-cuentas.mjs"], { encoding: "utf-8", env: process.env, timeout: 30000 });
     expect(r.status, r.stderr).toBe(0);
-    expect(r.stdout).toContain("nueva@ejemplo.es: cuenta creada");
+    expect(r.stdout).toContain("n***@e***.es: cuenta creada");
+    expect(r.stdout + r.stderr).not.toContain("nueva@ejemplo.es");
     expect(r.stdout).toContain("1 creadas");
     expect((await auth.getUserByEmail("nueva@ejemplo.es")).emailVerified).toBe(false);
   });

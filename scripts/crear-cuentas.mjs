@@ -15,6 +15,15 @@ import { fileURLToPath } from "node:url";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
 
+/** Oculta un correo para los registros (los de GitHub Actions son públicos): n***@e***.es */
+export function ocultarCorreo(correo) {
+  const [local = "", dominio = ""] = String(correo).split("@");
+  const punto = dominio.lastIndexOf(".");
+  const nombre = punto > 0 ? dominio.slice(0, punto) : dominio;
+  const final = punto > 0 ? dominio.slice(punto) : "";
+  return `${local.slice(0, 1)}***@${nombre.slice(0, 1)}***${final}`;
+}
+
 /** Devuelve { creadas, existentes, sinPapel, fallidas: [{ correo, motivo }] }. Nunca registra contraseñas. */
 export async function crearCuentas({ auth = getAuth(), db = getFirestore(), log = console.log } = {}) {
   const r = { creadas: [], existentes: [], sinPapel: [], fallidas: [] };
@@ -30,11 +39,12 @@ export async function crearCuentas({ auth = getAuth(), db = getFirestore(), log 
 
   for (const s of solicitudes.docs) {
     const correo = s.id.trim().toLowerCase();
+    const oculto = ocultarCorreo(correo);
     try {
       if (!conPapel.has(correo)) {
         await s.ref.delete();
         r.sinPapel.push(correo);
-        log(`- ${correo}: ya no tiene papel en la lista de usuarios; solicitud borrada, no se crea cuenta.`);
+        log(`- ${oculto}: ya no tiene papel en la lista de usuarios; solicitud borrada, no se crea cuenta.`);
         continue;
       }
       let existia = true;
@@ -55,15 +65,16 @@ export async function crearCuentas({ auth = getAuth(), db = getFirestore(), log 
       await s.ref.delete(); // solo cuando la cuenta ya existe
       if (existia) {
         r.existentes.push(correo);
-        log(`- ${correo}: la cuenta ya existía; solicitud borrada.`);
+        log(`- ${oculto}: la cuenta ya existía; solicitud borrada.`);
       } else {
         r.creadas.push(correo);
-        log(`✓ ${correo}: cuenta creada.`);
+        log(`✓ ${oculto}: cuenta creada.`);
       }
     } catch (e) {
-      const motivo = e?.code ?? e?.message ?? String(e);
+      // Solo el código: el mensaje de firebase-admin puede repetir el correo.
+      const motivo = typeof e?.code === "string" ? e.code : "error";
       r.fallidas.push({ correo, motivo });
-      console.error(`✗ ${correo}: no se ha podido atender la solicitud (${motivo}).`);
+      console.error(`✗ ${oculto}: no se ha podido atender la solicitud (${motivo}).`);
     }
   }
   return r;
@@ -78,7 +89,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`Resumen: ${r.creadas.length} creadas, ${r.existentes.length} ya existían, ${r.sinPapel.length} sin papel, ${r.fallidas.length} con error.`);
     if (r.fallidas.length) process.exitCode = 1;
   } catch (e) {
-    console.error("✗ No se han podido crear las cuentas:", e?.message ?? e);
+    console.error("✗ No se han podido crear las cuentas:", typeof e?.code === "string" ? e.code : "error");
     process.exitCode = 1;
   } finally {
     try { await deleteApp(getApp()); } catch {}
