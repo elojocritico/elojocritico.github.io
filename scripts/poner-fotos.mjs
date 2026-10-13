@@ -72,8 +72,7 @@ export async function ponerFotos({ db = getFirestore(), cambios, usuario = USUAR
     // <img> iguales, está hecho (así una segunda pasada no vuelve a cambiar la marca repetida que quedara).
     const grupos = new Map();
     for (const c of porSlug.get(slug)) {
-      const k = c.buscar + "
-" + c.poner;
+      const k = c.buscar + "\n" + c.poner;
       if (!grupos.has(k)) grupos.set(k, { c, k: 0 });
       grupos.get(k).k++;
     }
