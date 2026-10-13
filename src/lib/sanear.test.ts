@@ -108,3 +108,15 @@ describe("sanear: contenido real migrado", () => {
     expect(sanear('<p><a class="roto archivado x" href="http://a.es" title="Enlace caído">e</a></p>')).toBe('<p><a class="roto" href="http://a.es" title="Enlace caído">e</a></p>');
   });
 });
+
+describe("sanear: rendimiento", () => {
+  it("un párrafo con muchísimos espacios duros y sin cerrar no cuelga el saneado (backtracking)", () => {
+    const html = "<p>" + " ".repeat(80) + " " + " ".repeat(80) + "<b>texto</b> y más";
+    const t = Date.now();
+    expect(sanear(html)).toContain("texto");
+    expect(Date.now() - t).toBeLessThan(1000);
+  }, 5000);
+  it("sigue quitando párrafos vacíos con espacios duros", () => {
+    expect(sanear("<p>  &nbsp;<br></p><p>ok</p>")).toBe("<p>ok</p>");
+  });
+});
