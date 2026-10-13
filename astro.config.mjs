@@ -1,5 +1,6 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import react from "@astrojs/react";
 import { readFileSync, existsSync } from "node:fs";
 
 const fichero = "./contenido/redirecciones.json";
@@ -12,5 +13,6 @@ export default defineConfig({
   trailingSlash: "always",
   build: { format: "directory" },
   redirects,
-  integrations: [sitemap()],
+  // El panel (/admin/) no entra en el mapa del sitio; React solo se carga alli (client:only).
+  integrations: [sitemap({ filter: (pagina) => !new URL(pagina).pathname.startsWith("/admin/") }), react()],
 });
