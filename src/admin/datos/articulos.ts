@@ -2,7 +2,7 @@
 // Todas las fechas que guarda son texto ISO (new Date().toISOString()), igual que el importador.
 import {
   collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction, startAfter, startAt, endAt, where, writeBatch,
-  type DocumentSnapshot, type Firestore, type QueryConstraint, type QuerySnapshot,
+  type DocumentSnapshot, type Firestore, type QueryConstraint, type QuerySnapshot, type Transaction,
 } from "firebase/firestore";
 import type { Papel } from "../sesion";
 
@@ -35,7 +35,13 @@ export type Pagina = {
 };
 
 export class ErrorArticulo extends Error {
-  constructor(public code: "articulo/no-existe" | "articulo/estado" | "articulo/solo-admin" | "articulo/sin-usuario") {
+  constructor(
+    public code:
+      | "articulo/no-existe" | "articulo/estado" | "articulo/solo-admin" | "articulo/sin-usuario"
+      | "articulo/conflicto" | "articulo/direccion-ocupada" | "articulo/sin-titulo",
+    /** Datos útiles para quien captura el error (p. ej. el artículo como está ahora, en un conflicto). */
+    public detalle?: Record<string, unknown>,
+  ) {
     super(code);
   }
 }
@@ -125,18 +131,28 @@ async function buscarEnIndice(db: Firestore, indice: Record<string, string>, tex
 // ---------------------------------------------------------------------------------------------------------------
 // Acciones. Todas guardan primero una versión (copia de lo anterior) y marcan quién y cuándo, dentro de una transacción.
 
-async function cambiar(db: Firestore, id: string, usuario: string, calcular: (actual: Record<string, unknown>) => Record<string, unknown>) {
+/** El correo de quien guarda: nunca vacío ni el valor reservado del importador. */
+export function validarUsuario(usuario: string): string {
   const quien = (usuario ?? "").trim();
   if (!quien || quien === RESERVADO) throw new ErrorArticulo("articulo/sin-usuario");
+  return quien;
+}
+
+/** Guarda, dentro de la transacción, una copia del artículo tal como estaba (para poder volver a ella). */
+export function escribirVersion(tx: Transaction, db: Firestore, id: string, actual: Record<string, unknown>, ahora: string, quien: string) {
+  tx.set(doc(collection(db, "articulos", id, "versiones")), { ...actual, guardadoEn: ahora, guardadoPor: quien });
+}
+
+async function cambiar(db: Firestore, id: string, usuario: string, calcular: (actual: Record<string, unknown>) => Record<string, unknown>) {
+  const quien = validarUsuario(usuario);
   const ref = doc(db, "articulos", id);
-  const refVersion = doc(collection(db, "articulos", id, "versiones"));
   await runTransaction(db, async (tx) => {
     const snap = await tx.get(ref);
     if (!snap.exists()) throw new ErrorArticulo("articulo/no-existe");
     const actual = snap.data();
     const cambios = calcular(actual);
     const ahora = new Date().toISOString();
-    tx.set(refVersion, { ...actual, guardadoEn: ahora, guardadoPor: quien });
+    escribirVersion(tx, db, id, actual, ahora, quien);
     tx.update(ref, { ...cambios, actualizadoEn: ahora, actualizadoPor: quien });
   });
 }
