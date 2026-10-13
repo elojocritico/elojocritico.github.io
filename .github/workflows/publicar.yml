@@ -2,16 +2,20 @@
 #
 #  - repository_dispatch "publicar": el botón "Publicar cambios" del panel (vía el Worker eoc-publicar).
 #  - schedule 7 * * * *: cada hora; solo actúa si hay publicación pendiente, artículos programados vencidos o solicitudes de cuenta.
-#  - schedule 0 21,22 * * *: nocturno; solo actúa cuando en Madrid son las 23 (así sirve en horario de verano y de invierno).
+#  - schedule 0 21,22 * * *: nocturno; solo actúa cuando en Madrid son las 23 (o las 00 si GitHub retrasa el disparo; así sirve en
+#    horario de verano y de invierno). Si el disparo llega dos veces la misma noche, el segundo no repite la copia (ultimaCopia < 20 h).
 #    De noche se sincronizan iVoox y YouTube y se hace una exportación completa (copia de seguridad).
-#  - workflow_dispatch: a mano desde GitHub.
+#  - workflow_dispatch: a mano desde GitHub. Opciones: "forzar" (compilar y desplegar aunque no haya cambios) y
+#    "aceptar_bajada" (publicar aunque haya bastantes menos artículos que en la web actual; ver MANUAL.md).
 #
 # Si algo falla a mitad (compilación, comprobaciones, push, GitHub Pages): no se confirma la exportación y GitHub manda un correo.
 # La web publicada no cambia y la siguiente ejecución lo recupera solo.
 #
-# Secretos: FIREBASE_SERVICE_ACCOUNT (JSON de la cuenta de servicio), IMG_TOKEN (token con permiso de escritura en elojocritico/img),
+# Secretos: FIREBASE_SERVICE_ACCOUNT (JSON de la cuenta de servicio),
+#           IMG_DEPLOY_KEY (clave SSH privada de una "deploy key" con permiso de ESCRITURA en elojocritico/img; no caduca),
 #           CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID.
-# Variables (públicas): PUBLIC_FIREBASE_CONFIG, PUBLIC_RECAPTCHA_V3, PUBLIC_CLOUDINARY_NUBE, PUBLIC_CLOUDINARY_PRESET, PUBLIC_URL_PUBLICAR.
+# Variables (públicas): PUBLIC_FIREBASE_CONFIG, PUBLIC_RECAPTCHA_V3 (clave de sitio de reCAPTCHA Enterprise), PUBLIC_CLOUDINARY_NUBE,
+#           PUBLIC_CLOUDINARY_PRESET, PUBLIC_URL_PUBLICAR.
 name: Publicar
 
 on:
@@ -26,11 +30,16 @@ on:
         description: Compilar y desplegar aunque no haya cambios
         type: boolean
         default: false
+      aceptar_bajada:
+        description: Publicar aunque haya bastantes menos artículos que en la web actual (marcar solo si se han enviado a la papelera a propósito)
+        type: boolean
+        default: false
 
 # Un solo flujo a la vez; el que está en marcha nunca se cancela. Ojo: GitHub guarda como mucho UNO en espera por grupo,
 # así que si llega otro mientras hay uno esperando, el que esperaba se cancela (puede perderse el disparo nocturno).
-# Por eso el trabajo nocturno se recupera solo: si la última copia (estado/sistema.ultimaCopia) falta o tiene más de 25 h,
-# el flujo horario hace el trabajo de la noche. Un Publicar perdido también lo cubre el flujo horario (publicarPendiente).
+# Por eso el trabajo nocturno se recupera solo: si la última copia (estado/sistema.ultimaCopia) falta o tiene más de 25 h
+# (y el último intento, ultimoIntentoCopia, tiene más de 20 h), el flujo horario hace el trabajo de la noche.
+# Un Publicar perdido también lo cubre el flujo horario (publicarPendiente).
 concurrency:
   group: publicar
   cancel-in-progress: false
@@ -57,18 +66,8 @@ jobs:
       BOT_NOMBRE: El Ojo Crítico
       BOT_CORREO: 261278578+LaspitesdeGrao@users.noreply.github.com
     steps:
-      - name: Descargar la web
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - name: Instalar dependencias
-        run: npm ci
-
-      # modo: noche | hora | directo (botón o manual) | ninguno (disparo nocturno fuera de las 23:00 de Madrid)
+      # Lo primero, antes de descargar nada: los disparos nocturnos fuera de hora terminan aquí sin gastar tiempo.
+      # modo: noche | hora | directo (botón o manual) | ninguno (disparo nocturno fuera de las 23:00-00:59 de Madrid)
       - name: Elegir el modo
         id: modo
         env:
@@ -77,7 +76,8 @@ jobs:
         run: |
           HORA_MADRID=$(TZ=Europe/Madrid date +%H)
           if [ "$EVENTO" = "schedule" ] && [ "$CRON" = "0 21,22 * * *" ]; then
-            if [ "$HORA_MADRID" = "23" ]; then MODO=noche; else MODO=ninguno; fi
+            # La hora 00 cubre un disparo retrasado; si ya se hizo la copia esta noche, el paso "Ver si hay trabajo" lo descarta.
+            if [ "$HORA_MADRID" = "23" ] || [ "$HORA_MADRID" = "00" ]; then MODO=noche; else MODO=ninguno; fi
           elif [ "$EVENTO" = "schedule" ]; then
             MODO=hora
           else
@@ -85,6 +85,20 @@ jobs:
           fi
           echo "Evento: $EVENTO · hora en Madrid: $HORA_MADRID · modo: $MODO"
           echo "modo=$MODO" >> "$GITHUB_OUTPUT"
+
+      - name: Descargar la web
+        if: steps.modo.outputs.modo != 'ninguno'
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        if: steps.modo.outputs.modo != 'ninguno'
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        if: steps.modo.outputs.modo != 'ninguno'
+        run: npm ci
 
       - name: Preparar la clave de Firebase
         if: steps.modo.outputs.modo != 'ninguno'
@@ -113,7 +127,13 @@ jobs:
           AL_DIA=0
           grep -q '^AL_DIA=1$' "$RUNNER_TEMP/trabajo.txt" && AL_DIA=1
           if [ "$MODO" = "noche" ]; then
-            NOCHE=1
+            # Disparo nocturno: copia siempre, salvo que ya haya una de menos de 20 h (el disparo llegó dos veces o con retraso).
+            if grep -q '^COPIA_RECIENTE=1$' "$RUNNER_TEMP/trabajo.txt"; then
+              echo "Ya hay una copia de seguridad de menos de 20 h: no se repite el trabajo de la noche."
+              grep -q '^TRABAJO=1$' "$RUNNER_TEMP/trabajo.txt" || ACTUAR=0
+            else
+              NOCHE=1
+            fi
           elif [ "$MODO" = "hora" ]; then
             grep -q '^NOCHE=1$' "$RUNNER_TEMP/trabajo.txt" && NOCHE=1
             grep -q '^TRABAJO=1$' "$RUNNER_TEMP/trabajo.txt" || ACTUAR=0
@@ -123,12 +143,20 @@ jobs:
           echo "forzar=$([ "$FORZAR" = "true" ] && echo 1 || echo 0)" >> "$GITHUB_OUTPUT"
           echo "al_dia=$AL_DIA" >> "$GITHUB_OUTPUT"
 
+      # Se anota al EMPEZAR el trabajo de la noche (no al terminar): si la copia falla, el flujo horario no la repite cada hora
+      # (cuota de Firestore) sino pasadas 20 h.
+      - name: Anotar el intento de copia
+        if: steps.hay.outputs.actuar == '1' && steps.hay.outputs.noche == '1'
+        run: node scripts/estado-sistema.mjs --real --intento-copia
+
+      # Clave de despliegue (deploy key) con escritura en elojocritico/img: no caduca como un token personal.
+      # El checkout deja configurado el remoto SSH para poder subir las imágenes nuevas más abajo.
       - name: Descargar las imágenes
         if: steps.hay.outputs.actuar == '1'
         uses: actions/checkout@v4
         with:
           repository: elojocritico/img
-          token: ${{ secrets.IMG_TOKEN }}
+          ssh-key: ${{ secrets.IMG_DEPLOY_KEY }}
           path: imagenes-repo
 
       # Los scripts esperan las imágenes en ../imagenes.
@@ -137,9 +165,17 @@ jobs:
         run: ln -s "$GITHUB_WORKSPACE/imagenes-repo" ../imagenes
 
       # Artículos de la versión publicada (antes de exportar): referencia del umbral de bajada de verificar.
+      # Con "aceptar_bajada" (ejecución manual) no se fija: verificar no compara y la bajada se acepta solo en esa ejecución.
       - name: Contar los artículos publicados
         if: steps.hay.outputs.actuar == '1'
-        run: echo "EOC_ARTICULOS_PUBLICADOS=$(find contenido/articulos -name '*.json' | wc -l)" >> "$GITHUB_ENV"
+        env:
+          ACEPTAR_BAJADA: ${{ github.event.inputs.aceptar_bajada }}
+        run: |
+          if [ "$ACEPTAR_BAJADA" = "true" ]; then
+            echo "::notice::Se acepta una bajada del número de artículos en esta ejecución (aceptar_bajada)."
+          else
+            echo "EOC_ARTICULOS_PUBLICADOS=$(find contenido/articulos -name '*.json' | wc -l)" >> "$GITHUB_ENV"
+          fi
 
       # De noche: iVoox y YouTube. Si un feed falla (sale con 1) no se aborta: se publica lo demás.
       - name: Sincronizar iVoox y YouTube
@@ -179,13 +215,15 @@ jobs:
         if: steps.exportar.outputs.desplegar == '1'
         run: npm run build
 
+      # Solo lo que bloquearía GitHub Pages. Los límites de Cloudflare se comprueban justo antes de subir allí.
       - name: Comprobar la compilación
         if: steps.exportar.outputs.desplegar == '1'
         run: |
-          node scripts/comprobar-dist.mjs dist ../imagenes
+          node scripts/comprobar-dist.mjs dist
           npm run verificar
 
       # Primero las imágenes (la web las enlaza) y después la web. Si algo falla antes de desplegar, no se confirma nada.
+      # El push de las imágenes va por SSH con la clave de despliegue (remoto configurado por el checkout).
       - name: Subir las imágenes nuevas
         if: steps.exportar.outputs.cambios == '1'
         run: |
@@ -209,6 +247,30 @@ jobs:
             echo "No hay cambios de contenido que subir."
           else
             git commit -m "Publicación automática $(date -u +%Y-%m-%d\ %H:%M) UTC"
+            git push
+          fi
+
+      # Latido: GitHub desactiva los flujos programados de un repositorio público tras 60 días sin actividad. Si el último commit
+      # tiene más de 45 días, de noche se sube un commit mínimo (.latido, con la fecha). Va ANTES de anotar el commit desplegado,
+      # para que ese commit forme parte de lo anotado y la siguiente ejecución no redespliegue sin motivo.
+      # Si falla no frena la publicación: el último paso hace fallar la ejecución (correo).
+      - name: Latido del repositorio
+        id: latido
+        if: steps.hay.outputs.actuar == '1' && steps.hay.outputs.noche == '1'
+        continue-on-error: true
+        run: |
+          ULTIMO=$(git log -1 --format=%ct)
+          AHORA=$(date +%s)
+          DIAS=$(( (AHORA - ULTIMO) / 86400 ))
+          if [ "$DIAS" -lt 45 ]; then
+            echo "El último commit tiene $DIAS días: no hace falta latido."
+          else
+            echo "El último commit tiene $DIAS días: se sube el latido para que GitHub no desactive los flujos programados."
+            git config user.name "$BOT_NOMBRE"
+            git config user.email "$BOT_CORREO"
+            date -u +%Y-%m-%dT%H:%M:%SZ > .latido
+            git add .latido
+            git commit -m "Latido $(date -u +%Y-%m-%d)"
             git push
           fi
 
@@ -239,6 +301,8 @@ jobs:
           rm -rf dist-cloudflare/img/.git
 
       # Si Cloudflare falla no se deja sin confirmar: GitHub Pages ya está publicado. El último paso hace fallar el flujo para que llegue el correo.
+      # Los límites de Cloudflare (20.000 ficheros, 25 MiB por fichero) se comprueban aquí y solo afectan a este paso.
+      # wrangler está fijado en package.json / package-lock.json (versión 3.x exacta).
       - name: Desplegar en Cloudflare Pages
         id: cloudflare
         if: steps.exportar.outputs.desplegar == '1'
@@ -246,7 +310,10 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || vars.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@3 pages deploy dist-cloudflare --project-name=elojocritico --branch=main --commit-dirty=true
+        run: |
+          set -e
+          node scripts/comprobar-dist.mjs --cloudflare dist-cloudflare
+          npx --no-install wrangler pages deploy dist-cloudflare --project-name=elojocritico --branch=main --commit-dirty=true
 
       # Se confirma también cuando no hubo cambios (CAMBIOS=0): así la exportación avanza y "publicar pendiente" se resuelve.
       - name: Confirmar la exportación
@@ -256,10 +323,11 @@ jobs:
         run: npx tsx scripts/exportar.mjs --real --confirmar "$INICIO"
 
       # Cuentas nuevas: los administradores las piden desde el panel (solicitudesCuenta) y aquí se crean con firebase-admin.
-      # Va después de confirmar la exportación y no corta el flujo: si falla, se anota el estado igualmente y el último paso hace fallar la ejecución (correo).
+      # Se ejecuta aunque la publicación haya fallado antes (always()): las cuentas no dependen de ella. Solo necesita la clave de Firebase,
+      # que ya está preparada si actuar == 1. No corta el flujo: si falla, se anota el estado igualmente y el último paso hace fallar la ejecución (correo).
       - name: Crear las cuentas pedidas
         id: cuentas
-        if: steps.hay.outputs.actuar == '1'
+        if: always() && steps.hay.outputs.actuar == '1'
         continue-on-error: true
         run: node scripts/crear-cuentas.mjs --real
 
@@ -276,16 +344,31 @@ jobs:
           if [ "$MEDIOS_OK" = "1" ]; then ANOTAR="$ANOTAR --medios"; fi
           if [ -n "$ANOTAR" ]; then node scripts/estado-sistema.mjs --real $ANOTAR; else echo "Nada que anotar."; fi
 
+      # Prueba de humo (después de confirmar y anotar: la web ya está desplegada y nada de lo anterior depende de esta prueba).
+      # GitHub Pages tarda en propagar, así que se reintenta unos 3 minutos. Si falla, el flujo falla (correo).
+      - name: Comprobar que la web publicada responde
+        id: humo
+        if: steps.exportar.outputs.desplegar == '1'
+        env:
+          URL_WEB: ${{ steps.pages.outputs.page_url }}
+        run: node scripts/prueba-humo.mjs "$URL_WEB" dist contenido/articulos
+
       - name: Avisar si Cloudflare ha fallado
-        if: steps.cloudflare.outcome == 'failure'
+        if: always() && steps.cloudflare.outcome == 'failure'
         run: |
           echo "::error::GitHub Pages está publicado, pero el despliegue en Cloudflare Pages ha fallado."
           exit 1
 
       - name: Avisar si las cuentas han fallado
-        if: steps.cuentas.outcome == 'failure'
+        if: always() && steps.cuentas.outcome == 'failure'
         run: |
-          echo "::error::La web está publicada, pero no se han podido crear todas las cuentas pedidas. Se reintenta en la próxima ejecución."
+          echo "::error::No se han podido crear todas las cuentas pedidas. Se reintenta en la próxima ejecución."
+          exit 1
+
+      - name: Avisar si el latido ha fallado
+        if: always() && steps.latido.outcome == 'failure'
+        run: |
+          echo "::error::No se ha podido subir el latido del repositorio. Si se repite, GitHub puede desactivar los flujos programados (mira MANUAL.md)."
           exit 1
 
       - name: Borrar la clave de Firebase

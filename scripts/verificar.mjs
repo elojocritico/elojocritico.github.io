@@ -82,7 +82,7 @@ export function bajadaDeArticulos(actual, publicados, maxPorcentaje = 5) {
   const p = Number(publicados);
   if (publicados === undefined || publicados === "" || !Number.isFinite(p) || p <= 0) return null;
   if (actual >= p * (1 - maxPorcentaje / 100)) return null;
-  return `Hay ${actual} artículos y la versión publicada tiene ${p}: bajan más de un ${maxPorcentaje} %`;
+  return `Hay ${actual} artículos y la versión publicada tiene ${p}: bajan más de un ${maxPorcentaje} %. Si es a propósito (por ejemplo, se han enviado muchos artículos a la papelera), ejecuta Publicar a mano marcando aceptar_bajada (mira MANUAL.md).`;
 }
 
 export function tamanoMB(dir, excluir) {

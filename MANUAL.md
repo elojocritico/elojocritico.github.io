@@ -213,6 +213,8 @@ Lo que sí vale ya:
 4. **No respondas ni pulses enlaces de un correo que no esperabas**, sobre todo si pide contraseñas. Los avisos de verdad no piden tu contraseña.
 5. **Reenvía el correo a la persona técnica** y espera a que te diga qué hacer.
 
+Si el correo dice que los artículos "bajan más de un 5 %", es una protección: la web no se ha tocado y sigue como estaba. La persona técnica tiene el paso a paso al final de este manual, en el apartado "Si el correo habla de una bajada de artículos".
+
 ## Dar acceso a otra persona {#dar-acceso}
 
 Solo los administradores pueden hacerlo. Hay dos papeles:
@@ -285,3 +287,27 @@ Esta sección es técnica. Los comandos se ejecutan en la carpeta `sitio`, con N
 **Solo en desarrollo.** Con `npm run admin:dev` (`astro dev`), la dirección `/comentarios-archivo/<dirección>.json` devuelve 404, así que la pestaña Archivo de un artículo dice que no tiene comentarios. Es una peculiaridad del servidor de desarrollo con `trailingSlash: "always"`; en la web generada (`npm run build`) funciona bien. No afecta a la web publicada.
 
 **Comentarios ocultos y el historial de git.** Al ocultar un comentario del archivo, el exportador mueve su texto a la base de datos (solo lo leen los editores) y lo vacía en `contenido/comentarios-archivo`. Pero el historial de git conserva el texto antiguo en los commits anteriores, y el repositorio es público. Si por motivos legales hay que retirarlo del todo, hay que reescribir el historial (por ejemplo con `git filter-repo`), forzar el push y pedir a los servicios que guardan copias que las limpien. Es una operación delicada que cambia todos los identificadores de commit: consúltese con alguien con experiencia antes de hacerla.
+
+**Si el correo habla de una bajada de artículos.** El flujo de publicación se niega a publicar si la web nueva tendría más de un 5 % menos de artículos que la actual (por si un fallo hubiera borrado artículos). Si has enviado muchos artículos a la papelera a propósito, esa protección te bloquea para siempre hasta que se acepte la bajada una vez. El correo de GitHub dice que ha fallado "Publicar" y, en el paso "Comprobar la compilación", aparece "bajan más de un 5 %". La web publicada no ha cambiado. Para aceptar la bajada, paso a paso:
+
+1. Entra en GitHub con la cuenta de la web y abre el repositorio de la web (el que se llama `sitio`).
+2. Arriba, pulsa la pestaña "Actions".
+3. A la izquierda, pulsa el flujo llamado "Publicar".
+4. A la derecha, pulsa el botón gris "Run workflow".
+5. En el desplegable, marca la casilla "aceptar_bajada" (la otra, "forzar", déjala sin marcar).
+6. Pulsa el botón verde "Run workflow" del desplegable. En unos segundos aparece una ejecución nueva; tarda unos minutos. Solo esa ejecución acepta la bajada; las siguientes vuelven a vigilar con la nueva cantidad.
+
+Si no era a propósito (no has quitado tú esos artículos), no marques nada: avisa a la persona técnica y revisa la papelera y la lista de artículos del panel.
+
+**Otros correos de fallo de "Publicar".** Si el fallo es en "Desplegar en Cloudflare Pages", la web principal ya está publicada y solo falló la copia de reserva (puede ser el límite de 20.000 ficheros o de 25 MiB por fichero). Si el fallo es en "Crear las cuentas pedidas", se reintenta en la siguiente ronda. Si es en "Comprobar que la web publicada responde", la web se desplegó pero alguna página (portada, un artículo, la revista o el panel) no daba 200 pasados unos 3 minutos: mira la web y vuelve a ejecutar "Publicar". Si falla "Latido del repositorio", mira el siguiente párrafo.
+
+**El "latido" del repositorio.** GitHub desactiva los flujos programados de un repositorio público tras 60 días sin actividad (después ya no se publica solo cada hora). Para evitarlo, de noche el flujo comprueba la fecha del último commit y, si tiene más de 45 días, sube un fichero mínimo llamado `.latido` con la fecha. No hay que hacer nada. Si un día los flujos programados dejan de ejecutarse, en GitHub, pestaña "Actions", pulsa el botón para volver a habilitarlos.
+
+**Clave para subir las imágenes (`IMG_DEPLOY_KEY`).** Sustituye al antiguo token personal, que caducaba. Es una clave SSH de despliegue con permiso de escritura solo en el repositorio de imágenes (`elojocritico/img`). Para crearla o renovarla:
+
+1. En una terminal: `ssh-keygen -t ed25519 -N "" -f clave-img` (crea `clave-img` y `clave-img.pub`).
+2. En GitHub, repositorio `elojocritico/img`: Settings, "Deploy keys", "Add deploy key". Pega el contenido de `clave-img.pub` y marca "Allow write access".
+3. En GitHub, repositorio de la web: Settings, "Secrets and variables", "Actions", "New repository secret". Nombre `IMG_DEPLOY_KEY`; valor, el contenido completo de `clave-img` (con las líneas BEGIN y END).
+4. Borra `clave-img` y `clave-img.pub` del ordenador.
+
+**Variables y secretos del flujo.** Secretos: `FIREBASE_SERVICE_ACCOUNT`, `IMG_DEPLOY_KEY`, `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID`. Variables: `PUBLIC_FIREBASE_CONFIG`, `PUBLIC_RECAPTCHA_V3` (guarda la clave de sitio de reCAPTCHA Enterprise; el nombre se conserva), `PUBLIC_CLOUDINARY_NUBE`, `PUBLIC_CLOUDINARY_PRESET` y `PUBLIC_URL_PUBLICAR`. Si falta alguna, la compilación se detiene antes de publicar.
