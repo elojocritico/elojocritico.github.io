@@ -8,7 +8,7 @@ export const ELEMENTOS: Elemento[] = [
   { clave: "table", patron: /<table\b/g, uno: "tabla", varios: "tablas" },
   { clave: "img", patron: /<img\b/g, uno: "foto", varios: "fotos" },
   { clave: "figure", patron: /<figure\b/g, uno: "foto con pie", varios: "fotos con pie" },
-  { clave: "perdida", patron: /<span class="img-perdida"/g, uno: "aviso de «imagen no recuperada»", varios: "avisos de «imagen no recuperada»" },
+  { clave: "perdida", patron: /<span class="img-perdida"/g, uno: "foto pendiente", varios: "fotos pendientes" },
   { clave: "roto", patron: /<a [^>]*class="(roto|archivado)"/g, uno: "enlace marcado como roto o archivado", varios: "enlaces marcados como rotos o archivados" },
   { clave: "tabla-celdas", patron: /<(td|th)\b/g, uno: "celda de tabla", varios: "celdas de tablas" },
 ];

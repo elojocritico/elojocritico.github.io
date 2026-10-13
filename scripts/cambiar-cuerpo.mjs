@@ -2,7 +2,8 @@
 //  - copia del artículo tal como estaba en articulos/<slug>/versiones/<id> (mismo formato que escribirVersion del panel:
 //    todos los campos + guardadoEn + guardadoPor), para poder volver atrás desde el historial;
 //  - actualizadoEn / actualizadoPor del artículo;
-//  - estado/sistema.publicarPendiente = true (+ publicarPendienteEn), para que se vea el aviso «hay cambios sin publicar».
+//  - estado/sistema.publicarPendiente = true (+ publicarPendienteEn), para que se vea el aviso «hay cambios sin publicar»;
+//    se escribe en el ÚLTIMO lote.
 // Escribe por lotes (scripts/lotes.mjs) y con precondición de «no tocado desde que lo leí»: si alguien edita un artículo
 // mientras corre, el lote falla en vez de pisarlo (se vuelve a lanzar y listo; los scripts que lo usan son idempotentes).
 // Lo usan marcar-perdidas.mjs y (más adelante) la inserción de fotos recuperadas.
@@ -15,7 +16,7 @@ export const RESERVADO = "migración";
  * @param db        Firestore (admin)
  * @param slugs     artículos a mirar
  * @param decidir   (slug, datos, snap) => null            nada que hacer
- *                                       | { saltar: "motivo" }  no se toca; sale en `saltados`
+ *                                       | { saltar: "motivo", extra? }  el cuerpo no se toca; sale en `saltados` (si trae `extra`, eso sí se fusiona, sin versión ni aviso)
  *                                       | { cuerpoHtml?, extra? } cuerpoHtml nuevo (con versión + marca de publicar pendiente)
  *                                                              y/o `extra`: otros campos que se fusionan sin versión ni
  *                                                              aviso de publicar (datos internos, p. ej. fotosPendientes)
@@ -27,7 +28,6 @@ export async function cambiarCuerpos(db, slugs, decidir, { usuario, simular = fa
   const r = { cuerpoCambiado: [], soloDatos: [], sinCambios: 0, saltados: [], noExisten: [], escrituras: 0 };
   const w = crearEscritor(db);
   const refSistema = db.doc("estado/sistema");
-  let marcadoPendiente = false;
 
   for (let i = 0; i < slugs.length; i += trozo) {
     const parte = slugs.slice(i, i + trozo);
@@ -46,24 +46,21 @@ export async function cambiarCuerpos(db, slugs, decidir, { usuario, simular = fa
         r.sinCambios++;
         continue;
       }
-      if (d.saltar) {
-        r.saltados.push({ slug, motivo: d.saltar });
-        continue;
-      }
-      const cambiaCuerpo = typeof d.cuerpoHtml === "string" && d.cuerpoHtml !== actual.cuerpoHtml;
+      const saltar = Boolean(d.saltar);
+      if (saltar) r.saltados.push({ slug, motivo: d.saltar });
+      // Un artículo saltado no cambia de cuerpo, pero sí puede recibir `extra` (datos internos).
+      const cambiaCuerpo = !saltar && typeof d.cuerpoHtml === "string" && d.cuerpoHtml !== actual.cuerpoHtml;
       const extra = Object.fromEntries(Object.entries(d.extra ?? {}).filter(([k, v]) => JSON.stringify(actual[k] ?? null) !== JSON.stringify(v ?? null)));
       if (!cambiaCuerpo && Object.keys(extra).length === 0) {
-        r.sinCambios++;
+        if (!saltar) r.sinCambios++;
         continue;
       }
       (cambiaCuerpo ? r.cuerpoCambiado : r.soloDatos).push(slug);
       if (simular) continue;
       const precondicion = { lastUpdateTime: snap.updateTime };
       if (cambiaCuerpo) {
-        if (!marcadoPendiente) {
-          await w.set(refSistema, { publicarPendiente: true, publicarPendienteEn: ahora }, { merge: true });
-          marcadoPendiente = true;
-        }
+        // Versión y artículo van siempre en el mismo lote (si no cabe el par, se vacía antes).
+        await w.reservar(2, JSON.stringify(actual).length * 2 + 400);
         await w.set(db.collection("articulos").doc(slug).collection("versiones").doc(), { ...actual, guardadoEn: ahora, guardadoPor: quien });
         await w.update(refs[j], { ...extra, cuerpoHtml: d.cuerpoHtml, actualizadoEn: ahora, actualizadoPor: quien }, precondicion);
       } else {
@@ -71,6 +68,8 @@ export async function cambiarCuerpos(db, slugs, decidir, { usuario, simular = fa
       }
     }
   }
+  // «Publicar pendiente» se escribe lo ÚLTIMO: si un lote anterior falla, no queda el aviso sin cambios detrás.
+  if (r.cuerpoCambiado.length && !simular) await w.set(refSistema, { publicarPendiente: true, publicarPendienteEn: ahora }, { merge: true });
   await w.vaciar();
   r.escrituras = w.escrituras;
   return r;

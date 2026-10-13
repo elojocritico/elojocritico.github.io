@@ -32,6 +32,11 @@ export function crearEscritor(db, { maxOps = 400, maxBytes = 2_000_000 } = {}) {
     bytes += peso;
     e.escrituras++;
   };
+  // Garantiza sitio para `n` operaciones de ~`peso` bytes en el lote actual (si no caben, lo vacía antes): así un par de escrituras
+  // que tienen que ir juntas (p. ej. versión + artículo) acaban siempre en el mismo lote.
+  e.reservar = async (n, peso = 0) => {
+    if (ops && (ops + n > maxOps || bytes + peso > maxBytes)) await vaciar();
+  };
   e.vaciar = vaciar;
   return e;
 }

@@ -2,7 +2,7 @@
 // Lee informes/cambios-cuerpos.json (lo genera _scripts/fotos_revistas.py --aplicar):
 //   [{ slug, buscar: "<span class=\"img-perdida\" data-original=\"...\">Imagen no recuperada</span>", poner: "<img ... />", motivo }]
 //
-// Uso:  node scripts/poner-fotos.mjs [--real] [--simular] [--cambios=RUTA.json] [--informe=RUTA.md]
+// Uso:  npx tsx scripts/poner-fotos.mjs [--real] [--simular] [--cambios=RUTA.json] [--informe=RUTA.md]
 //   Por defecto SIMULA (cuenta lo que haría y no escribe nada). Escribe con --real (proyecto real, hace falta
 //   GOOGLE_APPLICATION_CREDENTIALS) o contra el simulador (FIRESTORE_EMULATOR_HOST) si no se pone --simular.
 //

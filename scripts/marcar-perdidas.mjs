@@ -1,15 +1,21 @@
 // Pone a cada «Imagen no recuperada» el nombre de la foto original: <span class="img-perdida" data-original="/wp-content/uploads/AAAA/MM/foto.jpg">.
 // Así, cuando aparezca la foto, el editor sabe cuál es cuál. También guarda en cada artículo con marcas cuántas fotos faltan (fotosPendientes).
 //
-// Uso:  node scripts/marcar-perdidas.mjs [--real] [--simular] [--perdidas=RUTA.json] [--contenido=DIR] [--informe=RUTA.md]
+// Uso:  npx tsx scripts/marcar-perdidas.mjs [--real] [--simular] [--perdidas=RUTA.json] [--contenido=DIR] [--base=COMMIT] [--informe=RUTA.md]
+//   (con tsx porque reutiliza el saneador de la web, src/lib/sanear.ts, el mismo que usa la exportación)
+//   --base      lee el «cuerpo original» de los artículos del commit indicado (git show COMMIT:contenido/articulos/<slug>.json) en vez
+//               de la carpeta contenido/ actual. Hay que usar 4b2ba1e (migración final = lo que tiene Firestore): la publicación
+//               automática (d4e1e91) reescribió contenido/ con los cuerpos ya normalizados por el saneador.
 //   --perdidas  informes/perdidas-por-articulo.json ({slug: [ruta, ...]}, en orden de aparición), lo genera la migración:
 //               python -m eoc_migracion.perdidas --wayback ../wayback --informes ../informes
 //   --simular   no escribe nada; solo calcula y cuenta (y escribe el informe).
 // Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
 //
 // Reglas:
-//  - Un artículo solo se toca si su cuerpo en Firestore es IDÉNTICO al de contenido/articulos/<slug>.json (nadie lo ha editado
-//    desde la importación) o ya es el resultado de este script. Si no, se salta y sale en el informe.
+//  - Un artículo solo se toca si su cuerpo en Firestore es IGUAL (una vez pasado por el saneador, para que no importe la
+//    normalización) al del original (nadie lo ha editado desde la importación) o ya es el resultado de este script. Si no, no se
+//    cambia su cuerpo, sale en el informe, y aun así se le actualiza el contador fotosPendientes (dato interno: sin versión
+//    ni «publicar pendiente», actualizadoPor intacto).
 //  - Solo se anota si el número de marcas del cuerpo coincide con el de rutas de la migración; si no, se deja y sale en el informe.
 //  - Idempotente: las marcas que ya llevan data-original no se tocan; una segunda pasada no escribe nada.
 //  - Cada artículo cambiado deja una versión en su historial (como el panel) y se marca «publicar pendiente».
@@ -20,7 +26,9 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getApp, deleteApp } from "firebase-admin/app";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
+import { execFileSync } from "node:child_process";
 import { cambiarCuerpos } from "./cambiar-cuerpo.mjs";
+import { sanear } from "../src/lib/sanear.ts";
 
 export const USUARIO = "script marcar-perdidas";
 const AQUI = dirname(fileURLToPath(import.meta.url));
@@ -81,8 +89,29 @@ export function articulosConMarcas(dirContenido) {
   return r;
 }
 
-export async function marcarPerdidas({ db = getFirestore(), dirContenido = resolve(AQUI, "..", "contenido"), perdidas, usuario = USUARIO, simular = false, log = console.log } = {}) {
-  const base = articulosConMarcas(dirContenido); // lo importado
+/** Igual que articulosConMarcas, pero leyendo los JSON de un commit de git (git show REF:./articulos/<slug>.json, con cwd = contenido/). */
+export function articulosConMarcasDeGit(dirContenido, ref) {
+  if (!/^[0-9A-Za-z._\/-]+$/.test(ref) || ref.startsWith("-")) throw new Error(`Commit no válido: ${ref}`);
+  const git = (...args) => execFileSync("git", args, { cwd: dirContenido, encoding: "utf-8", maxBuffer: 1 << 28 });
+  let ficheros;
+  try {
+    // Solo los ficheros que mencionan la marca (git grep es mucho más rápido que leerlos todos).
+    ficheros = git("grep", "-l", "img-perdida", ref, "--", "articulos/").split(/\r?\n/).map((f) => f.trim().replace(/^.*?:articulos\//, "")).filter((f) => f.endsWith(".json"));
+  } catch (e) {
+    if (e?.status === 1) ficheros = []; // git grep sin resultados
+    else throw new Error(`No puedo leer contenido/articulos del commit ${ref}: ${e?.message ?? e}`);
+  }
+  const r = {};
+  for (const f of ficheros.sort()) {
+    const a = JSON.parse(git("show", `${ref}:./articulos/${f}`));
+    if (contarMarcas(a.cuerpoHtml ?? "") > 0) r[a.slug ?? f.replace(/\.json$/, "")] = a.cuerpoHtml;
+  }
+  return r;
+}
+
+export async function marcarPerdidas({ db = getFirestore(), dirContenido = resolve(AQUI, "..", "contenido"), base: baseRef, perdidas, usuario = USUARIO, simular = false, log = console.log } = {}) {
+  const base = baseRef ? articulosConMarcasDeGit(dirContenido, baseRef) : articulosConMarcas(dirContenido); // lo importado
+  const igual = (a, b) => sanear(a) === sanear(b); // sin importar la normalización del saneador
   const slugs = Object.keys(base);
   const informe = { desajustes: [], sinLista: [], invalidas: [], anotados: [], yaAnotados: 0, soloContador: [] };
 
@@ -91,26 +120,30 @@ export async function marcarPerdidas({ db = getFirestore(), dirContenido = resol
     const rutas = perdidas[slug];
     const actual = String(doc.cuerpoHtml ?? "");
     const marcas = contarMarcas(actual);
-    // Número de fotos que faltan (se mantiene aunque no se pueda anotar).
+    // Número de fotos que faltan (se mantiene aunque no se pueda anotar, y también en los artículos editados a mano).
     const extra = { fotosPendientes: marcas };
+    const editado = { saltar: "editado desde la importación", extra };
     if (!rutas) {
-      if (actual !== original) return { saltar: "editado desde la importación" };
+      if (!igual(actual, original)) return editado;
       informe.sinLista.push(slug);
       return { extra };
     }
     const esperado = anotarMarcas(original, rutas);
     if (esperado.desajuste) {
-      if (actual !== original) return { saltar: "editado desde la importación" };
+      if (!igual(actual, original)) return editado;
       informe.desajustes.push({ slug, marcas: esperado.marcas, rutas: rutas.length });
       return { extra };
     }
-    if (actual !== original && actual !== esperado.html) return { saltar: "editado desde la importación" };
+    const yaAnotado = igual(actual, esperado.html);
+    if (!yaAnotado && !igual(actual, original)) return editado;
     if (esperado.invalidas.length) informe.invalidas.push({ slug, rutas: esperado.invalidas });
-    if (actual === esperado.html) {
+    if (yaAnotado) {
       informe.yaAnotados++;
       return { extra };
     }
-    return { cuerpoHtml: esperado.html, extra: { fotosPendientes: esperado.marcas } };
+    // Se anota el cuerpo de Firestore (no el de referencia), para conservar su forma tal como está guardado.
+    const nuevo = anotarMarcas(actual, rutas);
+    return { cuerpoHtml: nuevo.html, extra: { fotosPendientes: nuevo.marcas } };
   };
 
   const r = await cambiarCuerpos(db, slugs, decidir, { usuario, simular });
@@ -132,7 +165,7 @@ export function textoInforme(res) {
   L.push(`- Anotados ahora (con versión en el historial y «publicar pendiente»): ${res.anotados.length}`);
   L.push(`- Ya estaban anotados: ${res.yaAnotados}`);
   L.push(`- Número de marcas distinto del de rutas de la migración (no se anotan): ${res.desajustes.length}`);
-  L.push(`- Editados desde la importación (no se tocan): ${res.saltados.length}`);
+  L.push(`- Editados desde la importación (cuerpo intacto; solo se actualiza el contador): ${res.saltados.length}`);
   L.push(`- Sin documento en Firestore: ${res.noExisten.length}`);
   L.push(`- Con alguna ruta no válida (se deja esa marca sin nombre): ${res.invalidas.length}`);
   L.push(`- Con marcas pero sin lista de rutas: ${res.sinLista.length}`);
@@ -159,10 +192,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const rutaPerdidas = resolve(opcion("perdidas", join(AQUI, "..", "..", "informes", "perdidas-por-articulo.json")));
     const rutaInforme = resolve(opcion("informe", join(AQUI, "..", "..", "informes", "marcar-perdidas.md")));
     const dirContenido = resolve(opcion("contenido", join(AQUI, "..", "contenido")));
+    const base = opcion("base", undefined);
     if (!existsSync(rutaPerdidas)) throw new Error(`Falta ${rutaPerdidas}. Genéralo con: python -m eoc_migracion.perdidas (ver cabecera de este script).`);
     iniciarAdmin();
     const t = Date.now();
-    const res = await marcarPerdidas({ dirContenido, perdidas: leer(rutaPerdidas), simular });
+    const res = await marcarPerdidas({ dirContenido, base, perdidas: leer(rutaPerdidas), simular });
     mkdirSync(dirname(rutaInforme), { recursive: true });
     writeFileSync(rutaInforme, textoInforme(res), "utf-8");
     console.log(`Informe: ${rutaInforme}`);

@@ -2,6 +2,8 @@
 const SISTEMA: Record<string, string> = {
   "migración": "Importado de la web antigua",
   "publicación programada": "Publicación programada",
+  "script marcar-perdidas": "Arreglo automático de fotos",
+  "script poner-fotos": "Arreglo automático de fotos",
 };
 
 /** Nombre en llano de quien hizo un cambio (el correo, o el motivo si lo hizo un programa). */

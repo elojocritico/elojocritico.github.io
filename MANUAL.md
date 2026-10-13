@@ -127,7 +127,7 @@ Algunos artículos antiguos tenían fotos que no se pudieron recuperar. En la we
 4. Espera un momento. La foto aparece justo en el sitio del recuadro.
 5. Pulsa «Guardar borrador» o «Guardar y publicar cambios». El panel no te avisará de que se pierde nada: es normal.
 
-Si falla la subida, el recuadro se queda como estaba y te dice qué ha pasado; puedes volver a pulsar «Poner foto». Si ya no quieres esa foto, puedes borrar el recuadro como cualquier otra cosa del texto.
+Si falla la subida, el recuadro se queda como estaba y te dice qué ha pasado; puedes volver a pulsar «Poner foto». Si ya no quieres esa foto, puedes borrar el recuadro como cualquier otra cosa del texto. Al guardar, el panel te pregunta con «Se perdería parte del artículo» (dice cuántas fotos pendientes se perderían) y eliges entre «Sí, guardar de todas formas» y «Cancelar».
 
 ## Papelera {#papelera}
 

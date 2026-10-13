@@ -1,6 +1,7 @@
 // Se ejecuta con `npm run test:emulador`.
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { getFirestore } from "firebase-admin/firestore";
@@ -117,16 +118,67 @@ describe("marcarPerdidas (simulador)", () => {
     expect((await db.collection("articulos/dos/versiones").get()).size).toBe(1);
   });
 
-  it("no toca un artículo editado en el panel desde la importación, y lo lista", async () => {
-    const editado = "<p>Cambiado a mano</p>" + M;
+  it("un cuerpo igual al original salvo por la normalización del saneador SÍ se anota", async () => {
+    const crudo = `<p>${M}</p><P>texto<br></P><p>${M}</p>`; // el saneador lo reescribe (<P> → <p>, <br> → <br />)
+    const normalizado = sanear(crudo);
+    expect(normalizado).not.toBe(crudo);
+    const d2 = mkdtempSync(join(tmpdir(), "eoc-mp2-"));
+    mkdirSync(join(d2, "articulos"));
+    writeFileSync(join(d2, "articulos", "normal.json"), JSON.stringify(art("normal", crudo)));
+    try {
+      await importar({ db, dirContenido: d2, log: callar });
+      await db.doc("articulos/normal").update({ cuerpoHtml: normalizado }); // lo que dejó la exportación en el checkout / lo que hay en Firestore
+      const r = await marcarPerdidas({ db, dirContenido: d2, perdidas: { normal: [R1, R2] }, log: callar });
+      expect(r.anotados).toEqual(["normal"]);
+      expect(r.saltados).toEqual([]);
+      const d = (await db.doc("articulos/normal").get()).data();
+      expect(d.cuerpoHtml).toBe(anotarMarcas(normalizado, [R1, R2]).html);
+      expect(d.fotosPendientes).toBe(2);
+      // y la segunda pasada no escribe nada
+      const r2 = await marcarPerdidas({ db, dirContenido: d2, perdidas: { normal: [R1, R2] }, log: callar });
+      expect(r2.escrituras).toBe(0);
+      expect(r2.yaAnotados).toBe(1);
+    } finally {
+      rmSync(d2, { recursive: true, force: true });
+    }
+  });
+
+  it("no toca el cuerpo de un artículo editado en el panel, lo lista, pero sí actualiza el contador fotosPendientes (sin versión ni autor)", async () => {
+    const editado = "<p>Cambiado a mano</p>" + M + M;
     await db.doc("articulos/editado").update({ cuerpoHtml: editado, actualizadoPor: "ana@eoc.es" });
+    const antes = (await db.doc("articulos/editado").get()).data();
     const r = await marcarPerdidas({ db, dirContenido: dir, perdidas: PERDIDAS, log: callar });
     expect(r.saltados).toEqual([{ slug: "editado", motivo: "editado desde la importación" }]);
     const d = (await db.doc("articulos/editado").get()).data();
-    expect(d).toMatchObject({ cuerpoHtml: editado, actualizadoPor: "ana@eoc.es" });
-    expect(d.fotosPendientes).toBe(1); // lo puso el importador; el script no lo toca en lo editado a mano
+    expect(d).toMatchObject({ cuerpoHtml: editado, actualizadoPor: "ana@eoc.es", actualizadoEn: antes.actualizadoEn });
+    expect(d.fotosPendientes).toBe(2); // el contador sí se pone al día
     expect((await db.collection("articulos/editado/versiones").get()).size).toBe(0);
     expect(r.anotados.sort()).toEqual(["dos", "invalida"]);
+  });
+
+  it("--base lee el cuerpo original de un commit de git (no de la carpeta actual)", async () => {
+    const repo = mkdtempSync(join(tmpdir(), "eoc-mp3-"));
+    const git = (...a) => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t", ...a], { cwd: repo, encoding: "utf-8" });
+    try {
+      git("init", "-q");
+      mkdirSync(join(repo, "contenido", "articulos"), { recursive: true });
+      for (const [s, c] of Object.entries(CUERPOS)) writeFileSync(join(repo, "contenido", "articulos", s + ".json"), JSON.stringify(art(s, c)));
+      git("add", "-A");
+      git("commit", "-q", "-m", "base");
+      const base = git("rev-parse", "HEAD").trim();
+      // La carpeta «actual» cambia (como hizo la publicación automática): ya no coincide con Firestore.
+      writeFileSync(join(repo, "contenido", "articulos", "dos.json"), JSON.stringify(art("dos", "<p>otra cosa</p>")));
+      const dirContenido = join(repo, "contenido");
+      const sinBase = await marcarPerdidas({ db, dirContenido, perdidas: PERDIDAS, simular: true, log: callar });
+      expect(sinBase.revisados).toBe(4); // «dos» ya no tiene marcas en la carpeta actual
+      const r = await marcarPerdidas({ db, dirContenido, base, perdidas: PERDIDAS, log: callar });
+      expect(r.revisados).toBe(5);
+      expect(r.anotados.sort()).toEqual(["dos", "editado", "invalida"]);
+      expect(r.saltados).toEqual([]);
+      await expect(marcarPerdidas({ db, dirContenido, base: "no-existe-12345", perdidas: PERDIDAS, log: callar })).rejects.toThrow();
+    } finally {
+      rmSync(repo, { recursive: true, force: true });
+    }
   });
 
   it("--simular no escribe nada", async () => {
@@ -167,5 +219,45 @@ describe("cambiarCuerpos", () => {
     const r = await cambiarCuerpos(db, ["no-existe"], () => ({ cuerpoHtml: "x" }), { usuario: "t" });
     expect(r.noExisten).toEqual(["no-existe"]);
     expect(r.escrituras).toBe(0);
+  });
+});
+
+describe("cambiarCuerpos: orden de los lotes", () => {
+  it("«publicar pendiente» va en el último lote y cada versión va en el mismo lote que su artículo", async () => {
+    const N = 230; // 2 operaciones por artículo: más de 400 → varios lotes
+    const slugs = Array.from({ length: N }, (_, i) => "lote-" + String(i).padStart(3, "0"));
+    for (let i = 0; i < N; i += 100) {
+      const b = db.batch();
+      for (const s of slugs.slice(i, i + 100)) b.set(db.doc("articulos/" + s), art(s, "<p>a</p>"));
+      await b.commit();
+    }
+    const commits = [];
+    const dbEspia = new Proxy(db, {
+      get(t, prop) {
+        if (prop !== "batch") return typeof t[prop] === "function" ? t[prop].bind(t) : t[prop];
+        return () => {
+          const b = t.batch();
+          const ops = [];
+          commits.push(ops);
+          for (const m of ["set", "update"]) {
+            const f = b[m].bind(b);
+            b[m] = (ref, ...resto) => { ops.push(ref.path); return f(ref, ...resto); };
+          }
+          return b;
+        };
+      },
+    });
+    const r = await cambiarCuerpos(dbEspia, slugs, () => ({ cuerpoHtml: "<p>b</p>" }), { usuario: "t" });
+    expect(r.cuerpoCambiado.length).toBe(N);
+    const llenos = commits.filter((c) => c.length);
+    expect(llenos.length).toBeGreaterThan(1);
+    expect(llenos.slice(0, -1).flat()).not.toContain("estado/sistema");
+    expect(llenos.at(-1)).toContain("estado/sistema");
+    for (const c of llenos) {
+      const arts = c.filter((p) => /^articulos\/[^/]+$/.test(p));
+      const vers = c.filter((p) => p.includes("/versiones/")).map((p) => p.split("/")[1]);
+      expect(vers.sort()).toEqual(arts.map((p) => p.split("/")[1]).sort());
+    }
+    expect((await sistema()).publicarPendiente).toBe(true);
   });
 });

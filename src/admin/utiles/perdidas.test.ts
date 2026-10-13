@@ -34,10 +34,10 @@ describe("avisoDePerdidas", () => {
     });
     it("con dos marcas y una sola foto nueva, avisa de la que falta", () => {
       const antes = `<p>${marca("a")}${marca("b")}</p>`;
-      expect(avisoDePerdidas(antes, '<p><img src="https://res.cloudinary.com/x/a.jpg" alt="a"></p>')).toMatch(/1 aviso de «imagen no recuperada»/);
+      expect(avisoDePerdidas(antes, '<p><img src="https://res.cloudinary.com/x/a.jpg" alt="a"></p>')).toMatch(/1 foto pendiente/);
     });
     it("borrar una marca sin poner foto sigue avisando; una foto nueva que no sustituye nada no evita avisar de otras pérdidas", () => {
-      expect(avisoDePerdidas(`<p>${marca("a")}</p>`, "<p>x</p>")).toMatch(/1 aviso/);
+      expect(avisoDePerdidas(`<p>${marca("a")}</p>`, "<p>x</p>")).toMatch(/1 foto pendiente/);
       expect(avisoDePerdidas(`${ivoox}`, '<img src="https://res.cloudinary.com/x/a.jpg" alt="a">')).toMatch(/vídeo/);
     });
   });

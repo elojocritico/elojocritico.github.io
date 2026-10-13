@@ -5,7 +5,7 @@ import Comentarios from "../components/Comentarios.astro";
 import ComentariosNuevos from "../components/ComentariosNuevos.astro";
 import FormularioComentario from "../components/FormularioComentario.astro";
 import Anuncio from "../components/Anuncio.astro";
-import { portadaDe, tieneFotosPerdidas, NOTA_FOTOS_PERDIDAS } from "../lib/fotos";
+import { portadaDe, tieneFotosPerdidas, quitarMarcasPerdidas, NOTA_FOTOS_PERDIDAS } from "../lib/fotos";
 import { articulos, comentariosArchivo, comentariosAprobados, arbolComentarios, relacionados, fechaLarga, minutosLectura, nombreSeccion, type Articulo } from "../lib/contenido";
 export function getStaticPaths() {
   return articulos().map((a) => ({ params: { slug: a.slug }, props: { a } }));
@@ -24,7 +24,7 @@ const rel = relacionados(a, articulos());
       <h1 data-pagefind-meta="title">{a.titulo}</h1>
       {a.subtitulo && <p style="font:20px/1.4 var(--serif);color:var(--texto-2)">{a.subtitulo}</p>}
       <div class="meta">{a.autor} · <time datetime={a.fecha}>{fechaLarga(a.fecha)}</time> · {minutosLectura(a.cuerpoHtml)} min{total > 0 && ` · ${total} ${total === 1 ? "comentario" : "comentarios"}`}</div>
-      <div class="cuerpo cuerpo-publico" data-cuerpo style="margin-top:24px" set:html={a.cuerpoHtml} />
+      <div class="cuerpo cuerpo-publico" data-cuerpo style="margin-top:24px" set:html={quitarMarcasPerdidas(a.cuerpoHtml)} />
       {tieneFotosPerdidas(a.cuerpoHtml) && <p class="nota-fotos-perdidas" data-pagefind-ignore>{NOTA_FOTOS_PERDIDAS}</p>}
     </div>
     <div style="clear:both"></div>

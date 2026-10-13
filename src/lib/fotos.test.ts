@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
-import { elegirPortada, imagenesDelCuerpo, leerAncho, variante640, esPequena, tieneFotosPerdidas, portadaDe, NOTA_FOTOS_PERDIDAS } from "./fotos";
+import { elegirPortada, imagenesDelCuerpo, leerAncho, variante640, esPequena, tieneFotosPerdidas, quitarMarcasPerdidas, portadaDe, NOTA_FOTOS_PERDIDAS } from "./fotos";
 
 const anchos: Record<string, number> = {
   "/img/a/chica.webp": 300, "/img/a/chica-640.webp": 300, "/img/a/grande.webp": 1200, "/img/a/grande-640.webp": 640,
@@ -77,5 +77,29 @@ describe("leerAncho (disco real)", () => {
     expect(leerAncho("/img/2020/01/f.webp")).toBeNull();
     expect(portadaDe({ slug: "zz", portada: p("/img/2020/01/f.webp"), cuerpoHtml: "" })!.anchoSrc).toBeNull();
     rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+describe("quitarMarcasPerdidas", () => {
+  const M = '<span class="img-perdida" data-original="/wp-content/uploads/2014/12/a.jpg">Imagen no recuperada</span>';
+  it("sin marcas devuelve el HTML tal cual", () => {
+    const h = "<p>hola</p><p></p>";
+    expect(quitarMarcasPerdidas(h)).toBe(h);
+  });
+  it("quita la marca y su texto, pero deja el resto del párrafo", () => {
+    expect(quitarMarcasPerdidas(`<p>Antes ${M} después</p>`)).toBe("<p>Antes  después</p>");
+    expect(quitarMarcasPerdidas(`<p>${M}</p><p>texto</p>`)).toBe("<p>texto</p>");
+    expect(quitarMarcasPerdidas('<p><span class="img-perdida">Imagen no recuperada</span></p>x')).toBe("x");
+  });
+  it("quita lo que queda vacío: párrafos, figuras con pie vacío, enlaces y énfasis anidados", () => {
+    expect(quitarMarcasPerdidas(`<figure class="centro">${M}<figcaption></figcaption></figure><p>a</p>`)).toBe("<p>a</p>");
+    expect(quitarMarcasPerdidas(`<p><em><a href="/x">${M}</a></em><br></p><p>b</p>`)).toBe("<p>b</p>");
+    expect(quitarMarcasPerdidas(`<figure><img src="/img/a.webp" alt=""><figcaption>${M}</figcaption></figure>`)).toBe('<figure><img src="/img/a.webp" alt=""></figure>');
+  });
+  it("no toca vacíos que no tienen que ver con una marca", () => {
+    expect(quitarMarcasPerdidas(`<p></p><p>${M}</p><p>&nbsp;</p>`)).toBe("<p></p><p>&nbsp;</p>");
+  });
+  it("el texto de la marca no sobrevive en ningún caso", () => {
+    expect(quitarMarcasPerdidas(`<p>${M}${M}</p><div>${M}</div>`)).not.toContain("no recuperada");
   });
 });

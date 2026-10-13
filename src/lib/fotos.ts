@@ -94,3 +94,24 @@ export const esPequena = (ancho: number | null, umbral: number) => ancho !== nul
 
 /** El cuerpo tiene alguna marca de foto perdida. */
 export const tieneFotosPerdidas = (cuerpoHtml: string) => /<span\b[^>]*\bclass="[^"]*\bimg-perdida\b/i.test(cuerpoHtml);
+
+const CENTINELA = "\uE000";
+const MARCA_PERDIDA = /<span\b[^>]*\bclass="[^"]*\bimg-perdida\b[^"]*"[^>]*>[^<]*<\/span>/gi;
+// Elemento que solo contiene espacios, saltos de línea, un pie vacío o el rastro de una marca quitada.
+const VACIO = /<(p|figure|figcaption|div|a|li|h[1-6]|strong|em|b|i|u|span|blockquote)\b[^>]*>((?:\s|&nbsp;|<br\s*\/?>|<figcaption\b[^>]*>(?:\s|&nbsp;)*<\/figcaption>|\uE000)*)<\/\1>/gi;
+
+/**
+ * Para la web pública: quita del HTML las marcas de foto perdida (el texto «Imagen no recuperada» no debe indexarse ni verse)
+ * y los elementos que se quedan vacíos por ello (párrafo, pie, figura...), para no dejar huecos. No toca elementos que ya
+ * estuvieran vacíos sin tener nada que ver con una marca. El editor del panel sigue viendo las marcas (esto solo se usa al construir).
+ */
+export function quitarMarcasPerdidas(cuerpoHtml: string): string {
+  if (!MARCA_PERDIDA.test(cuerpoHtml)) return cuerpoHtml;
+  MARCA_PERDIDA.lastIndex = 0;
+  let html = cuerpoHtml.replace(MARCA_PERDIDA, CENTINELA);
+  for (let previo = ""; previo !== html; ) {
+    previo = html;
+    html = html.replace(VACIO, (todo, _etiqueta, dentro: string) => (dentro.includes(CENTINELA) ? CENTINELA : todo));
+  }
+  return html.split(CENTINELA).join("");
+}
