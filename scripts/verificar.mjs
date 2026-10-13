@@ -4,7 +4,7 @@ import { join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const RESERVADOS = new Set(["articulos", "tema", "anio", "revista", "podcast", "videos", "que-es-eoc", "buscar",
-  "img", "logo", "pagefind", "admin", "category", "feed", "wp-content", "404", "rss.xml"]);
+  "img", "logo", "pagefind", "admin", "comentarios-archivo", "category", "feed", "wp-content", "404", "rss.xml"]);
 const LIMITE_MB = 950;
 
 function* ficheros(dir) {

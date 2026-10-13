@@ -1,17 +1,9 @@
-import { initializeApp, getApps, type FirebaseOptions } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
+import { leerConfiguracion } from "../lib/configuracion";
 import { getAuth, connectAuthEmulator, type Auth } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator, type Firestore } from "firebase/firestore";
 
-/** Lee y valida la configuracion; devuelve null si falta o esta mal escrita. */
-export function leerConfiguracion(texto: string | undefined): FirebaseOptions | null {
-  if (!texto) return null;
-  try {
-    const c = JSON.parse(texto);
-    return c && typeof c === "object" && typeof c.projectId === "string" && typeof c.apiKey === "string" ? c : null;
-  } catch {
-    return null;
-  }
-}
+export { leerConfiguracion };
 
 const config = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG);
 export const configurado = config !== null;

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { signOut, type User } from "firebase/auth";
-import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { Boton } from "../componentes/Boton";
 import { Cargando } from "../componentes/Cargando";
 import { Ayuda } from "../componentes/Ayuda";
+import { suscribirPendientes } from "../datos/comentarios";
 import { calcularSemaforo, type Color } from "../semaforo";
 import { irA } from "../ruta";
 import type { Papel } from "../sesion";
@@ -31,11 +32,7 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
         setEstado(null);
       });
     // Unica escucha en tiempo real del panel: el contador de comentarios pendientes.
-    const cancelar = onSnapshot(
-      query(collection(db, "comentarios"), where("estado", "==", "pendiente")),
-      (s) => setPendientes(s.size),
-      () => setPendientes(null),
-    );
+    const cancelar = suscribirPendientes(db, setPendientes, () => setPendientes(null));
     return () => {
       vigente = false;
       cancelar();

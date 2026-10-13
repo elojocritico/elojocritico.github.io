@@ -6,7 +6,7 @@ export const MAX_DIRECCION = 80;
 /** Mismas rutas reservadas que scripts/verificar.mjs (hay una prueba que comprueba que siguen iguales). */
 export const RESERVADAS = [
   "articulos", "tema", "anio", "revista", "podcast", "videos", "que-es-eoc", "buscar",
-  "img", "logo", "pagefind", "admin", "category", "feed", "wp-content", "404", "rss.xml",
+  "img", "logo", "pagefind", "admin", "comentarios-archivo", "category", "feed", "wp-content", "404", "rss.xml",
 ];
 
 /** Del título a una dirección: minúsculas, sin tildes, ñ -> n, signos y espacios -> "-", máximo 80 letras. */

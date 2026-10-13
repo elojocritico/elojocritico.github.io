@@ -28,7 +28,9 @@ const AjustesZ = z.object({
 
 export type Articulo = z.infer<typeof ArticuloZ>;
 export type Comentario = z.infer<typeof ComentarioZ>;
+const NuevoComentarioZ = z.object({ id: z.string(), nombre: z.string(), fecha: z.string(), texto: z.string() });
 export type Ajustes = z.infer<typeof AjustesZ>;
+export type ComentarioNuevo = z.infer<typeof NuevoComentarioZ>;
 export type Seccion = { slug: string; nombre: string };
 export type NodoComentario = Comentario & { respuestas: NodoComentario[] };
 
@@ -47,9 +49,32 @@ export function articulos(): Articulo[] {
 }
 export const articulo = (slug: string) => articulos().find((a) => a.slug === slug);
 
-export function comentariosArchivo(slug: string): Comentario[] {
+/** Identificadores de comentarios del archivo ocultados desde el panel (contenido/archivo-ocultos.json). Sin fichero = ninguno. */
+export function ocultosArchivo(slug: string): Set<string> {
+  const rel = "archivo-ocultos.json";
+  if (!existsSync(join(RAIZ_CONTENIDO(), rel))) return new Set();
+  const datos = z.record(z.string(), z.array(z.string())).parse(leer(rel));
+  return new Set(datos[slug] ?? []);
+}
+/** Todos los comentarios del archivo tal como están en el fichero (el panel los lee enteros para poder mostrar los ocultos). */
+export function comentariosArchivoTodos(slug: string): Comentario[] {
   const rel = join("comentarios-archivo", `${slug}.json`);
   return existsSync(join(RAIZ_CONTENIDO(), rel)) ? z.array(ComentarioZ).parse(leer(rel)) : [];
+}
+export function slugsComentariosArchivo(): string[] {
+  const dir = join(RAIZ_CONTENIDO(), "comentarios-archivo");
+  return existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5)) : [];
+}
+/** Comentarios del archivo que se muestran en la web: sin los ocultos. */
+export function comentariosArchivo(slug: string): Comentario[] {
+  const ocultos = ocultosArchivo(slug);
+  return comentariosArchivoTodos(slug).filter((c) => !ocultos.has(c.id));
+}
+/** Comentarios nuevos ya aprobados (contenido/comentarios/<dirección>.json, los genera el exportador), del más antiguo al más reciente. */
+export function comentariosAprobados(slug: string): ComentarioNuevo[] {
+  const rel = join("comentarios", `${slug}.json`);
+  if (!existsSync(join(RAIZ_CONTENIDO(), rel))) return [];
+  return z.array(NuevoComentarioZ).parse(leer(rel)).sort((a, b) => a.fecha.localeCompare(b.fecha));
 }
 export const secciones = (): Seccion[] => leer("secciones.json");
 export const nombreSeccion = (slug: string) => secciones().find((s) => s.slug === slug)?.nombre ?? slug;

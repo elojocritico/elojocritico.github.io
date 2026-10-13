@@ -1,0 +1,110 @@
+---
+// Formulario para que los lectores dejen un comentario. Sin React: la página no carga nada de Firebase hasta que
+// el lector pulsa "Escribir un comentario". Si la web no tiene configuración, el botón no aparece.
+import { leerConfiguracion } from "../lib/configuracion";
+interface Props { slug: string }
+const { slug } = Astro.props;
+const disponible = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG) !== null;
+---
+{disponible && (
+  <section class="escribir" data-form-comentario data-slug={slug} style="margin-top:40px;border-top:1px solid var(--linea);padding-top:16px">
+    <button type="button" class="abrir" data-abrir>Escribir un comentario</button>
+    <form data-formulario hidden novalidate>
+      <label>Tu nombre
+        <input name="nombre" maxlength="60" autocomplete="name" required />
+      </label>
+      <label>Tu comentario
+        <textarea name="texto" maxlength="3000" rows="6" required></textarea>
+      </label>
+      <label>Tu correo (opcional)
+        <input name="correo" type="email" maxlength="120" autocomplete="email" />
+        <small>No se publica.</small>
+      </label>
+      <div class="trampa" aria-hidden="true">
+        <label>No rellenes este campo
+          <input name="web" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+      <button type="submit" class="enviar">Enviar comentario</button>
+    </form>
+    <p class="mensaje" data-mensaje role="status" aria-live="polite"></p>
+  </section>
+)}
+
+<script>
+  import { leerConfiguracion } from "../lib/configuracion";
+  import { MENSAJE_GRACIAS, MENSAJE_FALLO } from "../lib/reglasComentario";
+
+  type Servicios = { db: import("firebase/firestore").Firestore; enviar: typeof import("../lib/enviarComentario").enviarComentario };
+
+  async function cargarServicios(): Promise<Servicios> {
+    const config = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG);
+    if (!config) throw new Error("sin configuración");
+    const [{ initializeApp, getApps }, { getFirestore, connectFirestoreEmulator }, { enviarComentario }] = await Promise.all([
+      import("firebase/app"),
+      import("firebase/firestore"),
+      import("../lib/enviarComentario"),
+    ]);
+    const app = getApps()[0] ?? initializeApp(config);
+    const clave = import.meta.env.PUBLIC_RECAPTCHA_V3;
+    if (clave && import.meta.env.PUBLIC_EMULADOR !== "1") {
+      const { initializeAppCheck, ReCaptchaV3Provider } = await import("firebase/app-check");
+      initializeAppCheck(app, { provider: new ReCaptchaV3Provider(clave), isTokenAutoRefreshEnabled: true });
+    }
+    const db = getFirestore(app);
+    if (import.meta.env.PUBLIC_EMULADOR === "1") connectFirestoreEmulator(db, "127.0.0.1", 8080);
+    return { db, enviar: enviarComentario };
+  }
+
+  for (const caja of document.querySelectorAll<HTMLElement>("[data-form-comentario]")) {
+    const abrir = caja.querySelector<HTMLButtonElement>("[data-abrir]")!;
+    const form = caja.querySelector<HTMLFormElement>("[data-formulario]")!;
+    const mensaje = caja.querySelector<HTMLElement>("[data-mensaje]")!;
+    let servicios: Promise<Servicios> | null = null;
+    const pedir = () => (servicios ??= cargarServicios());
+
+    abrir.addEventListener("click", () => {
+      abrir.hidden = true;
+      form.hidden = false;
+      form.querySelector<HTMLInputElement>("[name=nombre]")?.focus();
+      pedir().catch(() => { servicios = null; }); // se prepara mientras el lector escribe; si falla, se reintenta al enviar
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (form.dataset.enviando === "1") return;
+      const campo = (n: string) => (form.elements.namedItem(n) as HTMLInputElement | HTMLTextAreaElement).value;
+      form.dataset.enviando = "1";
+      mensaje.textContent = "Enviando…";
+      try {
+        const { db, enviar } = await pedir();
+        const r = await enviar(db, {
+          articuloSlug: caja.dataset.slug ?? "", nombre: campo("nombre"), texto: campo("texto"), correo: campo("correo"), trampa: campo("web"),
+        });
+        if (r.ok) {
+          form.hidden = true;
+          form.reset();
+          mensaje.textContent = MENSAJE_GRACIAS;
+        } else {
+          mensaje.textContent = r.error;
+        }
+      } catch {
+        servicios = null;
+        mensaje.textContent = MENSAJE_FALLO;
+      } finally {
+        delete form.dataset.enviando;
+      }
+    });
+  }
+</script>
+
+<style>
+  .abrir, .enviar { font: 600 15px var(--sans, system-ui); padding: 10px 18px; border-radius: 6px; border: 1px solid var(--ambar); background: transparent; color: var(--ambar); cursor: pointer; }
+  .enviar { background: var(--ambar); color: #14171c; margin-top: 8px; }
+  form { display: grid; gap: 14px; max-width: 640px; }
+  label { display: grid; gap: 4px; font: 14px var(--sans, system-ui); color: var(--texto-2); }
+  input, textarea { font: 16px/1.4 var(--serif); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--linea); background: transparent; color: var(--texto); }
+  small { color: var(--texto-2); }
+  .trampa { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .mensaje { margin: 12px 0 0; font: 15px var(--sans, system-ui); color: var(--texto-2); }
+</style>

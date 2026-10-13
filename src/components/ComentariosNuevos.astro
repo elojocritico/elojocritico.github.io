@@ -1,0 +1,19 @@
+---
+import { fechaLarga, type ComentarioNuevo } from "../lib/contenido";
+interface Props { comentarios: ComentarioNuevo[] }
+const { comentarios } = Astro.props;
+---
+<ol class="nuevos">
+  {comentarios.map((c) => (
+    <li id={`comentario-${c.id}`}>
+      <div class="meta"><strong style="color:var(--texto)">{c.nombre}</strong> · {fechaLarga(c.fecha)}</div>
+      <div class="texto">{c.texto.split(/\n+/).filter((p) => p.trim() !== "").map((p) => <p>{p}</p>)}</div>
+    </li>
+  ))}
+</ol>
+<style>
+  .nuevos { list-style: none; padding-left: 0; margin: 0; }
+  li { margin: 0 0 18px; }
+  .texto { font: 15px/1.6 var(--serif); color: var(--texto-2); overflow-wrap: anywhere; }
+  .texto p { margin: 0 0 8px; }
+</style>

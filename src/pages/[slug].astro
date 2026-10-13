@@ -2,13 +2,17 @@
 import Base from "../layouts/Base.astro";
 import Tarjeta from "../components/Tarjeta.astro";
 import Comentarios from "../components/Comentarios.astro";
+import ComentariosNuevos from "../components/ComentariosNuevos.astro";
+import FormularioComentario from "../components/FormularioComentario.astro";
 import Anuncio from "../components/Anuncio.astro";
-import { articulos, comentariosArchivo, arbolComentarios, relacionados, fechaLarga, minutosLectura, nombreSeccion, type Articulo } from "../lib/contenido";
+import { articulos, comentariosArchivo, comentariosAprobados, arbolComentarios, relacionados, fechaLarga, minutosLectura, nombreSeccion, type Articulo } from "../lib/contenido";
 export function getStaticPaths() {
   return articulos().map((a) => ({ params: { slug: a.slug }, props: { a } }));
 }
 const { a } = Astro.props as { a: Articulo };
 const archivo = comentariosArchivo(a.slug);
+const nuevos = comentariosAprobados(a.slug);
+const total = archivo.length + nuevos.length;
 const rel = relacionados(a, articulos());
 ---
 <Base titulo={a.titulo} descripcion={a.extracto} actual="articulos" imagen={a.portada?.src}>
@@ -17,7 +21,7 @@ const rel = relacionados(a, articulos());
       {a.secciones.map((s) => <a class="etiqueta" href={`/tema/${s}/`} style="text-decoration:none;margin-right:12px">{nombreSeccion(s)}</a>)}
       <h1 data-pagefind-meta="title">{a.titulo}</h1>
       {a.subtitulo && <p style="font:20px/1.4 var(--serif);color:var(--texto-2)">{a.subtitulo}</p>}
-      <div class="meta">{a.autor} · <time datetime={a.fecha}>{fechaLarga(a.fecha)}</time> · {minutosLectura(a.cuerpoHtml)} min{archivo.length > 0 && ` · ${archivo.length} ${archivo.length === 1 ? "comentario" : "comentarios"}`}</div>
+      <div class="meta">{a.autor} · <time datetime={a.fecha}>{fechaLarga(a.fecha)}</time> · {minutosLectura(a.cuerpoHtml)} min{total > 0 && ` · ${total} ${total === 1 ? "comentario" : "comentarios"}`}</div>
       <div class="cuerpo" style="margin-top:24px" set:html={a.cuerpoHtml} />
     </div>
     <div style="clear:both"></div>
@@ -28,6 +32,13 @@ const rel = relacionados(a, articulos());
         <div class="rejilla">{rel.map((r) => <Tarjeta articulo={r} />)}</div>
       </section>
     )}
+    {nuevos.length > 0 && (
+      <section id="comentarios-lectores" style="margin-top:40px;border-top:1px solid var(--linea);padding-top:16px">
+        <h2 class="seccion-titulo">Comentarios de los lectores ({nuevos.length})</h2>
+        <ComentariosNuevos comentarios={nuevos} />
+      </section>
+    )}
+    <FormularioComentario slug={a.slug} />
     {archivo.length > 0 && (
       <details style="margin-top:40px;border-top:1px solid var(--linea);padding-top:16px">
         <summary class="seccion-titulo" style="cursor:pointer">Comentarios del archivo ({archivo.length})</summary>

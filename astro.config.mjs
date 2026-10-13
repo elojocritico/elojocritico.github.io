@@ -10,6 +10,8 @@ const redirects = existsSync(fichero)
 
 export default defineConfig({
   site: process.env.EOC_SITE ?? "https://elojocritico.github.io",
+  // Solo para pruebas: construir en otra carpeta sin tocar dist.
+  outDir: process.env.EOC_SALIDA ?? "./dist",
   trailingSlash: "always",
   build: { format: "directory" },
   redirects,
