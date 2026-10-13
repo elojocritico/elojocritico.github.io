@@ -1,9 +1,10 @@
 // Anota en estado/sistema cuándo terminó cada tarea automática (lo muestra el semáforo del panel).
 //
-// Uso:  node scripts/estado-sistema.mjs --real [--publicacion] [--medios] [--copia]
+// Uso:  node scripts/estado-sistema.mjs --real [--publicacion] [--medios] [--copia] [--intento-copia]
 //   --publicacion  ultimaPublicacion
 //   --medios       ultimaSincronizacionMedios
 //   --copia        ultimaCopia
+//   --intento-copia  ultimoIntentoCopia: se anota al EMPEZAR el trabajo de la noche, para no repetir cada hora una copia que falla
 //   --despliegue <sha>  ultimoDespliegue: commit que acaba de desplegarse en GitHub Pages (solo lo escribe el flujo)
 // Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
 import { getApp, deleteApp } from "firebase-admin/app";
@@ -12,7 +13,7 @@ import { fileURLToPath } from "node:url";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
 
-const CAMPOS = { "--publicacion": "ultimaPublicacion", "--medios": "ultimaSincronizacionMedios", "--copia": "ultimaCopia" };
+const CAMPOS = { "--publicacion": "ultimaPublicacion", "--medios": "ultimaSincronizacionMedios", "--copia": "ultimaCopia", "--intento-copia": "ultimoIntentoCopia" };
 
 /** Campos de estado/sistema que corresponden a los indicadores pedidos (en el orden de CAMPOS), sin el commit del despliegue. */
 export function camposAnotar(args) {
@@ -52,7 +53,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const destino = resolverDestino();
     console.log(destino.mensaje);
     const datos = datosAnotar(destino.args);
-    if (!Object.keys(datos).length) throw new Error("Indica qué anotar: --publicacion, --medios, --copia y/o --despliegue <sha>.");
+    if (!Object.keys(datos).length) throw new Error("Indica qué anotar: --publicacion, --medios, --copia, --intento-copia y/o --despliegue <sha>.");
     iniciarAdmin();
     const r = await anotarEstado(getFirestore(), datos);
     console.log(`Estado anotado: ${Object.keys(r).join(", ")}`);

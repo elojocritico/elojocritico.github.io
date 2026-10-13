@@ -55,7 +55,7 @@ it("solicitud de cuenta pendiente: hay trabajo", async () => {
 });
 it("sin nada pendiente: no hay trabajo, con pocas lecturas", async () => {
   const db = dbFalsa({ estado: ok() });
-  expect(await hayTrabajo(db, AHORA)).toEqual({ trabajo: false, motivo: "nada que hacer", noche: false, alDia: true });
+  expect(await hayTrabajo(db, AHORA)).toEqual({ trabajo: false, motivo: "nada que hacer", noche: false, alDia: true, copiaReciente: true });
   expect(db.lecturas).toEqual(["estado/sistema", "articulos?estado==programado", "solicitudesCuenta limit 1"]);
 });
 
@@ -86,4 +86,30 @@ it("ultimaCopia ausente o de hace más de 25 h: modo noche (hay trabajo); recien
 it("el modo noche se señala aunque haya otro motivo de trabajo", async () => {
   const r = await hayTrabajo(dbFalsa({ estado: { publicarPendiente: true } }), AHORA);
   expect(r).toMatchObject({ trabajo: true, noche: true });
+});
+
+it("copia vieja pero con un intento reciente (menos de 20 h): no se repite cada hora (NOCHE=0), con una sola lectura de estado/sistema", async () => {
+  const copiaVieja = "2026-10-11T00:00:00.000Z"; // 58 h
+  const db = dbFalsa({ estado: { ultimaCopia: copiaVieja, ultimoIntentoCopia: "2026-10-13T00:00:00.000Z" } }); // intento hace 10 h
+  const r = await hayTrabajo(db, AHORA);
+  expect(r).toMatchObject({ noche: false, copiaReciente: false });
+  expect(db.lecturas.filter((l) => l === "estado/sistema")).toHaveLength(1);
+});
+it("intento de hace más de 20 h (o ilegible) y copia vieja: vuelve NOCHE=1; el límite son 20 h", async () => {
+  const copiaVieja = "2026-10-11T00:00:00.000Z";
+  const viejo = await hayTrabajo(dbFalsa({ estado: { ultimaCopia: copiaVieja, ultimoIntentoCopia: "2026-10-12T13:59:00.000Z" } }), AHORA); // 20 h 1 min
+  expect(viejo).toMatchObject({ trabajo: true, noche: true });
+  const justo = await hayTrabajo(dbFalsa({ estado: { ultimaCopia: copiaVieja, ultimoIntentoCopia: "2026-10-12T14:00:00.000Z" } }), AHORA); // 20 h justas
+  expect(justo.noche).toBe(false); // 20 h justas: aún no (hace falta que pasen más de 20 h, como con las 25 h de la copia)
+  const ilegible = await hayTrabajo(dbFalsa({ estado: { ultimaCopia: copiaVieja, ultimoIntentoCopia: "ayer" } }), AHORA);
+  expect(ilegible.noche).toBe(true);
+});
+it("un intento reciente no tapa una copia que sí está al día ni al revés", async () => {
+  const r = await hayTrabajo(dbFalsa({ estado: { ultimaCopia: COPIA_RECIENTE, ultimoIntentoCopia: "2026-10-13T09:00:00.000Z" } }), AHORA);
+  expect(r).toMatchObject({ noche: false, copiaReciente: true });
+});
+it("copiaReciente: copia de menos de 20 h; de 20 h o más, o ausente: no", async () => {
+  expect((await hayTrabajo(dbFalsa({ estado: { ultimaCopia: "2026-10-12T14:01:00.000Z" } }), AHORA)).copiaReciente).toBe(true); // 19 h 59 min
+  expect((await hayTrabajo(dbFalsa({ estado: { ultimaCopia: "2026-10-12T14:00:00.000Z" } }), AHORA)).copiaReciente).toBe(false);
+  expect((await hayTrabajo(dbFalsa({ estado: {} }), AHORA)).copiaReciente).toBe(false);
 });

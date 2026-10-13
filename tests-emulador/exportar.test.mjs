@@ -106,6 +106,17 @@ describe("artículos", () => {
     expect((await db.doc("articulos/futuro").get()).data().estado).toBe("programado");
   });
 
+  it("el registro (público) no imprime la dirección de artículos no publicados; solo cuántos hay", async () => {
+    await poner("fecha-mala", { estado: "programado", fechaPublicacion: "no es fecha" });
+    await poner("admin"); // dirección reservada
+    await poner("bien");
+    const r = await correr();
+    const registro = r.salida.join("\n");
+    expect(registro).not.toMatch(/fecha-mala|"admin"/);
+    expect(registro).toMatch(/AVISO: 2 artículo\(s\) no se publican/);
+    expect(r.avisos.join("\n")).toMatch(/fecha-mala/); // el detalle sigue en el valor devuelto
+  });
+
   it("un programado que vence entre dos exportaciones se publica en la segunda", async () => {
     await poner("luego", { estado: "programado", fechaPublicacion: dias(1) });
     await correr();

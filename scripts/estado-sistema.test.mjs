@@ -8,6 +8,7 @@ function dbFalsa() {
 
 it("traduce las opciones a campos de estado/sistema", () => {
   expect(camposAnotar(["--copia", "--publicacion"])).toEqual(["ultimaPublicacion", "ultimaCopia"]);
+  expect(camposAnotar(["--intento-copia"])).toEqual(["ultimoIntentoCopia"]);
   expect(camposAnotar(["--medios"])).toEqual(["ultimaSincronizacionMedios"]);
   expect(camposAnotar([])).toEqual([]);
   expect(() => camposAnotar(["--otra"])).toThrow(/desconocida/);

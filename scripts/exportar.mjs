@@ -114,6 +114,10 @@ export async function exportar({
   const ahoraMs = ahora.getTime();
   const avisos = [];
   const aviso = (m) => avisos.push(m);
+  // Los registros de GitHub Actions son públicos: de los artículos que NO están publicados (programados, borradores, no válidos)
+  // no se imprime la dirección, solo cuántos son. El detalle sigue en el valor devuelto (avisos) para quien llame a exportar().
+  const ocultosEnRegistro = new Set();
+  const avisoNoPublicado = (m) => { ocultosEnRegistro.add(avisos.length); avisos.push(m); };
   const ruta = (...p) => join(dirContenido, ...p);
   if (!existsSync(dirImagenes)) throw new Error(`No encuentro la carpeta de imágenes (${dirImagenes}). Revisa que esté descargada y, si hace falta, indica su sitio con EOC_IMAGENES.`);
 
@@ -171,7 +175,7 @@ export async function exportar({
       if (nuevo) articulos.set(id, nuevo);
       else articulos.delete(id);
     } else if (d.estado === "programado" && isNaN(Date.parse(d.fechaPublicacion ?? ""))) {
-      aviso(`El artículo "${id}" está programado con una fecha no válida; no se publica.`);
+      avisoNoPublicado(`El artículo "${id}" está programado con una fecha no válida; no se publica.`);
     }
   }
 
@@ -275,7 +279,7 @@ export async function exportar({
   const retirar = [];
   for (const [id, d] of articulos) {
     if (!slugSeguro(id)) {
-      aviso(`Se ignora el artículo con dirección no válida: ${JSON.stringify(id)}`);
+      avisoNoPublicado(`Se ignora el artículo con dirección no válida: ${JSON.stringify(id)}`);
       continue;
     }
     const fichero = ruta("articulos", `${id}.json`);
@@ -284,12 +288,12 @@ export async function exportar({
       continue;
     }
     if (RESERVADAS.includes(id)) {
-      aviso(`El artículo "${id}" usa una dirección reservada para la web; no se publica.`);
+      avisoNoPublicado(`El artículo "${id}" usa una dirección reservada para la web; no se publica.`);
       continue;
     }
     const fecha = utcAMadrid(d.fechaPublicacion).slice(0, 10);
     if (!fecha) {
-      aviso(`El artículo "${id}" no tiene una fecha de publicación válida; no se publica.`);
+      avisoNoPublicado(`El artículo "${id}" no tiene una fecha de publicación válida; no se publica.`);
       continue;
     }
     const existente = existsSync(fichero) ? leerJson(fichero) : {};
@@ -340,7 +344,7 @@ export async function exportar({
     };
     const valido = ArticuloZ.safeParse(salida);
     if (!valido.success) {
-      aviso(`El artículo "${id}" no es válido para la web (${valido.error.issues[0]?.message ?? "datos incorrectos"}); no se publica.`);
+      avisoNoPublicado(`El artículo "${id}" no es válido para la web (${valido.error.issues[0]?.message ?? "datos incorrectos"}); no se publica.`);
       continue;
     }
     if (Array.isArray(existente.enlacesExternos)) salida.enlacesExternos = existente.enlacesExternos; // dato de la migración
@@ -581,7 +585,8 @@ export async function exportar({
     `Comentarios aprobados publicados: ${resumen.comentarios}. Fotos nuevas convertidas: ${resumen.imagenes}.`,
     `Ficheros escritos: ${textos.size + imagenes.size}; borrados: ${borrar.size}. Papelera vaciada: ${purgados.length}.`,
     ...(fotosSinUsar ? [`Hay ${fotosSinUsar} foto(s) en la carpeta de imágenes sin usar en ningún artículo (no se borran).`] : []),
-    ...avisos.map((m) => `AVISO: ${m}`),
+    ...avisos.filter((_, i) => !ocultosEnRegistro.has(i)).map((m) => `AVISO: ${m}`),
+    ...(ocultosEnRegistro.size ? [`AVISO: ${ocultosEnRegistro.size} artículo(s) no se publican (fecha no válida, dirección reservada o datos incorrectos). Mira cuáles en el panel.`] : []),
     `INICIO=${inicio}`,
     `CAMBIOS=${cambios ? 1 : 0}`,
   ];
