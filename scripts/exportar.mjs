@@ -16,6 +16,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, w
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { getApp, deleteApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
@@ -595,6 +596,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     } else await exportar({ completo: destino.args.includes("--completo"), sinConfirmar: destino.args.includes("--sin-confirmar") });
   } catch (e) {
     console.error("✗ No se ha podido exportar:", e?.message ?? e);
-    process.exit(1);
+    process.exitCode = 1;
+  } finally {
+    try { await deleteApp(getApp()); } catch {}
   }
 }

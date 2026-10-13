@@ -5,7 +5,7 @@
 // Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
 // Simulador: define FIREBASE_AUTH_EMULATOR_HOST y FIRESTORE_EMULATOR_HOST (los pone `firebase emulators:exec`).
 // Proyecto real: define GOOGLE_APPLICATION_CREDENTIALS (y GCLOUD_PROJECT si la clave no trae el proyecto).
-import { initializeApp, getApps, applicationDefault } from "firebase-admin/app";
+import { initializeApp, getApps, getApp, deleteApp, applicationDefault } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { fileURLToPath } from "node:url";
@@ -87,6 +87,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     if (!r.usuarioNuevo) console.warn("⚠ Atención: esa cuenta ya existía y su contraseña se ha cambiado por la nueva.");
   } catch (e) {
     console.error("✗ No se ha podido crear el administrador:", e?.message ?? e);
-    process.exit(1);
+    process.exitCode = 1;
+  } finally {
+    try { await deleteApp(getApp()); } catch {}
   }
 }

@@ -90,7 +90,7 @@ describe("importar como comando: protección del proyecto real", () => {
     for (const k of ["FIRESTORE_EMULATOR_HOST", "FIREBASE_AUTH_EMULATOR_HOST", "GOOGLE_APPLICATION_CREDENTIALS", "GCLOUD_PROJECT", "GOOGLE_CLOUD_PROJECT"]) delete env[k];
     return env;
   };
-  const correr = (args, env) => spawnSync(process.execPath, ["scripts/importar.mjs", ...args], { encoding: "utf-8", env });
+  const correr = (args, env) => spawnSync(process.execPath, ["scripts/importar.mjs", ...args], { encoding: "utf-8", env, timeout: 30000 });
 
   it("sin simulador y sin --real se niega y no escribe nada", async () => {
     const r = correr([dir], limpio());
@@ -120,13 +120,13 @@ describe("simulador a medias", () => {
     return env;
   };
   it("crear-admin con solo FIRESTORE_EMULATOR_HOST se niega y no escribe", async () => {
-    const r = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "mezcla@ejemplo.es", "clave-segura-1"], { encoding: "utf-8", env: soloFirestore() });
+    const r = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "mezcla@ejemplo.es", "clave-segura-1"], { encoding: "utf-8", env: soloFirestore(), timeout: 30000 });
     expect(r.status).toBe(1);
     expect(r.stderr).toContain("Configuración mezclada");
     expect((await db.doc("ajustes/global").get()).exists).toBe(false);
   });
   it("importar con solo FIRESTORE_EMULATOR_HOST funciona", async () => {
-    const r = spawnSync(process.execPath, ["scripts/importar.mjs", dir], { encoding: "utf-8", env: soloFirestore() });
+    const r = spawnSync(process.execPath, ["scripts/importar.mjs", dir], { encoding: "utf-8", env: soloFirestore(), timeout: 30000 });
     expect(r.status, r.stderr).toBe(0);
     expect((await db.collection("articulos").get()).size).toBe(3);
   });
@@ -137,4 +137,36 @@ describe("resolverDestino", () => {
     const d = resolverDestino(["x", "--real"], { GOOGLE_APPLICATION_CREDENTIALS: "k.json", GCLOUD_PROJECT: "eoc" });
     expect(d).toMatchObject({ real: true, args: ["x"], mensaje: "Destino: proyecto REAL eoc" });
   });
+});
+
+describe("lotes grandes y salida de los comandos", () => {
+  it("con ~30 artículos de ~150 KB hace más de un commit y termina", async () => {
+    const grande = mkdtempSync(join(tmpdir(), "eoc-grande-"));
+    mkdirSync(join(grande, "articulos"));
+    const cuerpo = "<p>" + "palabra ".repeat(19000) + "</p>";
+    for (let i = 0; i < 30; i++) writeFileSync(join(grande, "articulos", `g${i}.json`), JSON.stringify(art(`g${i}`, { cuerpoHtml: cuerpo })));
+    try {
+      const r = await importar({ db, dirContenido: grande, log: callar });
+      expect(r.articulos.creados).toBe(30);
+      expect(r.commits).toBeGreaterThan(1);
+      expect((await db.collection("articulos").get()).size).toBe(30);
+    } finally {
+      rmSync(grande, { recursive: true, force: true });
+    }
+  }, 60000);
+
+  it("importar y exportar terminan solos contra el simulador", () => {
+    const a = spawnSync(process.execPath, ["scripts/importar.mjs", dir], { encoding: "utf-8", env: process.env, timeout: 30000 });
+    expect(a.status, a.stderr).toBe(0);
+    const out = mkdtempSync(join(tmpdir(), "eoc-exp-"));
+    mkdirSync(join(out, "imagenes"));
+    try {
+      const env = { ...process.env, EOC_CONTENIDO: join(out, "contenido"), EOC_IMAGENES: join(out, "imagenes") };
+      const b = spawnSync(process.execPath, ["node_modules/tsx/dist/cli.mjs", "scripts/exportar.mjs"], { encoding: "utf-8", env, timeout: 60000 });
+      expect(b.error, String(b.error)).toBeUndefined();
+      expect(b.status, b.stderr).toBe(0);
+    } finally {
+      rmSync(out, { recursive: true, force: true });
+    }
+  }, 120000);
 });

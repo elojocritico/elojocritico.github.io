@@ -9,8 +9,10 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getFirestore } from "firebase-admin/firestore";
+import { getApp, deleteApp } from "firebase-admin/app";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { mediodiaMadridUtc } from "../src/lib/madrid.js";
+import { crearEscritor } from "./lotes.mjs";
 import { iniciarAdmin, AJUSTES_POR_DEFECTO, ESTADO_POR_DEFECTO } from "./crear-admin.mjs";
 
 const LOTE = 400;
@@ -44,19 +46,8 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   const ficheros = existsSync(dirArt) ? readdirSync(dirArt).filter((f) => f.endsWith(".json")).sort() : [];
   const nuevos = ficheros.map((f) => docArticulo(leer(join(dirArt, f))));
   const r = { total: nuevos.length, creados: 0, actualizados: 0, sinCambios: 0, editadosEnPanel: 0 };
-  let escrituras = 0;
-  let lote = db.batch();
-  let enLote = 0;
-  const escribir = async (ref, datos, opciones) => {
-    if (opciones) lote.set(ref, datos, opciones);
-    else lote.set(ref, datos);
-    escrituras++;
-    if (++enLote >= LOTE) {
-      await lote.commit();
-      lote = db.batch();
-      enLote = 0;
-    }
-  };
+  const w = crearEscritor(db);
+  const escribir = (ref, datos, opciones) => w.set(ref, datos, opciones);
 
   for (let i = 0; i < nuevos.length; i += 300) {
     const trozo = nuevos.slice(i, i + 300);
@@ -102,13 +93,17 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
   const refEst = db.doc("estado/sistema");
   if (!(await refEst.get()).exists) await escribir(refEst, ESTADO_POR_DEFECTO);
 
-  if (enLote) await lote.commit();
+  await w.vaciar();
   log(
     `${r.total} artículos: ${r.creados} creados, ${r.actualizados} actualizados, ${r.sinCambios} sin cambios` +
       (r.editadosEnPanel ? `, ${r.editadosEnPanel} editado(s) en el panel, no se toca` : ""),
   );
-  log(`Ajustes: ${Object.keys(faltan).length ? "completados (" + Object.keys(faltan).join(", ") + ")" : "sin cambios"}. Escrituras totales: ${escrituras}.`);
-  return { articulos: r, escrituras, ajustes: faltan };
+  log(`Ajustes: ${Object.keys(faltan).length ? "completados (" + Object.keys(faltan).join(", ") + ")" : "sin cambios"}. Escrituras totales: ${w.escrituras}.`);
+  return { articulos: r, escrituras: w.escrituras, commits: w.commits, ajustes: faltan };
+}
+
+async function cerrar() {
+  try { await deleteApp(getApp()); } catch {}
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
@@ -121,6 +116,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(`✓ Hecho en ${((Date.now() - t) / 1000).toFixed(1)} s.`);
   } catch (e) {
     console.error("✗ No se ha podido importar:", e?.message ?? e);
-    process.exit(1);
+    process.exitCode = 1;
+  } finally {
+    await cerrar();
   }
 }

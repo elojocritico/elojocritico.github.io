@@ -66,17 +66,17 @@ describe("crear-admin (simulador)", () => {
   });
 
   it("funciona como comando: node scripts/crear-admin.mjs correo contraseña", () => {
-    const r = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "cli@ejemplo.es", "clave-segura-1"], { encoding: "utf-8", env: process.env });
+    const r = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "cli@ejemplo.es", "clave-segura-1"], { encoding: "utf-8", env: process.env, timeout: 30000 });
     expect(r.status, r.stderr).toBe(0);
     expect(r.stdout).toContain("cli@ejemplo.es es administrador");
   });
 
   it("acepta la contraseña por CONTRASENA_ADMIN y avisa si la cuenta ya existía", () => {
     const env = { ...process.env, CONTRASENA_ADMIN: "clave-segura-1" };
-    const a = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env });
+    const a = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env, timeout: 30000 });
     expect(a.status, a.stderr).toBe(0);
     expect(a.stderr).not.toContain("Atención");
-    const b = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env });
+    const b = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env, timeout: 30000 });
     expect(b.status, b.stderr).toBe(0);
     expect(b.stderr).toContain("ya existía y su contraseña se ha cambiado");
   });
