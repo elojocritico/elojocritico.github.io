@@ -71,6 +71,25 @@ describe("listarArticulos", () => {
     expect(await ids({ estado: "todos" })).toEqual(["a", "b", "c"]);
   });
 
+  it("«con fotos pendientes»: solo los que tienen alguna, los que más faltan primero, y se puede paginar y combinar con estado y sección", async () => {
+    await sembrar(async (db) => {
+      await setDoc(doc(db, "articulos/a"), art(1, { fotosPendientes: 1 }));
+      await setDoc(doc(db, "articulos/b"), art(2, { fotosPendientes: 3, secciones: ["fraudes"] }));
+      await setDoc(doc(db, "articulos/c"), art(3, { fotosPendientes: 0 }));
+      await setDoc(doc(db, "articulos/d"), art(4));
+      await setDoc(doc(db, "articulos/e"), art(5, { fotosPendientes: 2, estado: "borrador" }));
+      await setDoc(doc(db, "articulos/f"), art(6, { fotosPendientes: 5, estado: "papelera" }));
+    });
+    const db = como(EDITOR);
+    const ids = async (f) => (await listarArticulos(db, { conFotosPendientes: true, ...f })).articulos.map((a) => a.id);
+    expect(await ids({})).toEqual(["b", "e", "a"]);
+    expect(await ids({ estado: "borrador" })).toEqual(["e"]);
+    expect(await ids({ seccion: "fraudes" })).toEqual(["b"]);
+    expect(await ids({ estado: "papelera" })).toEqual(["f"]);
+    const r = (await listarArticulos(db, { conFotosPendientes: true })).articulos;
+    expect(r.map((a) => a.fotosPendientes)).toEqual([3, 2, 1]);
+  });
+
   it("sin índice de títulos: búsqueda simple por el principio del título", async () => {
     await sembrar(async (db) => {
       await setDoc(doc(db, "articulos/a"), art(1, { titulo: "Roswell y los mitos" }));

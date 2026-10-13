@@ -85,7 +85,7 @@ El artículo queda en el estado «Programado». En la lista de «Mis artículos�
 
 1. En el inicio, pulsa «Mis artículos».
 2. Para buscar, escribe una palabra del título en «Buscar por título» y pulsa «Buscar». Escribe el principio del título tal como está escrito, con mayúsculas y tildes.
-3. Puedes filtrar por «Estado» (borrador, programado, publicado, en la papelera) y por «Sección».
+3. Puedes filtrar por «Estado» (borrador, programado, publicado, en la papelera) y por «Sección». Marca «Con fotos pendientes» para ver solo los artículos a los que les falta alguna foto (mira [Poner una foto que faltaba](#/ayuda/poner-foto)).
 4. La lista enseña 25 artículos cada vez. Pulsa «Más antiguos →» para ver más.
 
 ### Lo que puedes hacer con un artículo
@@ -116,6 +116,18 @@ Si otra persona guarda el mismo artículo mientras tú lo tienes abierto, al gua
 
 - «Ver los cambios del otro»: te enseña qué es distinto. Desde ahí puedes pulsar «Quedarme con lo de la otra persona», «Seguir editando» o «Guardar los míos de todas formas».
 - «Guardar los míos de todas formas»: tu versión sustituye a la de la otra persona. La de ella queda en el historial, así que se puede recuperar.
+
+## Poner una foto que faltaba {#poner-foto}
+
+Algunos artículos antiguos tenían fotos que no se pudieron recuperar. En la web no se nota, pero en el editor cada una aparece como un recuadro que dice «Foto pendiente», con el nombre que tenía la foto original. Cuando consigas la foto, ponerla es fácil:
+
+1. En «Mis artículos», marca «Con fotos pendientes». Verás solo los artículos a los que les falta alguna foto, con el aviso «Falta 1 foto» o cuántas faltan.
+2. Pulsa «Editar» en el artículo y busca el recuadro «Foto pendiente». El nombre que lleva te dice qué foto era.
+3. Pulsa «Poner foto» y elige la foto en tu ordenador o en tu móvil.
+4. Espera un momento. La foto aparece justo en el sitio del recuadro.
+5. Pulsa «Guardar borrador» o «Guardar y publicar cambios». El panel no te avisará de que se pierde nada: es normal.
+
+Si falla la subida, el recuadro se queda como estaba y te dice qué ha pasado; puedes volver a pulsar «Poner foto». Si ya no quieres esa foto, puedes borrar el recuadro como cualquier otra cosa del texto.
 
 ## Papelera {#papelera}
 

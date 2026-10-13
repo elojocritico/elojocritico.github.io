@@ -10,6 +10,10 @@
       { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "titulo", "order": "ASCENDING" } ] },
     { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "secciones", "arrayConfig": "CONTAINS" }, { "fieldPath": "titulo", "order": "ASCENDING" } ] },
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "fotosPendientes", "order": "DESCENDING" }, { "fieldPath": "actualizadoEn", "order": "DESCENDING" } ] },
+    { "collectionGroup": "articulos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "secciones", "arrayConfig": "CONTAINS" }, { "fieldPath": "fotosPendientes", "order": "DESCENDING" }, { "fieldPath": "actualizadoEn", "order": "DESCENDING" } ] },
     { "collectionGroup": "comentarios", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "estado", "order": "ASCENDING" }, { "fieldPath": "creadoEn", "order": "ASCENDING" } ] }
   ],

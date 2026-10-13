@@ -121,3 +121,13 @@
 .lista-enlaces li { display: grid; gap: 8px; border: 1px solid var(--linea); border-radius: 6px; padding: 12px; }
 .seccion-ajuste .casilla { margin: 4px 0; }
 .grande-texto { font-size: 1.5rem; font-weight: 700; margin: 16px 0; }
+
+/* Recuadro de «Foto pendiente» dentro del editor: un solo bloque, con el botón para poner la foto. */
+.foto-pendiente { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 10px 0; padding: 14px 16px; border: 2px dashed var(--ambar); border-radius: 8px; background: rgba(255, 176, 32, .08); font-size: 16px; line-height: 1.3; }
+.foto-pendiente-nombre { font-family: var(--mono, monospace); font-size: 14px; word-break: break-all; opacity: .85; }
+.foto-pendiente-boton { padding: 12px 20px; font: inherit; font-weight: 700; border: 0; border-radius: 8px; background: var(--ambar); color: #1b1305; cursor: pointer; }
+.foto-pendiente-boton:disabled { opacity: .6; cursor: progress; }
+.foto-pendiente-mensaje { flex-basis: 100%; color: #ff8a80; font-weight: 600; }
+.foto-pendiente-mensaje:empty { display: none; }
+.foto-pendiente.ProseMirror-selectednode { outline: 3px solid var(--ambar); }
+.etiqueta-fotos { background: rgba(255, 176, 32, .2); color: var(--ambar); }

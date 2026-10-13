@@ -100,7 +100,7 @@ describe("marcarPerdidas (simulador)", () => {
       expect((await db.collection(`articulos/${slug}/versiones`).get()).size).toBe(0);
     }
     expect((await db.doc("articulos/desajuste").get()).data().fotosPendientes).toBe(3);
-    expect((await db.doc("articulos/sinmarcas").get()).data().fotosPendientes).toBeUndefined();
+    expect((await db.doc("articulos/sinmarcas").get()).data().fotosPendientes).toBe(0);
     // Marca con ruta no válida: se anota la buena y la otra queda como estaba.
     expect((await db.doc("articulos/invalida").get()).data().cuerpoHtml).toBe(`<p><span class="img-perdida" data-original="${R1}">Imagen no recuperada</span></p><p>${M}</p>`);
     expect(r.invalidas).toEqual([{ slug: "invalida", rutas: ["/wp-content/uploads/con espacio.jpg"] }]);
@@ -124,7 +124,7 @@ describe("marcarPerdidas (simulador)", () => {
     expect(r.saltados).toEqual([{ slug: "editado", motivo: "editado desde la importación" }]);
     const d = (await db.doc("articulos/editado").get()).data();
     expect(d).toMatchObject({ cuerpoHtml: editado, actualizadoPor: "ana@eoc.es" });
-    expect(d.fotosPendientes).toBeUndefined();
+    expect(d.fotosPendientes).toBe(1); // lo puso el importador; el script no lo toca en lo editado a mano
     expect((await db.collection("articulos/editado/versiones").get()).size).toBe(0);
     expect(r.anotados.sort()).toEqual(["dos", "invalida"]);
   });

@@ -29,6 +29,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
   const correo = usuario.email ?? "";
   const [estado, setEstado] = useState<Estado | "todos">("todos");
   const [seccion, setSeccion] = useState("");
+  const [conFotosPendientes, setConFotosPendientes] = useState(false);
   const [escrito, setEscrito] = useState("");
   const [texto, setTexto] = useState("");
   const [articulos, setArticulos] = useState<Resumen[]>([]);
@@ -46,14 +47,14 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
   const peticion = useRef(0);
   const enCurso = useRef(false); // evita que un doble clic lance la misma acción dos veces antes de que React repinte
 
-  const filtros: Filtros = { estado, seccion, texto };
+  const filtros: Filtros = { estado, seccion, texto, conFotosPendientes };
 
   useEffect(() => {
     if (!db) return;
     const esta = ++peticion.current;
     setCargando(true);
     setError(null);
-    listarArticulos(db, { estado, seccion, texto })
+    listarArticulos(db, { estado, seccion, texto, conFotosPendientes })
       .then((p) => {
         if (esta !== peticion.current) return;
         setArticulos(p.articulos);
@@ -63,7 +64,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
       })
       .catch((e) => esta === peticion.current && (setError(mensajeDeError(e)), setArticulos([]), setCursor(null)))
       .finally(() => esta === peticion.current && setCargando(false));
-  }, [estado, seccion, texto, version]);
+  }, [estado, seccion, texto, conFotosPendientes, version]);
 
   const verMas = useCallback(async () => {
     if (!db || !cursor) return;
@@ -78,7 +79,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
       setCargandoMas(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cursor, estado, seccion, texto]);
+  }, [cursor, estado, seccion, texto, conFotosPendientes]);
 
   const buscar = (e: FormEvent) => {
     e.preventDefault();
@@ -179,6 +180,10 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
             ))}
           </select>
         </label>
+        <label className="casilla">
+          <input type="checkbox" checked={conFotosPendientes} onChange={(e) => setConFotosPendientes(e.target.checked)} />
+          Con fotos pendientes
+        </label>
       </form>
 
       {texto && modo === "prefijo" && !cargando && <Aviso>Búsqueda simple: escribe el principio del título (respeta mayúsculas y tildes).</Aviso>}
@@ -199,6 +204,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
               <p className="meta-articulo">
                 <span className={`etiqueta etiqueta-${a.estado}`}>{NOMBRE_ESTADO[a.estado] ?? a.estado}</span>
                 {a.secciones.length > 0 && <span>{a.secciones.map(nombreDeSeccion).join(", ")}</span>}
+                {a.fotosPendientes > 0 && <span className="etiqueta etiqueta-fotos">{a.fotosPendientes === 1 ? "Falta 1 foto" : `Faltan ${a.fotosPendientes} fotos`}</span>}
                 {a.actualizadoEn && (
                   <span>
                     Cambiado el {fechaLlana(a.actualizadoEn)}

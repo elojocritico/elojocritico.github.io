@@ -14,6 +14,7 @@ import { resolverDestino } from "./destino-firebase.mjs";
 import { mediodiaMadridUtc } from "../src/lib/madrid.js";
 import { tituloParaIndice, limpiarIndice } from "./indice-titulos.mjs";
 import { crearEscritor } from "./lotes.mjs";
+import { contarMarcas } from "./marcar-perdidas.mjs";
 import { iniciarAdmin, AJUSTES_POR_DEFECTO, ESTADO_POR_DEFECTO } from "./crear-admin.mjs";
 
 const LOTE = 400;
@@ -37,6 +38,8 @@ export function docArticulo(a) {
     portada: a.portada ?? null, autor: a.autor ?? "", secciones: a.secciones ?? [], etiquetas: a.etiquetas ?? [],
     estado: "publicado", fechaPublicacion: iso, destacado: !!a.destacado,
     creadoEn: iso, actualizadoEn: iso, actualizadoPor: MIGRACION, enPapeleraDesde: null, origen: a.origen ?? null,
+    // Cuántas «fotos pendientes» (marcas de foto perdida) tiene el cuerpo: lo usa el filtro del panel.
+    fotosPendientes: contarMarcas(a.cuerpoHtml ?? ""),
   };
 }
 

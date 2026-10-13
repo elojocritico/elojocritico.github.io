@@ -16,9 +16,15 @@ type Props = {
 
 export function EditorTexto({ inicial, alCambiar, alAviso }: Props) {
   const archivo = useRef<HTMLInputElement>(null);
+  const avisar = useRef(alAviso);
+  avisar.current = alAviso;
 
   const editor = useEditor({
-    extensions: extensionesEditor(),
+    extensions: extensionesEditor({
+      subir: subirImagen,
+      alAviso: (m, t) => avisar.current(m, t),
+      mensajeDeError: (e) => (e instanceof ErrorSubida ? e.message : "No se ha podido subir la foto. Inténtalo de nuevo."),
+    }),
     content: inicial,
     shouldRerenderOnTransaction: true,
     immediatelyRender: false,

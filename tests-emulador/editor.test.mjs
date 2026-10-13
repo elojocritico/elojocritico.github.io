@@ -49,6 +49,18 @@ describe("guardarArticulo: artículo nuevo", () => {
     expect((await getDocs(collection(db, "articulos/mi-articulo/versiones"))).size).toBe(0);
   });
 
+  it("guarda cuántas fotos pendientes (marcas de foto perdida) tiene el texto, y lo actualiza al poner una foto", async () => {
+    const db = como(EDITOR);
+    const marca = '<span class="img-perdida" data-original="/wp-content/uploads/2014/12/a.jpg">Imagen no recuperada</span>';
+    const r = await nuevo(db, "con-fotos", { campos: campos({ cuerpoHtml: `<p>${marca} y ${marca}</p>` }) });
+    expect((await getDoc(doc(db, "articulos/con-fotos"))).data().fotosPendientes).toBe(2);
+    await guardarArticulo(db, {
+      id: "con-fotos", esNuevo: false, cargadoEn: r.actualizadoEn, estado: "borrador", usuario: EDITOR,
+      campos: campos({ cuerpoHtml: `<p>${marca} y <img src="https://res.cloudinary.com/x/a.jpg" alt="a"></p>` }),
+    });
+    expect((await getDoc(doc(db, "articulos/con-fotos"))).data().fotosPendientes).toBe(1);
+  });
+
   it("no pisa un artículo que ya existe con esa dirección", async () => {
     const db = como(EDITOR);
     await nuevo(db, "repetido");

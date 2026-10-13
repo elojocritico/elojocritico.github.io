@@ -70,13 +70,24 @@ describe("Articulos", () => {
   it("cambiar el estado o la seccion o buscar aplica la consulta con esos filtros", async () => {
     render(<Articulos usuario={usuario} papel="editor" />);
     await screen.findByRole("heading", { name: "Título a" });
-    expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "todos", seccion: "", texto: "" });
+    expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "todos", seccion: "", texto: "", conFotosPendientes: false });
     await userEvent.selectOptions(screen.getByLabelText("Estado"), "borrador");
-    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "", texto: "" }));
+    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "", texto: "", conFotosPendientes: false }));
     await userEvent.selectOptions(screen.getByLabelText("Sección"), "historia");
-    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "historia", texto: "" }));
+    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "historia", texto: "", conFotosPendientes: false }));
     await userEvent.type(screen.getByLabelText("Buscar por título"), "Roswell{Enter}");
-    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "historia", texto: "Roswell" }));
+    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "borrador", seccion: "historia", texto: "Roswell", conFotosPendientes: false }));
+  });
+
+  it("«Con fotos pendientes» filtra la lista y cada artículo dice cuántas fotos le faltan", async () => {
+    d.listarArticulos.mockResolvedValue(pagina([res("a", { fotosPendientes: 3 }), res("b", { fotosPendientes: 1 }), res("c", { fotosPendientes: 0 })]));
+    render(<Articulos usuario={usuario} papel="editor" />);
+    await screen.findByRole("heading", { name: "Título a" });
+    expect(within(fila("Título a")).getByText("Faltan 3 fotos")).toBeInTheDocument();
+    expect(within(fila("Título b")).getByText("Falta 1 foto")).toBeInTheDocument();
+    expect(within(fila("Título c")).queryByText(/Falta/)).toBeNull();
+    await userEvent.click(screen.getByLabelText("Con fotos pendientes"));
+    await waitFor(() => expect(d.listarArticulos).toHaveBeenLastCalledWith(BD, { estado: "todos", seccion: "", texto: "", conFotosPendientes: true }));
   });
 
   it("busqueda simple: avisa de que hay que escribir el principio del titulo", async () => {

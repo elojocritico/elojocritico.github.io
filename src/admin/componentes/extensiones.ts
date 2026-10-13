@@ -1,7 +1,7 @@
 // Extensiones de TipTap del editor de artículos. Además de lo que se puede escribir con la barra de herramientas,
 // conocen todo lo que tienen los artículos migrados (reproductores, tablas, fotos con pie, notas, marcas de la migración),
 // para que abrir y guardar un artículo antiguo no se lo coma en silencio.
-import { Node, Mark, mergeAttributes } from "@tiptap/core";
+import { Node, mergeAttributes } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
@@ -88,11 +88,45 @@ export const PieDeFoto = Node.create({
   renderHTML: ({ HTMLAttributes }) => ["figcaption", HTMLAttributes, 0],
 });
 
-/** «Imagen no recuperada»: marca que dejó la migración donde no se pudo rescatar una foto. */
-export const ImagenPerdida = Mark.create({
+/** Nombre de la foto original a partir de data-original (último trozo de la ruta); null si no hay. */
+export function nombreOriginal(original: unknown): string | null {
+  if (typeof original !== "string" || !original) return null;
+  const ultimo = original.split("?")[0].split("/").filter(Boolean).pop();
+  if (!ultimo) return null;
+  try {
+    return decodeURIComponent(ultimo);
+  } catch {
+    return ultimo;
+  }
+}
+
+/** Texto alternativo por defecto de una foto puesta en lugar de una marca: el nombre original sin la extensión. */
+export const altDeOriginal = (original: unknown) => (nombreOriginal(original) ?? "").replace(/\.[A-Za-z0-9]{1,5}$/, "");
+
+export type OpcionesFotoPendiente = {
+  /** Sube la foto elegida; devuelve su dirección (y un aviso opcional). */
+  subir: (f: File) => Promise<{ url: string; aviso?: string }>;
+  /** Mensajes para quien edita (aviso de modo de prueba). */
+  alAviso?: (mensaje: string, tipo: "info" | "error") => void;
+  /** Texto de un error de subida en llano. */
+  mensajeDeError?: (e: unknown) => string;
+};
+
+/**
+ * «Imagen no recuperada»: marca que dejó la migración donde no se pudo rescatar una foto.
+ * En el editor es un recuadro «Foto pendiente» que no se puede escribir dentro (un solo bloque), con el botón «Poner foto».
+ * Se guarda tal como llegó: <span class="img-perdida" data-original="...">Imagen no recuperada</span>.
+ */
+export const ImagenPerdida = Node.create<OpcionesFotoPendiente>({
   name: "imagenPerdida",
-  inclusive: false,
-  // data-original: nombre de la foto original (/wp-content/uploads/...). Se conserva al abrir y guardar; la interfaz para usarlo llega después.
+  group: "inline",
+  inline: true,
+  atom: true,
+  selectable: true,
+  priority: 60,
+  addOptions() {
+    return { subir: async () => { throw new Error("Sin subida"); } };
+  },
   addAttributes() {
     return {
       original: {
@@ -103,7 +137,71 @@ export const ImagenPerdida = Mark.create({
     };
   },
   parseHTML: () => [{ tag: "span.img-perdida" }],
-  renderHTML: ({ HTMLAttributes }) => ["span", mergeAttributes(HTMLAttributes, { class: "img-perdida" }), 0],
+  renderHTML: ({ HTMLAttributes }) => ["span", mergeAttributes(HTMLAttributes, { class: "img-perdida" }), "Imagen no recuperada"],
+  addNodeView() {
+    const opciones = this.options;
+    return ({ node, editor, getPos }) => {
+      const dom = document.createElement("span");
+      dom.className = "foto-pendiente";
+      dom.setAttribute("contenteditable", "false");
+      dom.setAttribute("data-foto-pendiente", "");
+      const titulo = document.createElement("strong");
+      titulo.textContent = "Foto pendiente";
+      const nombre = document.createElement("span");
+      nombre.className = "foto-pendiente-nombre";
+      nombre.textContent = nombreOriginal(node.attrs.original) ?? "sin nombre";
+      const mensaje = document.createElement("span");
+      mensaje.className = "foto-pendiente-mensaje";
+      mensaje.setAttribute("role", "status");
+      const boton = document.createElement("button");
+      boton.type = "button";
+      boton.className = "foto-pendiente-boton";
+      boton.textContent = "Poner foto";
+      const archivo = document.createElement("input");
+      archivo.type = "file";
+      archivo.accept = "image/*";
+      archivo.hidden = true;
+      archivo.setAttribute("data-testid", "elegir-foto-pendiente");
+      dom.append(titulo, nombre, boton, mensaje, archivo);
+
+      let ocupado = false;
+      boton.addEventListener("mousedown", (e) => e.preventDefault());
+      boton.addEventListener("click", () => { if (!ocupado) archivo.click(); });
+      archivo.addEventListener("change", async () => {
+        const f = archivo.files?.[0];
+        archivo.value = "";
+        if (!f || ocupado) return;
+        ocupado = true;
+        boton.disabled = true;
+        boton.textContent = "Subiendo la foto…";
+        mensaje.textContent = "";
+        try {
+          const r = await opciones.subir(f);
+          const pos = typeof getPos === "function" ? getPos() : undefined;
+          const actual = pos === undefined ? null : editor.state.doc.nodeAt(pos);
+          if (pos === undefined || !actual || actual.type.name !== "imagenPerdida") {
+            mensaje.textContent = "Esta foto pendiente ya no está en el texto, así que no se ha puesto.";
+            return;
+          }
+          const alt = altDeOriginal(node.attrs.original) || "Foto";
+          editor.chain().insertContentAt({ from: pos, to: pos + actual.nodeSize }, { type: "image", attrs: { src: r.url, alt } }).run();
+          if (r.aviso) opciones.alAviso?.(r.aviso, "info");
+        } catch (e) {
+          mensaje.textContent = opciones.mensajeDeError?.(e) ?? (e instanceof Error && e.message ? e.message : "No se ha podido subir la foto.");
+        } finally {
+          ocupado = false;
+          boton.disabled = false;
+          boton.textContent = "Poner foto";
+        }
+      });
+      return {
+        dom,
+        // Los clics y cambios de dentro del recuadro (botón, selector de archivo) son de él, no del editor.
+        stopEvent: (ev) => ev.target === boton || ev.target === archivo,
+        ignoreMutation: () => true,
+      };
+    };
+  },
 });
 
 /** Foto dentro del texto: en línea (para poder ir dentro de un enlace), con alineación y con fotos pegadas en modo de prueba (data:). */
@@ -139,7 +237,7 @@ const Enlace = Link.extend({
   },
 });
 
-export function extensionesEditor() {
+export function extensionesEditor(fotoPendiente?: OpcionesFotoPendiente) {
   return [
     StarterKit.configure({
       heading: { levels: [2, 3, 4] },
@@ -153,7 +251,7 @@ export function extensionesEditor() {
     Figura,
     PieDeFoto,
     Reproductor,
-    ImagenPerdida,
+    fotoPendiente ? ImagenPerdida.configure(fotoPendiente) : ImagenPerdida,
     Table.configure({ resizable: false }),
     TableRow,
     TableHeader,

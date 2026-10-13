@@ -68,6 +68,12 @@ describe("importar (simulador)", () => {
     expect(r2.articulos).toMatchObject({ creados: 0, actualizados: 0, sinCambios: 3 });
   });
 
+  it("anota cuántas fotos pendientes (marcas de foto perdida) tiene cada artículo", () => {
+    const marca = '<span class="img-perdida">Imagen no recuperada</span>';
+    expect(docArticulo({ slug: "m", fecha: "2020-01-10", cuerpoHtml: `<p>${marca}${marca}</p>` }).fotosPendientes).toBe(2);
+    expect(docArticulo({ slug: "n", fecha: "2020-01-10", cuerpoHtml: "<p>x</p>" }).fotosPendientes).toBe(0);
+  });
+
   it("guarda las fechas en UTC (Z) como el mediodía de España de ese día, con el desfase de invierno o de verano", () => {
     const invierno = docArticulo({ slug: "i", fecha: "2020-01-10" });
     const verano = docArticulo({ slug: "v", fecha: "2020-07-10" });

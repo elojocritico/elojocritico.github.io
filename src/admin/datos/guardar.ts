@@ -4,6 +4,7 @@ import { collection, doc, getDoc, getDocs, limit, orderBy, query, runTransaction
 import { ErrorArticulo, escribirVersion, validarUsuario, type Estado } from "./articulos";
 import { marcarPublicarPendiente } from "./publicar";
 import { hayConflicto } from "../utiles/conflicto";
+import { contarFotosPendientes } from "../utiles/perdidas";
 
 export type Portada = { src: string; tarjeta: string; alt: string };
 
@@ -86,7 +87,7 @@ export async function guardarArticulo(db: Firestore, p: Peticion): Promise<{ act
   return runTransaction(db, async (tx) => {
     const snap = await tx.get(ref);
     const ahora = new Date().toISOString();
-    const c = { ...p.campos, titulo: p.campos.titulo.trim() };
+    const c = { ...p.campos, titulo: p.campos.titulo.trim(), fotosPendientes: contarFotosPendientes(p.campos.cuerpoHtml) };
     if (p.esNuevo) {
       if (snap.exists()) throw new ErrorArticulo("articulo/direccion-ocupada");
       tx.set(ref, {

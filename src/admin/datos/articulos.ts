@@ -23,9 +23,11 @@ export const NOMBRE_ESTADO: Record<Estado, string> = {
 export type Resumen = {
   id: string; slug: string; titulo: string; estado: Estado; secciones: string[];
   actualizadoEn: string; actualizadoPor: string; fechaPublicacion: string; enPapeleraDesde: string | null;
+  /** Cuántas fotos que faltan (marcas «Foto pendiente») tiene el texto. */
+  fotosPendientes: number;
 };
 
-export type Filtros = { estado?: Estado | "todos"; seccion?: string; texto?: string };
+export type Filtros = { estado?: Estado | "todos"; seccion?: string; texto?: string; conFotosPendientes?: boolean };
 type Modo = "normal" | "indice" | "prefijo";
 /** Cursor opaco: lo devuelve una página y se pasa tal cual para pedir la siguiente. */
 export type Cursor = { tipo: "doc"; doc: DocumentSnapshot; modo: Modo } | { tipo: "resto"; resto: Resumen[] };
@@ -57,6 +59,7 @@ const aResumen = (id: string, d: Record<string, unknown>): Resumen => ({
   actualizadoPor: String(d.actualizadoPor ?? ""),
   fechaPublicacion: String(d.fechaPublicacion ?? ""),
   enPapeleraDesde: (d.enPapeleraDesde as string | null) ?? null,
+  fotosPendientes: typeof d.fotosPendientes === "number" && d.fotosPendientes > 0 ? d.fotosPendientes : 0,
 });
 
 /** Minúsculas y sin tildes, para comparar títulos. */
@@ -70,11 +73,12 @@ function filtrosDe(f: Filtros): QueryConstraint[] {
   return r;
 }
 
-function paginaDeConsulta(s: QuerySnapshot, modo: Modo): Pagina {
+function paginaDeConsulta(s: QuerySnapshot, modo: Modo, soloConFotos = false): Pagina {
   const docs = s.docs.slice(0, POR_PAGINA);
   const hayMas = s.docs.length > POR_PAGINA;
   return {
-    articulos: docs.map((d) => aResumen(d.id, d.data())),
+    // En la búsqueda simple por el principio del título no se puede pedir "con fotos pendientes" a la base de datos: se filtra aquí.
+    articulos: docs.map((d) => aResumen(d.id, d.data())).filter((a) => !soloConFotos || a.fotosPendientes > 0),
     cursor: hayMas ? { tipo: "doc", doc: docs[docs.length - 1], modo } : null,
     hayMas, modo, truncado: false,
   };
@@ -97,7 +101,11 @@ export async function listarArticulos(db: Firestore, filtros: Filtros = {}, curs
   const despues = cursor ? [startAfter(cursor.doc)] : [];
 
   if (!texto) {
-    const q = query(coleccion, ...filtrosDe(filtros), orderBy("actualizadoEn", "desc"), ...despues, limit(POR_PAGINA + 1));
+    // «Con fotos pendientes»: los que más fotos tienen pendientes primero (necesita su propio índice, ver firestore.indexes.json).
+    const orden = filtros.conFotosPendientes
+      ? [where("fotosPendientes", ">", 0), orderBy("fotosPendientes", "desc"), orderBy("actualizadoEn", "desc")]
+      : [orderBy("actualizadoEn", "desc")];
+    const q = query(coleccion, ...filtrosDe(filtros), ...orden, ...despues, limit(POR_PAGINA + 1));
     return paginaDeConsulta(await getDocs(q), "normal");
   }
 
@@ -106,7 +114,7 @@ export async function listarArticulos(db: Firestore, filtros: Filtros = {}, curs
     if (indice.exists()) return buscarEnIndice(db, indice.data() as Record<string, string>, texto, filtros);
   }
   const q = query(coleccion, ...filtrosDe(filtros), orderBy("titulo"), startAt(texto), endAt(texto + ""), ...despues, limit(POR_PAGINA + 1));
-  return paginaDeConsulta(await getDocs(q), "prefijo");
+  return paginaDeConsulta(await getDocs(q), "prefijo", filtros.conFotosPendientes);
 }
 
 async function buscarEnIndice(db: Firestore, indice: Record<string, string>, texto: string, filtros: Filtros): Promise<Pagina> {
@@ -125,6 +133,7 @@ async function buscarEnIndice(db: Firestore, indice: Record<string, string>, tex
   const lista = encontrados
     .filter((a) => (queEstado ? a.estado === queEstado : a.estado !== "papelera"))
     .filter((a) => !filtros.seccion || a.secciones.includes(filtros.seccion))
+    .filter((a) => !filtros.conFotosPendientes || a.fotosPendientes > 0)
     .sort((a, b) => (a.actualizadoEn < b.actualizadoEn ? 1 : a.actualizadoEn > b.actualizadoEn ? -1 : 0));
   return paginaDeLista(lista, todas.length > MAX_COINCIDENCIAS);
 }

@@ -19,13 +19,18 @@ export function contarElementos(html: string): Record<string, number> {
   return Object.fromEntries(ELEMENTOS.map((e) => [e.clave, (limpio.match(e.patron) ?? []).length]));
 }
 
+/** Cuántas «fotos pendientes» (marcas de foto perdida) quedan en el cuerpo ya saneado. Se guarda en el artículo como fotosPendientes. */
+export const contarFotosPendientes = (html: string) => contarElementos(html).perdida;
+
 /** Frase en llano si al guardar se perderían elementos que había al abrir; null si no se pierde nada. */
 export function avisoDePerdidas(antes: string, despues: string): string | null {
   const a = contarElementos(antes);
   const d = contarElementos(despues);
   const partes: string[] = [];
+  // Poner una foto en lugar de una «foto pendiente» no es perder nada: cada foto nueva compensa una marca que ya no está.
+  const fotosNuevas = Math.max(0, d.img - a.img);
   for (const e of ELEMENTOS) {
-    const faltan = a[e.clave] - d[e.clave];
+    const faltan = a[e.clave] - d[e.clave] - (e.clave === "perdida" ? Math.min(fotosNuevas, a.perdida - d.perdida) : 0);
     if (faltan > 0) partes.push(`${faltan} ${faltan === 1 ? e.uno : e.varios}`);
   }
   if (partes.length === 0) return null;
