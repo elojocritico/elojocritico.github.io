@@ -48,8 +48,8 @@ const disponible = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG) !==
     const app = getApps()[0] ?? initializeApp(config);
     const clave = import.meta.env.PUBLIC_RECAPTCHA_V3;
     if (clave && import.meta.env.PUBLIC_EMULADOR !== "1") {
-      const { initializeAppCheck, ReCaptchaV3Provider } = await import("firebase/app-check");
-      initializeAppCheck(app, { provider: new ReCaptchaV3Provider(clave), isTokenAutoRefreshEnabled: true });
+      const { initializeAppCheck, ReCaptchaEnterpriseProvider } = await import("firebase/app-check");
+      initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(clave), isTokenAutoRefreshEnabled: true });
     }
     const db = getFirestore(app);
     if (import.meta.env.PUBLIC_EMULADOR === "1") connectFirestoreEmulator(db, "127.0.0.1", 8080);
