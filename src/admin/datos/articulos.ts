@@ -185,7 +185,7 @@ export const restaurar = (db: Firestore, id: string, usuario: string) =>
   });
 
 /** Solo administradores y solo desde la papelera: borra el artículo y todas sus versiones. */
-export async function borrarDefinitivamente(db: Firestore, id: string, papel: Papel) {
+export async function borrarDefinitivamente(db: Firestore, id: string, papel: Papel, usuario = "") {
   if (papel !== "admin") throw new ErrorArticulo("articulo/solo-admin");
   const ref = doc(db, "articulos", id);
   const snap = await getDoc(ref);
@@ -197,5 +197,9 @@ export async function borrarDefinitivamente(db: Firestore, id: string, papel: Pa
     versiones.slice(i, i + TROZO_BORRADO).forEach((r) => lote.delete(r));
     await lote.commit();
   }
-  await writeBatch(db).delete(ref).commit();
+  // La lápida va en el mismo lote que el borrado: así el exportador sabe que la página debe retirarse de la web.
+  const lote = writeBatch(db);
+  lote.delete(ref);
+  lote.set(doc(db, "borrados", id), { borradoEn: new Date().toISOString(), borradoPor: usuario || "administrador" });
+  await lote.commit();
 }

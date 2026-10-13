@@ -193,9 +193,11 @@ describe("acciones", () => {
     // Aunque el editor se saltase la comprobación del panel, las reglas lo impiden.
     await assertFails(borrarDefinitivamente(como(EDITOR), "a1", "admin"));
     expect(await leer("articulos/a1")).toBeDefined();
-    await borrarDefinitivamente(como(ADMIN), "a1", "admin");
+    await borrarDefinitivamente(como(ADMIN), "a1", "admin", ADMIN);
     expect(await leer("articulos/a1")).toBeUndefined();
     expect(await versiones()).toHaveLength(0);
+    expect(await leer("borrados/a1")).toMatchObject({ borradoPor: ADMIN });
+    expect(typeof (await leer("borrados/a1")).borradoEn).toBe("string");
   });
 
   it("borrar definitivamente algo que no está en la papelera se rechaza", async () => {

@@ -96,7 +96,7 @@ const OPCIONES: sanitizeHtml.IOptions = {
 };
 
 // Ojo: \s ya incluye el espacio duro (U+00A0). Repetirlo como alternativa aparte hace el regex exponencial con muchos espacios duros seguidos.
-const PARRAFO_VACIO = /<p>(?:\s|&nbsp;|<\/?(?:br|strong|b|em|i|u|a|sup|sub)(?:\s[^>]*)?\/?>)*<\/p>/g;
+const PARRAFO_VACIO = /<p>(?:\s|&nbsp;|<\/?(?:br|strong|b|em|i|u|a|sup|sub)(?:\s[^>]*|\/)?>)*<\/p>/g;
 
 export function sanear(html: string): string {
   if (typeof html !== "string" || !html) return "";

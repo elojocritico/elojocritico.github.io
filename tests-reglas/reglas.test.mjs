@@ -176,38 +176,59 @@ describe("editor", () => {
   it("escribe archivoOcultos", async () => {
     await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/x"), { ids: ["1"] }));
   });
-  describe("archivoOcultos.textos (copia del texto de los ocultos)", () => {
-    const TEXTOS = { "7": { id: "7", autor: "A", fecha: "2018-01-01T10:00", html: "<p>t</p>", respuestaA: null } };
+  describe("archivoOcultos y su subcoleccion textos", () => {
+    const T = { id: "7", autor: "A", fecha: "2018-01-01T10:00", html: "<p>t</p>", respuestaA: null };
     beforeEach(async () => {
       await env.withSecurityRulesDisabled(async (ctx) => {
-        await setDoc(doc(ctx.firestore(), "archivoOcultos/t"), { ids: ["7"], textos: TEXTOS });
+        await setDoc(doc(ctx.firestore(), "archivoOcultos/t"), { ids: ["7"] });
+        await setDoc(doc(ctx.firestore(), "archivoOcultos/t/textos/7"), T);
       });
     });
-    it("un editor lee los textos", async () => {
-      const s = await assertSucceeds(getDoc(doc(auth(EDITOR), "archivoOcultos/t")));
-      assert.deepEqual(s.data().textos, TEXTOS);
+    it("un editor lee los textos; un lector o alguien sin papel no", async () => {
+      const s = await assertSucceeds(getDoc(doc(auth(EDITOR), "archivoOcultos/t/textos/7")));
+      assert.deepEqual(s.data(), T);
+      await assertFails(getDoc(doc(anon(), "archivoOcultos/t/textos/7")));
+      await assertFails(getDoc(doc(auth(SINPAPEL), "archivoOcultos/t/textos/7")));
     });
-    it("un lector o alguien sin papel no los lee", async () => {
-      await assertFails(getDoc(doc(anon(), "archivoOcultos/t")));
-      await assertFails(getDoc(doc(auth(SINPAPEL), "archivoOcultos/t")));
-    });
-    it("un editor puede cambiar ids sin tocar los textos", async () => {
-      await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/t"), { ids: ["7", "8"] }, { merge: true }));
-      await assertSucceeds(updateDoc(doc(auth(ADMIN), "archivoOcultos/t"), { ids: [] }));
-    });
-    it("un editor o admin no puede escribir, cambiar ni vaciar los textos", async () => {
+    it("nadie desde un cliente escribe, cambia ni borra textos", async () => {
       for (const quien of [EDITOR, ADMIN]) {
         const db = auth(quien);
-        await assertFails(updateDoc(doc(db, "archivoOcultos/t"), { textos: {} }));
-        await assertFails(updateDoc(doc(db, "archivoOcultos/t"), { textos: { "7": { ...TEXTOS["7"], html: "<p>otro</p>" } } }));
-        await assertFails(setDoc(doc(db, "archivoOcultos/t"), { ids: ["7"] })); // reemplazar sin textos los borraría
-        await assertFails(setDoc(doc(db, "archivoOcultos/nuevo"), { ids: [], textos: TEXTOS }));
-        await assertFails(deleteDoc(doc(db, "archivoOcultos/t")));
+        await assertFails(setDoc(doc(db, "archivoOcultos/t/textos/8"), T));
+        await assertFails(setDoc(doc(db, "archivoOcultos/t/textos/7"), { ...T, html: "<p>otro</p>" }));
+        await assertFails(deleteDoc(doc(db, "archivoOcultos/t/textos/7")));
       }
     });
-    it("no admite otros campos", async () => {
-      await assertFails(updateDoc(doc(auth(EDITOR), "archivoOcultos/t"), { otro: 1 }));
+    it("un editor cambia ids, pero no puede borrar el documento ni anadir otros campos", async () => {
+      await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/t"), { ids: ["7", "8"] }));
+      await assertSucceeds(updateDoc(doc(auth(ADMIN), "archivoOcultos/t"), { ids: [] }));
+      for (const quien of [EDITOR, ADMIN]) {
+        await assertFails(deleteDoc(doc(auth(quien), "archivoOcultos/t")));
+        await assertFails(updateDoc(doc(auth(quien), "archivoOcultos/t"), { textos: {} }));
+      }
     });
+  });
+  describe("borrados (lapidas)", () => {
+    const L = { borradoEn: "2024-01-01T00:00:00.000Z", borradoPor: ADMIN };
+    it("el admin crea una; un editor no", async () => {
+      await assertSucceeds(setDoc(doc(auth(ADMIN), "borrados/x"), L));
+      await assertFails(setDoc(doc(auth(EDITOR), "borrados/y"), L));
+      await assertFails(setDoc(doc(anon(), "borrados/y"), L));
+    });
+    it("con forma exacta, y nadie la cambia ni la borra", async () => {
+      await assertFails(setDoc(doc(auth(ADMIN), "borrados/z"), { ...L, extra: 1 }));
+      await assertFails(setDoc(doc(auth(ADMIN), "borrados/z"), { borradoEn: 5, borradoPor: ADMIN }));
+      await env.withSecurityRulesDisabled(async (ctx) => { await setDoc(doc(ctx.firestore(), "borrados/x"), L); });
+      await assertFails(updateDoc(doc(auth(ADMIN), "borrados/x"), { borradoPor: "otro" }));
+      await assertFails(deleteDoc(doc(auth(ADMIN), "borrados/x")));
+      await assertSucceeds(getDoc(doc(auth(EDITOR), "borrados/x")));
+      await assertFails(getDoc(doc(anon(), "borrados/x")));
+    });
+  });
+  it("un editor escribe publicarPendiente y publicarPendienteEn (texto) y nada mas en estado", async () => {
+    const db = auth(EDITOR);
+    await assertSucceeds(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true, publicarPendienteEn: "2024-01-01T00:00:00.000Z" }));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendienteEn: 5 }));
+    await assertFails(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true, publicarPendienteEn: "x", ultimaExportacion: "x" }));
   });
   it("lee ajustes pero no puede escribirlos", async () => {
     const db = auth(EDITOR);

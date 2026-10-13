@@ -164,7 +164,7 @@ describe("Articulos", () => {
     expect(screen.getByRole("alertdialog", { name: "¿Borrar para siempre?" })).toBeInTheDocument();
     expect(d.borrarDefinitivamente).not.toHaveBeenCalled();
     await userEvent.click(screen.getByRole("button", { name: "Sí, borrar para siempre" }));
-    expect(d.borrarDefinitivamente).toHaveBeenCalledWith(BD, "p", "admin");
+    expect(d.borrarDefinitivamente).toHaveBeenCalledWith(BD, "p", "admin", "ana@x.es");
     expect(await screen.findByText(/borrado para siempre/)).toBeInTheDocument();
   });
 

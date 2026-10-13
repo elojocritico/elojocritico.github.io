@@ -118,7 +118,7 @@ export async function listarVersiones(db: Firestore, id: string, maximo = 30): P
 /** Avisa de que hay cambios por publicar. Si falla no pasa nada: el artículo ya está guardado. */
 export async function marcarPublicarPendiente(db: Firestore): Promise<void> {
   try {
-    await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true });
+    await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true, publicarPendienteEn: new Date().toISOString() });
   } catch {
     /* sin permiso o sin conexión: el exportador lo recalcula */
   }

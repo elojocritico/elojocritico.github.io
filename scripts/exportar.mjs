@@ -16,7 +16,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, w
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { FieldPath, FieldValue, getFirestore } from "firebase-admin/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin } from "./crear-admin.mjs";
 import { estable } from "./importar.mjs";
@@ -31,12 +31,16 @@ const LOTE = 400;
 const DIAS_PAPELERA = 30;
 const PROGRAMADA = "publicación programada";
 const MAX_IMAGEN = 30 * 1024 * 1024;
+const RESERVADOS_WINDOWS = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
 const CLOUDINARY = /^(?:https:)?\/\/res\.cloudinary\.com\//i;
 
 /** Dirección usable como nombre de fichero (y válida para la web). */
 export function slugSeguro(s) {
   // eslint-disable-next-line no-control-regex
-  return typeof s === "string" && /^[^/\\]{1,200}$/.test(s) && !s.includes("..") && !/[\x00-\x1f]/.test(s) && /^[^/\s]+$/.test(s);
+  return (
+    typeof s === "string" && /^[^/\\]{1,200}$/.test(s) && !s.includes("..") && !/[\x00-\x1f]/.test(s) && /^[^/\s]+$/.test(s) &&
+    !/[:<>|?*"]/.test(s) && !RESERVADOS_WINDOWS.test(s.split(".")[0])
+  );
 }
 const json = (v) => JSON.stringify(v, null, 2).replace(/\n/g, "\r\n"); // igual que los ficheros de la migración
 const iso = (v) => (v && typeof v.toDate === "function" ? v.toDate().toISOString() : typeof v === "string" ? v : "");
@@ -69,16 +73,44 @@ export function debePublicarse(d, ahoraMs) {
 const limpiarNombre = (nombre) =>
   nombre.normalize("NFKD").replace(/[^\x00-\x7f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "imagen";
 
+function limpiarTemporales(dir) {
+  if (!existsSync(dir)) return;
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) limpiarTemporales(p);
+    else if (/\.tmp-\d+$/.test(e.name)) rmSync(p, { force: true });
+  }
+}
+
+/**
+ * Da por buena una exportación: la última exportación pasa a ser `inicio` y "publicar pendiente" se resuelve
+ * solo si el aviso es anterior o igual a ese instante (un Publicar pulsado durante la exportación sigue pendiente).
+ */
+export async function confirmarExportacion(db, inicio) {
+  if (typeof inicio !== "string" || isNaN(Date.parse(inicio)) || new Date(inicio).toISOString() !== inicio) throw new Error(`La fecha de la exportación no es válida: ${inicio}`);
+  await db.runTransaction(async (tx) => {
+    const ref = db.doc("estado/sistema");
+    const actual = await tx.get(ref);
+    const d = actual.exists ? actual.data() : {};
+    const cambio = {};
+    if (!esTexto(d.ultimaExportacion) || Date.parse(d.ultimaExportacion) < Date.parse(inicio)) cambio.ultimaExportacion = inicio;
+    const pedido = Date.parse(d.publicarPendienteEn ?? "");
+    if (d.publicarPendiente === true && (isNaN(pedido) || pedido <= Date.parse(inicio))) cambio.publicarPendiente = false;
+    if (Object.keys(cambio).length) tx.set(ref, cambio, { merge: true });
+  });
+}
+
 export async function exportar({
   db = getFirestore(), dirContenido = process.env.EOC_CONTENIDO ?? resolve(AQUI, "..", "contenido"),
   dirImagenes = process.env.EOC_IMAGENES ?? resolve(AQUI, "..", "..", "imagenes"),
-  completo = false, ahora = new Date(), traer = globalThis.fetch, log = console.log,
+  completo = false, sinConfirmar = false, ahora = new Date(), traer = globalThis.fetch, log = console.log,
 } = {}) {
   const inicio = ahora.toISOString();
   const ahoraMs = ahora.getTime();
   const avisos = [];
   const aviso = (m) => avisos.push(m);
   const ruta = (...p) => join(dirContenido, ...p);
+  if (!existsSync(dirImagenes)) throw new Error(`No encuentro la carpeta de imágenes (${dirImagenes}). Revisa que esté descargada y, si hace falta, indica su sitio con EOC_IMAGENES.`);
 
   // ---------------------------------------------------------------------------------------------------------
   // 1. Lectura de Firestore (nada se escribe todavía en contenido/)
@@ -93,11 +125,21 @@ export async function exportar({
     (await db.collection("articulos").get()).forEach((s) => articulos.set(s.id, s.data()));
   } else {
     const [cambiados, programados] = await Promise.all([
-      db.collection("articulos").where("actualizadoEn", ">", ultima).get(),
+      // 24 h de margen: un reloj de cliente atrasado o un guardado en curso no deben perder cambios (lo repetido se descarta al comparar).
+      db.collection("articulos").where("actualizadoEn", ">", new Date(Date.parse(ultima) - 86400000).toISOString()).get(),
       db.collection("articulos").where("estado", "==", "programado").get(),
     ]);
     cambiados.forEach((s) => articulos.set(s.id, s.data()));
     programados.forEach((s) => articulos.set(s.id, s.data()));
+  }
+  const lapidas = (await db.collection("borrados").get()).docs.map((x) => x.id);
+  const rutaManifiestoPrevio = join(dirContenido, "imagenes-cloudinary.json");
+  const pendientesFotos = existsSync(rutaManifiestoPrevio) && Array.isArray(leerJson(rutaManifiestoPrevio)._pendientes) ? leerJson(rutaManifiestoPrevio)._pendientes.filter(slugSeguro) : [];
+  const faltanPend = pendientesFotos.filter((x) => !articulos.has(x));
+  for (let i = 0; i < faltanPend.length; i += 300) {
+    const trozo = faltanPend.slice(i, i + 300);
+    const snaps = await db.getAll(...trozo.map((x) => db.collection("articulos").doc(x)));
+    snaps.forEach((x) => x.exists && articulos.set(x.id, x.data()));
   }
   const papelera = await db.collection("articulos").where("estado", "==", "papelera").select("enPapeleraDesde", "estado").get();
   const [aprobados, ocultosSnap, ajustesSnap, indiceSnap] = await Promise.all([
@@ -146,11 +188,23 @@ export async function exportar({
   const rutaManifiesto = ruta("imagenes-cloudinary.json");
   const manifiesto = existsSync(rutaManifiesto) ? leerJson(rutaManifiesto) : {};
   const manifiestoNuevo = { ...manifiesto };
+  delete manifiestoNuevo._pendientes;
+  const conFotosPendientes = new Set();
   const reservados = new Map(); // ruta de imagen (/img/...) -> url que la usa en esta ejecución
   const hechas = new Map(); // url -> resultado
   const rutaImagen = (src) => join(dirImagenes, ...src.replace(/^\/img\//, "").split("/"));
 
-  async function convertirCloudinary(url, fecha) {
+  async function convertirCloudinary(url, fecha, idArticulo) {
+    try {
+      return await convertirCloudinaryONada(url, fecha);
+    } catch (e) {
+      conFotosPendientes.add(idArticulo);
+      aviso(`En el artículo "${idArticulo}" no se ha podido preparar una foto (${e?.message ?? e}). Se deja la dirección original y se reintentará en la próxima exportación.`);
+      return null;
+    }
+  }
+
+  async function convertirCloudinaryONada(url, fecha) {
     const limpia = url.replace(/&amp;/g, "&");
     const completa = limpia.startsWith("//") ? "https:" + limpia : limpia;
     if (hechas.has(completa)) return hechas.get(completa);
@@ -161,7 +215,7 @@ export async function exportar({
     }
     let respuesta;
     try {
-      respuesta = await traer(completa);
+      respuesta = await traer(completa, { signal: AbortSignal.timeout(30000) });
     } catch (e) {
       throw new Error(`No se ha podido descargar la foto ${completa}: ${e?.message ?? e}`);
     }
@@ -242,7 +296,8 @@ export async function exportar({
     for (const tag of new Set(cuerpo.match(/<img\b[^>]*>/gi) ?? [])) {
       const m = /\ssrc="([^"]*)"/.exec(tag);
       if (!m || !CLOUDINARY.test(m[1])) continue;
-      const r = await convertirCloudinary(m[1], fecha);
+      const r = await convertirCloudinary(m[1], fecha, id);
+      if (!r) continue;
       const sinMedidas = tag.replace(/\s(?:width|height)="[^"]*"/gi, "");
       reemplazos.set(tag, sinMedidas.replace(/\ssrc="[^"]*"/, ` src="${r.src}" width="${r.ancho}" height="${r.alto}"`));
     }
@@ -255,8 +310,8 @@ export async function exportar({
       const alt = esTexto(p.alt) ? p.alt : "";
       if (/^\s*data:/i.test(p.src)) aviso(`La portada del artículo "${id}" era una foto sin subir; se ha quitado. Hay que volver a subirla.`);
       else if (CLOUDINARY.test(p.src)) {
-        const r = await convertirCloudinary(p.src, fecha);
-        portada = { src: r.src, tarjeta: r.tarjeta, alt };
+        const r = await convertirCloudinary(p.src, fecha, id);
+        portada = r ? { src: r.src, tarjeta: r.tarjeta, alt } : { src: p.src.startsWith("//") ? "https:" + p.src : p.src, tarjeta: p.src.startsWith("//") ? "https:" + p.src : p.src, alt };
       } else if (/^(?:\/(?!\/)|https?:\/\/)/i.test(p.src)) {
         const tarjetaOk = esTexto(p.tarjeta) && /^(?:\/(?!\/)|https?:\/\/)/i.test(p.tarjeta) && !CLOUDINARY.test(p.tarjeta);
         portada = { src: p.src, tarjeta: tarjetaOk ? p.tarjeta : p.src, alt };
@@ -287,6 +342,8 @@ export async function exportar({
     resumen.publicados++;
     preparar(fichero, salida);
   }
+  // Artículos con fotos sin resolver: se reintentan en la próxima exportación aunque no cambien (también los que ya lo estaban y no se han tocado).
+  const pendientes = [...conFotosPendientes].sort();
   for (const id of retirar) {
     const f = ruta("articulos", `${id}.json`);
     if (existsSync(f)) resumen.retirados++;
@@ -298,19 +355,45 @@ export async function exportar({
   const aPurgar = [];
   papelera.forEach((s) => {
     const t = Date.parse(s.data().enPapeleraDesde ?? "");
-    if (!isNaN(t) && t < limitePapelera) aPurgar.push(s.id);
+    if (slugSeguro(s.id) && !isNaN(t) && t < limitePapelera) aPurgar.push(s.id);
   });
-  for (const id of aPurgar) if (slugSeguro(id)) quitar(ruta("articulos", `${id}.json`));
+  // (el JSON de un artículo en la papelera ya se retira arriba; el borrado real se confirma dentro de una transacción más abajo)
+  const purgados = [];
 
   // --- Estado (existe / publicado) de las direcciones que no hemos leído entero: comentarios y ocultos
   const conocido = new Map(); // dirección -> {existe, publicado}
-  for (const id of articulos.keys()) conocido.set(id, { existe: true, publicado: publicadosAhora.has(id) });
+  for (const [id, d] of articulos) conocido.set(id, { existe: true, publicado: debePublicarse(d, ahoraMs) });
   async function estadoDe(slugs) {
     const faltan = [...new Set(slugs)].filter((s) => slugSeguro(s) && !conocido.has(s));
     for (let i = 0; i < faltan.length; i += 300) {
       const trozo = faltan.slice(i, i + 300);
       const snaps = await db.getAll(...trozo.map((s) => db.collection("articulos").doc(s)), { fieldMask: ["estado", "fechaPublicacion"] });
-      snaps.forEach((s, j) => conocido.set(trozo[j], { existe: s.exists, publicado: s.exists && debePublicarse(s.data(), ahoraMs) && !RESERVADAS.includes(trozo[j]) }));
+      snaps.forEach((s, j) => conocido.set(trozo[j], { existe: s.exists, publicado: s.exists && debePublicarse(s.data(), ahoraMs) }));
+    }
+  }
+
+  // --- Lápidas: artículos borrados del todo desde el panel. Se retira su página y sus comentarios; la lápida se conserva.
+  await estadoDe(lapidas);
+  for (const slug of lapidas) {
+    if (!slugSeguro(slug) || conocido.get(slug)?.existe) continue; // si la dirección se ha vuelto a usar, manda el artículo nuevo
+    if (existsSync(ruta("articulos", `${slug}.json`))) resumen.retirados++;
+    quitar(ruta("articulos", `${slug}.json`));
+    quitar(ruta("comentarios", `${slug}.json`));
+  }
+
+  // --- Completa: JSON sin documento en Firestore (solo si Firestore parece completo)
+  if (completo) {
+    const dirArt = ruta("articulos");
+    const ficheros = existsSync(dirArt) ? readdirSync(dirArt).filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5)) : [];
+    const huerfanos = ficheros.filter((f) => slugSeguro(f) && !articulos.has(f));
+    if (huerfanos.length) {
+      if (articulos.size >= 0.9 * ficheros.length) {
+        for (const f of huerfanos) {
+          quitar(ruta("articulos", `${f}.json`));
+          quitar(ruta("comentarios", `${f}.json`));
+          resumen.retirados++;
+        }
+      } else aviso(`Hay ${huerfanos.length} artículo(s) en contenido/ que no están en Firestore, pero Firestore tiene menos del 90 % de los artículos de contenido/ (${articulos.size} de ${ficheros.length}); no se retira nada por precaución.`);
     }
   }
 
@@ -348,7 +431,6 @@ export async function exportar({
   // --- Archivo: comentarios ocultos (el texto pasa a Firestore y se vacía en el repositorio; al mostrarlos se restaura)
   const ocultosPorSlug = {};
   const guardarTextos = []; // antes de escribir ficheros
-  const quitarTextos = []; // después
   const docsOcultos = [];
   ocultosSnap.forEach((s) => docsOcultos.push([s.id, s.data()]));
   await estadoDe(docsOcultos.map(([s]) => s));
@@ -359,12 +441,12 @@ export async function exportar({
     }
     const ids = [...new Set((Array.isArray(d.ids) ? d.ids : []).map(String))];
     if (ids.length) ocultosPorSlug[slug] = ids;
-    const textosGuardados = d.textos && typeof d.textos === "object" ? d.textos : {};
+    const textosGuardados = {};
+    (await db.collection("archivoOcultos").doc(slug).collection("textos").get()).forEach((x) => { textosGuardados[x.id] = x.data(); });
     const fArchivo = ruta("comentarios-archivo", `${slug}.json`);
     if (!existsSync(fArchivo)) continue;
     const oculto = new Set(ids);
     const mover = {};
-    const quitarIds = [];
     const nuevos = leerJson(fArchivo).map((c) => {
       const id = String(c.id);
       const vacio = (c.html ?? "") === "" && (c.autor ?? "") === "";
@@ -376,14 +458,10 @@ export async function exportar({
         if (!textosGuardados[id]) aviso(`El comentario oculto ${id} de "${slug}" ya estaba vacío y no hay copia de su texto; no se podrá volver a mostrar.`);
         return c;
       }
-      if (textosGuardados[id]) {
-        quitarIds.push(id);
-        return vacio ? textosGuardados[id] : c;
-      }
+      if (textosGuardados[id] && vacio) return textosGuardados[id]; // se restaura; la copia guardada NUNCA se borra
       return c;
     });
     if (Object.keys(mover).length) guardarTextos.push([slug, mover]);
-    if (quitarIds.length) quitarTextos.push([slug, quitarIds]);
     preparar(fArchivo, nuevos);
   }
   const fOcultos = ruta("archivo-ocultos.json");
@@ -421,54 +499,72 @@ export async function exportar({
       else delete titulos[id];
     }
   }
-  for (const id of aPurgar) delete titulos[id];
   for (const id of Object.keys(titulos)) if (/^__.*__$/.test(id) || id.includes("/") || !esTexto(titulos[id])) delete titulos[id];
-  const indiceCambia = !indiceSnap.exists || estable(indiceSnap.data()) !== estable(titulos);
+  const indiceAntes = estable(indiceSnap.data() ?? {});
 
   // ---------------------------------------------------------------------------------------------------------
   // 3. Escritura. Ya está todo leído y preparado.
   for (const [slug, mover] of guardarTextos) {
-    await db.collection("archivoOcultos").doc(slug).set({ textos: mover }, { merge: true }); // antes de vaciar el fichero del repositorio
+    for (const [id, c] of Object.entries(mover)) await db.collection("archivoOcultos").doc(slug).collection("textos").doc(id).set(c); // antes de vaciar el fichero del repositorio
   }
+  limpiarTemporales(dirContenido);
   for (const [r, datos] of imagenes) escribirAtomico(r, datos);
-  if (JSON.stringify(manifiestoNuevo) !== JSON.stringify(manifiesto)) textos.set(rutaManifiesto, json(manifiestoNuevo));
+  if (pendientes.length) manifiestoNuevo._pendientes = pendientes;
+  if (JSON.stringify(manifiestoNuevo) !== JSON.stringify(manifiesto) && (Object.keys(manifiestoNuevo).length || existsSync(rutaManifiesto))) textos.set(rutaManifiesto, json(manifiestoNuevo));
   for (const [r, t] of textos) escribirAtomico(r, t);
   for (const r of borrar) rmSync(r, { force: true });
   const cambios = textos.size > 0 || borrar.size > 0 || imagenes.size > 0;
 
   // 4. Lo que va a Firestore tras haber escrito los ficheros
-  for (const [slug, ids] of quitarTextos) {
-    await db.collection("archivoOcultos").doc(slug).update(...ids.flatMap((id) => [new FieldPath("textos", id), FieldValue.delete()]));
-  }
   for (const id of aPurgar) {
+    // Se vuelve a leer dentro de la transacción: si alguien lo restauró entre tanto, no se toca.
     const ref = db.collection("articulos").doc(id);
+    const borrado = await db.runTransaction(async (tx) => {
+      const s = await tx.get(ref);
+      const t = s.exists ? Date.parse(s.data().enPapeleraDesde ?? "") : NaN;
+      if (!s.exists || s.data().estado !== "papelera" || isNaN(t) || t >= limitePapelera) return false;
+      tx.delete(ref);
+      tx.set(db.collection("borrados").doc(id), { borradoEn: inicio, borradoPor: "vaciado automático de la papelera" });
+      return true;
+    });
+    if (!borrado) continue;
+    purgados.push(id);
     const versiones = (await ref.collection("versiones").select().get()).docs.map((s) => s.ref);
     for (let i = 0; i < versiones.length; i += LOTE) {
       const lote = db.batch();
       versiones.slice(i, i + LOTE).forEach((r) => lote.delete(r));
       await lote.commit();
     }
-    await ref.delete();
   }
-  if (indiceCambia) await db.doc("indices/titulos").set(titulos);
-  await db.runTransaction(async (tx) => {
-    const ref = db.doc("estado/sistema");
-    const actual = await tx.get(ref);
-    const cambio = { ultimaExportacion: inicio };
-    if (estadoInicial.publicarPendiente === true && actual.exists && actual.data().publicarPendiente === true) cambio.publicarPendiente = false;
-    tx.set(ref, cambio, { merge: true });
-  });
+  for (const id of purgados) delete titulos[id];
+  if (!indiceSnap.exists || indiceAntes !== estable(titulos)) await db.doc("indices/titulos").set(titulos);
+  if (!sinConfirmar) await confirmarExportacion(db, inicio);
 
+  let fotosSinUsar = 0;
+  if (completo) {
+    const usadas = new Set();
+    const dirArt = ruta("articulos");
+    if (existsSync(dirArt)) for (const f of readdirSync(dirArt)) if (f.endsWith(".json")) for (const m of readFileSync(join(dirArt, f), "utf-8").matchAll(/\/img\/[^"'\s)\\]+/g)) usadas.add(m[0]);
+    const recorrer = (d, rel) => {
+      for (const e of readdirSync(d, { withFileTypes: true })) {
+        if (e.isDirectory()) recorrer(join(d, e.name), `${rel}/${e.name}`);
+        else if (e.name.endsWith(".webp") && !usadas.has(`${rel}/${e.name}`) && !usadas.has(`${rel}/${e.name.replace(/-640\.webp$/, ".webp")}`)) fotosSinUsar++;
+      }
+    };
+    recorrer(dirImagenes, "/img");
+  }
   const lineas = [
     `${todo ? "Exportación completa" : "Exportación incremental"}: ${articulos.size} artículo(s) revisados.`,
     `Artículos en la web: ${resumen.publicados} escritos o al día; ${resumen.retirados} retirados.`,
     `Comentarios aprobados publicados: ${resumen.comentarios}. Fotos nuevas convertidas: ${resumen.imagenes}.`,
-    `Ficheros escritos: ${textos.size + imagenes.size}; borrados: ${borrar.size}. Papelera vaciada: ${aPurgar.length}.`,
+    `Ficheros escritos: ${textos.size + imagenes.size}; borrados: ${borrar.size}. Papelera vaciada: ${purgados.length}.`,
+    ...(fotosSinUsar ? [`Hay ${fotosSinUsar} foto(s) en la carpeta de imágenes sin usar en ningún artículo (no se borran).`] : []),
     ...avisos.map((m) => `AVISO: ${m}`),
+    `INICIO=${inicio}`,
     `CAMBIOS=${cambios ? 1 : 0}`,
   ];
   lineas.forEach((l) => log(l));
-  return { cambios, avisos, resumen, escritos: [...textos.keys(), ...imagenes.keys()], borrados: [...borrar], purgados: aPurgar };
+  return { cambios, inicio, avisos, resumen, escritos: [...textos.keys(), ...imagenes.keys()], borrados: [...borrar], purgados };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
@@ -476,7 +572,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     const destino = resolverDestino();
     console.log(destino.mensaje);
     iniciarAdmin();
-    await exportar({ completo: destino.args.includes("--completo") });
+    const i = destino.args.indexOf("--confirmar");
+    if (i >= 0) {
+      await confirmarExportacion(getFirestore(), destino.args[i + 1]);
+      console.log(`Exportación confirmada: ${destino.args[i + 1]}`);
+    } else await exportar({ completo: destino.args.includes("--completo"), sinConfirmar: destino.args.includes("--sin-confirmar") });
   } catch (e) {
     console.error("✗ No se ha podido exportar:", e?.message ?? e);
     process.exit(1);

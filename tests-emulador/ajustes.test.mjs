@@ -142,6 +142,7 @@ describe("publicar cambios", () => {
     const r = await publicarCambios(como(EDITOR), { url: undefined, obtenerToken: async () => "t" });
     expect(r).toEqual({ rapido: false });
     expect((await sembrar((db) => getDoc(doc(db, "estado/sistema")))).data().publicarPendiente).toBe(true);
+    expect(typeof (await sembrar((db) => getDoc(doc(db, "estado/sistema")))).data().publicarPendienteEn).toBe("string");
   });
 
   it("con dirección, envía el token; si responde bien es rápido; si falla, queda programado igual", async () => {

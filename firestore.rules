@@ -64,19 +64,32 @@ service cloud.firestore {
         && request.resource.data.estado in ['pendiente', 'aprobado', 'rechazado', 'spam'];
     }
 
-    // Comentarios del archivo ocultados: ids = lista de ocultos (la cambian los editores desde el panel);
-    // textos = copia del texto original de cada oculto (id -> comentario), que solo escribe el exportador (servidor).
-    // Un cliente puede leer textos si es editor, pero nunca crearlos, cambiarlos ni borrarlos.
+    // Comentarios del archivo ocultados: ids = lista de ocultos (la cambian los editores desde el panel).
+    // El texto original de cada oculto vive en archivoOcultos/{slug}/textos/{id}: lo escribe solo el exportador (servidor).
+    // Un cliente no puede borrar estos documentos (se perdería la lista) ni tocar textos.
     match /archivoOcultos/{slug} {
       allow read: if esEditor();
       allow create: if esEditor()
         && request.resource.data.keys().hasOnly(['ids'])
         && request.resource.data.ids is list;
       allow update: if esEditor()
-        && request.resource.data.keys().hasOnly(['ids', 'textos'])
-        && request.resource.data.ids is list
-        && request.resource.data.get('textos', null) == resource.data.get('textos', null);
-      allow delete: if esEditor() && !('textos' in resource.data && resource.data.textos.size() > 0);
+        && request.resource.data.keys().hasOnly(['ids'])
+        && request.resource.data.ids is list;
+      allow delete: if false;
+      match /textos/{id} {
+        allow read: if esEditor();
+        allow write: if false;
+      }
+    }
+
+    // Lapidas de articulos borrados del todo: las crea el admin al borrar y las lee el exportador (servidor) para retirar la pagina.
+    match /borrados/{slug} {
+      allow read: if esEditor();
+      allow create: if esAdmin()
+        && request.resource.data.keys().hasOnly(['borradoEn', 'borradoPor'])
+        && request.resource.data.borradoEn is string
+        && request.resource.data.borradoPor is string;
+      allow update, delete: if false;
     }
 
     // Valores de ajustes/global que acaban en la web publica: se vuelven a comprobar aqui (y otra vez en la web).
@@ -99,12 +112,13 @@ service cloud.firestore {
         && ajustesValidos();
     }
 
-    // Estado: los editores solo pueden cambiar publicarPendiente.
+    // Estado: los editores solo pueden cambiar publicarPendiente y publicarPendienteEn (cuándo lo pidieron).
     match /estado/sistema {
       allow read: if autorizado();
       allow update: if esEditor()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicarPendiente'])
-        && request.resource.data.publicarPendiente is bool;
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['publicarPendiente', 'publicarPendienteEn'])
+        && request.resource.data.publicarPendiente is bool
+        && (!('publicarPendienteEn' in request.resource.data) || request.resource.data.publicarPendienteEn is string);
     }
 
     match /{document=**} { allow read, write: if false; }

@@ -51,7 +51,7 @@ export function urlPublicarSegura(url: string | undefined): url is string {
  * `rapido: true` si respondió bien. Un fallo al avisar no es un error: la marca ya está puesta y se publicará en la siguiente ronda.
  */
 export async function publicarCambios(db: Firestore, { url, obtenerToken, fetchFn, tiempoMs = TIEMPO_ESPERA_MS }: Opciones): Promise<Resultado> {
-  await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true });
+  await updateDoc(doc(db, "estado", "sistema"), { publicarPendiente: true, publicarPendienteEn: new Date().toISOString() });
   if (!urlPublicarSegura(url)) return { rapido: false };
   const control = new AbortController();
   let reloj: ReturnType<typeof setTimeout> | undefined;

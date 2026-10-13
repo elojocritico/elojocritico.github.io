@@ -6,7 +6,7 @@ import { join, relative } from "node:path";
 import sharp from "sharp";
 import { getFirestore } from "firebase-admin/firestore";
 import { iniciarAdmin } from "../scripts/crear-admin.mjs";
-import { exportar, slugSeguro } from "../scripts/exportar.mjs";
+import { exportar, slugSeguro, confirmarExportacion } from "../scripts/exportar.mjs";
 
 iniciarAdmin();
 const db = getFirestore();
@@ -62,6 +62,7 @@ beforeEach(async () => {
   const base = join(raiz, "t" + ++n);
   dir = join(base, "contenido");
   img = join(base, "imagenes");
+  mkdirSync(img, { recursive: true });
   fuera = base;
   mkdirSync(dir, { recursive: true });
   await db.doc("ajustes/global").set({
@@ -288,7 +289,8 @@ describe("archivo: ocultar y volver a mostrar", () => {
     expect(f1[1]).toEqual({ id: "2", autor: "", fecha: "2018-01-02T10:00", html: "", respuestaA: "1" });
     expect(f1[0]).toEqual(original[0]);
     expect(JSON.stringify(f1)).not.toContain("dos");
-    expect((await db.doc("archivoOcultos/a").get()).data()).toEqual({ ids: ["2"], textos: { 2: original[1] } });
+    expect((await db.doc("archivoOcultos/a/textos/2").get()).data()).toEqual(original[1]);
+    expect((await db.doc("archivoOcultos/a").get()).data()).toEqual({ ids: ["2"] });
     expect(leer("archivo-ocultos.json")).toEqual({ a: ["2"] });
     expect(r1.cambios).toBe(true);
 
@@ -297,7 +299,7 @@ describe("archivo: ocultar y volver a mostrar", () => {
     await db.doc("archivoOcultos/a").update({ ids: [] });
     const r3 = await correr();
     expect(leer("comentarios-archivo", "a.json")).toEqual(original);
-    expect((await db.doc("archivoOcultos/a").get()).data()).toEqual({ ids: [], textos: {} });
+    expect((await db.doc("archivoOcultos/a/textos/2").get()).data()).toEqual(original[1]); // nunca se borra el texto guardado
     expect(leer("archivo-ocultos.json")).toEqual({});
     expect(r3.cambios).toBe(true);
     expect((await correr()).cambios).toBe(false);
@@ -310,10 +312,22 @@ describe("archivo: ocultar y volver a mostrar", () => {
     await correr();
     const f = leer("comentarios-archivo", "a.json");
     expect(f.map((c) => c.html)).toEqual(["", "<p>dos</p>", ""]);
-    expect(Object.keys((await db.doc("archivoOcultos/a").get()).data().textos).sort()).toEqual(["1", "3"]);
+    expect((await db.collection("archivoOcultos/a/textos").get()).docs.map((d) => d.id).sort()).toEqual(["1", "3"]);
     await db.doc("archivoOcultos/a").update({ ids: ["3"] });
     await correr();
     expect(leer("comentarios-archivo", "a.json").map((c) => c.html)).toEqual(["<p>uno</p>", "<p>dos</p>", ""]);
+  });
+
+  it("ocultar, mostrar y volver a ocultar no pierde el texto aunque el repositorio ya esté vacío", async () => {
+    await db.doc("archivoOcultos/a").set({ ids: ["2"] });
+    await correr();
+    await db.doc("archivoOcultos/a").set({ ids: [] });
+    await correr();
+    await db.doc("archivoOcultos/a").set({ ids: ["2"] });
+    await correr();
+    await db.doc("archivoOcultos/a").set({ ids: [] });
+    await correr();
+    expect(leer("comentarios-archivo", "a.json")).toEqual(original);
   });
 
   it("ignora los ocultos de un artículo que no existe", async () => {
@@ -415,6 +429,7 @@ describe("fotos", () => {
     const traer = falsoFetch({ [URL1]: await png(300, 200) });
     await correr({ traer });
     rmSync(img, { recursive: true, force: true });
+    mkdirSync(img);
     const r = await correr({ traer, completo: true });
     expect(existsSync(join(img, "2024", "05", "foto-nandu-1.webp"))).toBe(true);
     expect(r.cambios).toBe(true);
@@ -438,16 +453,6 @@ describe("fotos", () => {
     expect(llamadas).toEqual([]);
     expect(leer("articulos", "raro.json").portada).toBeNull();
     expect(r.avisos.length).toBe(1);
-  });
-
-  it("si no se puede bajar una foto, falla sin tocar contenido/ ni avanzar la última exportación", async () => {
-    await poner("a");
-    await poner("b", { cuerpoHtml: `<img src="${URL1}" alt="">` });
-    const antes = arbol(dir);
-    await expect(correr({ traer: falsoFetch({}) })).rejects.toThrow(/No se ha podido descargar/);
-    expect(arbol(dir)).toEqual(antes);
-    expect(existsSync(img)).toBe(false);
-    expect((await db.doc("estado/sistema").get()).data().ultimaExportacion).toBeNull();
   });
 });
 
@@ -482,5 +487,177 @@ describe("si Firestore falla", () => {
     await expect(exportar({ db: a_medias, dirContenido: dir, dirImagenes: img, ahora: AHORA, log: () => {} })).rejects.toThrow(/conexión/);
     expect(arbol(dir)).toEqual(antes);
     expect(statSync(dir).isDirectory()).toBe(true);
+  });
+});
+
+describe("correcciones de la revisión", () => {
+  const com = (slug, texto, creadoEn) =>
+    db.collection("comentarios").add({ articuloSlug: slug, nombre: "N", correo: "", texto, respuestaA: null, estado: "aprobado", origen: "nuevo", creadoEn });
+  const URL1 = "https://res.cloudinary.com/demo/image/upload/v1/carpeta/Foto.png";
+
+  it("incremental: una edición con el reloj atrasado (10 min antes de la última exportación) también se exporta", async () => {
+    await poner("a");
+    await correr();
+    await db.doc("estado/sistema").update({ ultimaExportacion: "2024-06-01T12:00:00.000Z" });
+    await db.doc("articulos/a").update({ titulo: "Con reloj atrasado", actualizadoEn: "2024-06-01T11:50:00.000Z" });
+    await correr({ ahora: new Date("2024-06-02T00:00:00Z") });
+    expect(leer("articulos", "a.json").titulo).toBe("Con reloj atrasado");
+  });
+
+  it("lápida: un artículo borrado del todo se retira de la web (y sus comentarios), y la lápida se conserva", async () => {
+    await poner("a");
+    await poner("b");
+    await com("a", "hola", "2024-05-12T10:00:00.000Z");
+    await correr();
+    expect(existsSync(J("comentarios", "a.json"))).toBe(true);
+    await db.doc("articulos/a").delete();
+    await db.doc("borrados/a").set({ borradoEn: "2024-06-01T13:00:00.000Z", borradoPor: "admin@eoc.test" });
+    await correr({ ahora: new Date(dias(2)) });
+    expect(existsSync(J("articulos", "a.json"))).toBe(false);
+    expect(existsSync(J("comentarios", "a.json"))).toBe(false);
+    expect(existsSync(J("articulos", "b.json"))).toBe(true);
+    expect((await db.doc("borrados/a").get()).exists).toBe(true);
+    expect((await correr({ ahora: new Date(dias(3)) })).cambios).toBe(false);
+  });
+
+  it("lápida antigua: si la dirección se vuelve a usar, no se retira el artículo nuevo", async () => {
+    await db.doc("borrados/a").set({ borradoEn: "2024-01-01T00:00:00.000Z", borradoPor: "x" });
+    await poner("a");
+    await correr();
+    expect(existsSync(J("articulos", "a.json"))).toBe(true);
+  });
+
+  it("completa: retira los JSON sin documento solo si Firestore tiene al menos el 90 % de los artículos", async () => {
+    for (let i = 0; i < 10; i++) await poner("art" + i);
+    escribir("articulos/huerfano.json", { slug: "huerfano", titulo: "H", fecha: "2020-01-01", cuerpoHtml: "<p>h</p>" });
+    await correr({ completo: true });
+    expect(existsSync(J("articulos", "huerfano.json"))).toBe(false);
+    escribir("articulos/huerfano2.json", { slug: "huerfano2", titulo: "H", fecha: "2020-01-01", cuerpoHtml: "<p>h</p>" });
+    for (let i = 0; i < 9; i++) await db.doc("articulos/art" + i).delete();
+    const r = await correr({ completo: true });
+    expect(existsSync(J("articulos", "art5.json"))).toBe(true);
+    expect(existsSync(J("articulos", "huerfano2.json"))).toBe(true);
+    expect(r.avisos.join()).toMatch(/90/);
+  });
+
+  it("incremental nunca retira JSON sin documento", async () => {
+    await poner("a");
+    escribir("articulos/huerfano.json", { slug: "huerfano", titulo: "H", fecha: "2020-01-01", cuerpoHtml: "<p>h</p>" });
+    await correr();
+    expect(existsSync(J("articulos", "huerfano.json"))).toBe(true);
+  });
+
+  it("papelera: no se borra un artículo que se restauró entre la lectura y el borrado", async () => {
+    await poner("r", { estado: "papelera", enPapeleraDesde: dias(-40) });
+    let ya = false;
+    const dbCarrera = new Proxy(db, {
+      get(t, p) {
+        if (p === "runTransaction") {
+          return async (fn) => {
+            if (!ya) {
+              ya = true;
+              await t.doc("articulos/r").update({ estado: "borrador", enPapeleraDesde: null });
+            }
+            return t.runTransaction(fn);
+          };
+        }
+        const v = t[p];
+        return typeof v === "function" ? v.bind(t) : v;
+      },
+    });
+    await exportar({ db: dbCarrera, dirContenido: dir, dirImagenes: img, ahora: AHORA, log: () => {} });
+    expect((await db.doc("articulos/r").get()).exists).toBe(true);
+  });
+
+  it("papelera: al vaciarla se borra el documento y luego sus versiones, y queda lápida", async () => {
+    await poner("v", { estado: "papelera", enPapeleraDesde: dias(-40) });
+    await db.doc("articulos/v/versiones/1").set({ titulo: "x" });
+    await correr();
+    expect((await db.doc("articulos/v").get()).exists).toBe(false);
+    expect((await db.collection("articulos/v/versiones").get()).size).toBe(0);
+    expect((await db.doc("borrados/v").get()).exists).toBe(true);
+  });
+
+  it("foto que no se puede bajar: se conserva la dirección de Cloudinary, hay aviso con el artículo y se reintenta", async () => {
+    await poner("f", { cuerpoHtml: `<p>x</p><img src="${URL1}" alt="">`, portada: { src: URL1, tarjeta: URL1, alt: "p" } });
+    await poner("g");
+    const r = await correr({ traer: falsoFetch({}) });
+    const a = leer("articulos", "f.json");
+    expect(a.cuerpoHtml).toContain(URL1);
+    expect(a.portada.src).toBe(URL1);
+    expect(r.avisos.join("\n")).toMatch(/"f"/);
+    expect(existsSync(J("articulos", "g.json"))).toBe(true);
+    const manifiesto = existsSync(J("imagenes-cloudinary.json")) ? JSON.stringify(leer("imagenes-cloudinary.json")) : "";
+    expect(manifiesto).not.toContain(URL1);
+    // Siguiente ejecución incremental (el artículo no ha cambiado): vuelve a intentarlo y ahora sí funciona
+    await correr({ ahora: new Date(dias(1)), traer: falsoFetch({ [URL1]: await png(300, 200) }) });
+    expect(leer("articulos", "f.json").cuerpoHtml).toContain("/img/2024/05/foto.webp");
+    expect(leer("articulos", "f.json").cuerpoHtml).not.toContain("cloudinary");
+    expect(leer("articulos", "f.json").portada.src).toBe("/img/2024/05/foto.webp");
+  });
+
+  it("foto corrupta o con tiempo agotado: igual, aviso y se conserva la dirección; se pide con tiempo límite", async () => {
+    await poner("c", { cuerpoHtml: `<img src="${URL1}" alt="">` });
+    let r = await correr({ traer: falsoFetch({ [URL1]: Buffer.from("esto no es una imagen") }) });
+    expect(leer("articulos", "c.json").cuerpoHtml).toContain(URL1);
+    expect(r.avisos.length).toBe(1);
+    r = await correr({ completo: true, traer: async () => { throw new Error("timeout"); } });
+    expect(leer("articulos", "c.json").cuerpoHtml).toContain(URL1);
+    let senal;
+    await correr({ completo: true, traer: async (u, o) => { senal = o?.signal; return falsoFetch({})(u); } });
+    expect(senal).toBeDefined();
+  });
+
+  it("--sin-confirmar no toca estado/sistema; confirmar fija la última exportación y resuelve publicarPendiente según publicarPendienteEn", async () => {
+    await db.doc("estado/sistema").update({ publicarPendiente: true, publicarPendienteEn: "2024-06-01T11:00:00.000Z" });
+    await poner("a");
+    const r = await correr({ sinConfirmar: true });
+    expect(r.inicio).toBe(AHORA.toISOString());
+    expect(r.salida).toContain("INICIO=" + AHORA.toISOString());
+    expect((await db.doc("estado/sistema").get()).data()).toMatchObject({ ultimaExportacion: null, publicarPendiente: true });
+    await db.doc("estado/sistema").update({ publicarPendienteEn: "2024-06-01T12:00:05.000Z" });
+    await confirmarExportacion(db, AHORA.toISOString());
+    expect((await db.doc("estado/sistema").get()).data()).toMatchObject({ ultimaExportacion: AHORA.toISOString(), publicarPendiente: true });
+    await db.doc("estado/sistema").update({ publicarPendienteEn: "2024-06-01T11:59:00.000Z" });
+    await confirmarExportacion(db, AHORA.toISOString());
+    expect((await db.doc("estado/sistema").get()).data().publicarPendiente).toBe(false);
+    await expect(confirmarExportacion(db, "mañana")).rejects.toThrow();
+  });
+
+  it("por defecto (sin indicador) fija la última exportación y respeta un Publicar pedido después del inicio", async () => {
+    await db.doc("estado/sistema").update({ publicarPendiente: true, publicarPendienteEn: "2024-06-01T12:00:09.000Z" });
+    await poner("a");
+    await correr();
+    expect((await db.doc("estado/sistema").get()).data()).toMatchObject({ ultimaExportacion: AHORA.toISOString(), publicarPendiente: true });
+  });
+
+  it("falla con un mensaje claro si no existe la carpeta de imágenes", async () => {
+    await expect(correr({ dirImagenes: join(fuera, "no-existe") })).rejects.toThrow(/carpeta de im/i);
+  });
+
+  it("slugSeguro rechaza caracteres de Windows y nombres reservados", () => {
+    for (const mala of ["a:b", "a<b", "a>b", "a|b", "a?b", "a*b", 'a"b', "CON", "con", "nul.txt", "Aux", "com1", "LPT9", "prn.x"]) expect(slugSeguro(mala), mala).toBe(false);
+    for (const buena of ["consola", "com10", "lpt0", "aux-1", "contacto"]) expect(slugSeguro(buena), buena).toBe(true);
+  });
+
+  it("un publicado que se omite por inválido conserva su fichero de comentarios", async () => {
+    await poner("roto");
+    await com("roto", "hola", "2024-05-12T10:00:00.000Z");
+    await correr();
+    expect(existsSync(J("comentarios", "roto.json"))).toBe(true);
+    await db.doc("articulos/roto").update({ titulo: " ", actualizadoEn: dias(1) });
+    await correr({ ahora: new Date(dias(2)) });
+    expect(existsSync(J("comentarios", "roto.json"))).toBe(true);
+  });
+
+  it("limpia ficheros .tmp- sobrantes y avisa de las fotos sin usar en la completa", async () => {
+    mkdirSync(J("articulos"), { recursive: true });
+    writeFileSync(J("articulos", "x.json.tmp-123"), "a medias");
+    mkdirSync(join(img, "2020", "01"), { recursive: true });
+    writeFileSync(join(img, "2020", "01", "sola.webp"), "x");
+    await poner("a");
+    const r = await correr({ completo: true });
+    expect(existsSync(J("articulos", "x.json.tmp-123"))).toBe(false);
+    expect(r.salida.join("\n")).toMatch(/1 foto.*sin usar/);
   });
 });

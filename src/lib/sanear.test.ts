@@ -120,3 +120,19 @@ describe("sanear: rendimiento", () => {
     expect(sanear("<p>  &nbsp;<br></p><p>ok</p>")).toBe("<p>ok</p>");
   });
 });
+
+describe("sanear: rendimiento con etiquetas repetidas", () => {
+  it("un párrafo con muchos <br /> seguidos y sin cerrar no se cuelga", () => {
+    const html = "<p>" + "<br />".repeat(40) + "texto</p>";
+    const t = Date.now();
+    expect(sanear(html)).toContain("texto");
+    expect(Date.now() - t).toBeLessThan(100);
+    const sinCerrar = "<p>" + "<br />".repeat(40) + "<b>texto";
+    const t2 = Date.now();
+    sanear(sinCerrar);
+    expect(Date.now() - t2).toBeLessThan(100);
+  }, 5000);
+  it("sigue quitando párrafos que solo tienen saltos", () => {
+    expect(sanear("<p><br/><br /><br></p><p>ok</p>")).toBe("<p>ok</p>");
+  });
+});

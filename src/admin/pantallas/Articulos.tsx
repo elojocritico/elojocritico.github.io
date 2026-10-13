@@ -94,7 +94,7 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
       if (a.tipo === "despublicar") await despublicar(db, id, correo);
       else if (a.tipo === "papelera") await enviarAPapelera(db, id, correo);
       else if (a.tipo === "mover") await moverSeccion(db, id, correo, seccionNueva);
-      else await borrarDefinitivamente(db, id, papel);
+      else await borrarDefinitivamente(db, id, papel, correo);
       setOk(
         {
           despublicar: `«${titulo}» ya no está publicado. Ahora es un borrador.`,
