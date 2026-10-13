@@ -22,17 +22,17 @@ afterEach(() => vi.unstubAllEnvs());
 describe("Publicar cambios", () => {
   it("muestra el contador de cambios sin publicar", async () => {
     render(<Publicar usuario={usuario} />);
-    expect(await screen.findByText("3 cambios sin publicar")).toBeInTheDocument();
+    expect(await screen.findByText("3 cambios sin publicar en la web")).toBeInTheDocument();
   });
 
   it("singular, cero y «nunca»", async () => {
     d.contarCambios.mockResolvedValue({ nunca: false, cambios: 1, pendiente: false });
     const { unmount } = render(<Publicar usuario={usuario} />);
-    expect(await screen.findByText("1 cambio sin publicar")).toBeInTheDocument();
+    expect(await screen.findByText("1 cambio sin publicar en la web")).toBeInTheDocument();
     unmount();
     d.contarCambios.mockResolvedValue({ nunca: true, cambios: null, pendiente: false });
     render(<Publicar usuario={usuario} />);
-    expect(await screen.findByText("Aún no se ha publicado nunca desde el panel")).toBeInTheDocument();
+    expect(await screen.findByText("Todavía no se ha publicado ningún cambio")).toBeInTheDocument();
   });
 
   it("sin dirección de publicación: «Se publicará en menos de 1 hora»", async () => {
@@ -86,7 +86,7 @@ describe("Publicar cambios", () => {
   it("si no se pueden contar los cambios, avisa pero deja publicar", async () => {
     d.contarCambios.mockRejectedValue({ code: "unavailable" });
     render(<Publicar usuario={usuario} />);
-    expect(await screen.findByRole("alert")).toHaveTextContent(/No se ha podido contar/);
+    expect(await screen.findByRole("alert")).toHaveTextContent(/No se han podido contar/);
     expect(screen.getByRole("button", { name: "Publicar cambios ahora" })).toBeEnabled();
   });
 });

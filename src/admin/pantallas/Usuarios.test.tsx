@@ -7,7 +7,7 @@ vi.mock("../firebase", () => ({ auth: {}, db: { falso: true }, configurado: true
 vi.mock("../datos/ajustes", async () => ({ ...(await vi.importActual<object>("../datos/ajustes")), leerAjustes: d.leerAjustes, cambiarUsuario: d.cambiarUsuario }));
 vi.mock("../ruta", async () => ({ ...(await vi.importActual<object>("../ruta")), irA: vi.fn() }));
 
-import { Usuarios, INSTRUCCIONES_NUEVO } from "./Usuarios";
+import { Usuarios, INSTRUCCIONES_NUEVO, NOTA_SIN_CUENTA } from "./Usuarios";
 import { ErrorAjustes } from "../datos/ajustes";
 
 const BD = { falso: true };
@@ -41,6 +41,7 @@ describe("Usuarios", () => {
     await userEvent.click(screen.getByRole("button", { name: "Añadir" }));
     await waitFor(() => expect(d.cambiarUsuario).toHaveBeenCalledWith(BD, "Ana@x.es", "v1", "nuevo@ejemplo.es", "editor"));
     expect(await screen.findByText(INSTRUCCIONES_NUEVO)).toBeInTheDocument();
+    expect(screen.getByText(NOTA_SIN_CUENTA)).toBeInTheDocument();
     expect(screen.getByText("nuevo@ejemplo.es")).toBeInTheDocument();
   });
 

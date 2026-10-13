@@ -15,9 +15,9 @@ export const MSG_LENTO = "Se publicará en menos de 1 hora.";
 type Mensaje = { tipo: "ok" | "error"; texto: string };
 
 export function textoCambios(c: Cuenta): string {
-  if (c.nunca) return "Aún no se ha publicado nunca desde el panel";
-  if (c.cambios === 0) return "No hay cambios sin publicar";
-  return c.cambios === 1 ? "1 cambio sin publicar" : `${c.cambios} cambios sin publicar`;
+  if (c.nunca) return "Todavía no se ha publicado ningún cambio";
+  if (c.cambios === 0) return "No hay cambios sin publicar en la web";
+  return c.cambios === 1 ? "1 cambio sin publicar en la web" : `${c.cambios} cambios sin publicar en la web`;
 }
 
 export function Publicar({ usuario }: { usuario: User }) {
@@ -75,7 +75,7 @@ export function Publicar({ usuario }: { usuario: User }) {
         <>
           <p className="grande-texto" aria-live="polite">{textoCambios(cuenta)}</p>
           {cuenta.pendiente && <p className="meta">Ya hay una publicación pedida; saldrá en la próxima ronda.</p>}
-          {fallo && <Aviso tipo="error">{fallo} No se ha podido contar los cambios, pero puedes publicar igualmente.</Aviso>}
+          {fallo && <Aviso tipo="error">{fallo} No se han podido contar los cambios, pero puedes publicar igualmente.</Aviso>}
         </>
       )}
       {mensaje && <Aviso ref={avisoRef} tipo={mensaje.tipo}>{mensaje.texto}</Aviso>}

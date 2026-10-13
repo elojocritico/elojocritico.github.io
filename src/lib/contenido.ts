@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { z } from "astro/zod";
+import { esBloque, esCliente, esUrlWeb } from "./validacion";
 
 export const RAIZ_CONTENIDO = () => process.env.EOC_CONTENIDO ?? resolve(process.cwd(), "contenido");
 const leer = (rel: string) => JSON.parse(readFileSync(join(RAIZ_CONTENIDO(), rel), "utf-8"));
@@ -20,11 +21,28 @@ const ArticuloZ = z.object({
   origen: z.string().default(""),
 });
 const ComentarioZ = z.object({ id: z.string(), autor: z.string(), fecha: z.string(), html: z.string(), respuestaA: z.string().nullable() });
-const AjustesZ = z.object({
-  destacado: z.string().nullable(),
-  enlaces: z.array(z.object({ nombre: z.string(), url: z.string() })),
-  adsense: z.object({ activo: z.boolean(), cliente: z.string(), bloque: z.string() }),
-});
+const AjustesZ = z
+  .object({
+    destacado: z.string().nullable(),
+    enlaces: z.array(z.object({ nombre: z.string(), url: z.string() })),
+    adsense: z.object({ activo: z.boolean(), cliente: z.string(), bloque: z.string() }),
+  })
+  // Defensa en profundidad: lo guardado en el panel se vuelve a comprobar antes de pintarlo en la web.
+  // Lo inválido se descarta con un aviso; nunca se rompe la construcción.
+  .transform((a) => {
+    const enlaces = a.enlaces.filter((e) => {
+      const bien = esUrlWeb(e.url);
+      if (!bien) console.warn(`[ajustes] Enlace descartado (la dirección no es http/https): ${JSON.stringify(e.nombre)}`);
+      return bien;
+    });
+    let adsense = a.adsense;
+    const { cliente, bloque } = adsense;
+    if ((cliente !== "" && !esCliente(cliente)) || (bloque !== "" && !esBloque(bloque))) {
+      console.warn("[ajustes] Publicidad desactivada: el código de cuenta o de bloque no es válido.");
+      adsense = { activo: false, cliente: "", bloque: "" };
+    }
+    return { ...a, enlaces, adsense };
+  });
 
 export type Articulo = z.infer<typeof ArticuloZ>;
 export type Comentario = z.infer<typeof ComentarioZ>;

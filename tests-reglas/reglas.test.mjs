@@ -233,6 +233,23 @@ describe("admin", () => {
   it("puede escribir publicarPendiente", async () => {
     await assertSucceeds(updateDoc(doc(auth(ADMIN), "estado/sistema"), { publicarPendiente: true }));
   });
+  it("ajustes: publicidad y enlaces se validan (cliente, bloque, máximo 20 enlaces)", async () => {
+    const ref = doc(auth(ADMIN), "ajustes/global");
+    const ad = (o) => ({ adsense: { activo: true, cliente: "ca-pub-1234567890123456", bloque: "1234567890", ...o } });
+    await assertSucceeds(updateDoc(ref, ad({})));
+    await assertSucceeds(updateDoc(ref, ad({ activo: false, cliente: "", bloque: "" })));
+    await assertFails(updateDoc(ref, ad({ cliente: 'ca-pub-1"><script>' })));
+    await assertFails(updateDoc(ref, ad({ cliente: "ca-pub-123" })));
+    await assertFails(updateDoc(ref, ad({ cliente: "ca-pub-1234567890123456x" })));
+    await assertFails(updateDoc(ref, ad({ bloque: "12345" })));
+    await assertFails(updateDoc(ref, ad({ bloque: "123456789a" })));
+    await assertFails(updateDoc(ref, ad({ activo: "si" })));
+    await assertFails(updateDoc(ref, { adsense: "x" }));
+    const enlaces = (n) => Array.from({ length: n }, (_, i) => ({ nombre: "E" + i, url: "https://e.es/" + i }));
+    await assertSucceeds(updateDoc(ref, { enlaces: enlaces(20) }));
+    await assertFails(updateDoc(ref, { enlaces: enlaces(21) }));
+    await assertFails(updateDoc(ref, { enlaces: "javascript:alert(1)" }));
+  });
 });
 
 describe("correo verificado y mayusculas", () => {

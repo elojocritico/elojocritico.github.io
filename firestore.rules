@@ -68,12 +68,24 @@ service cloud.firestore {
       allow read, write: if esEditor();
     }
 
+    // Valores de ajustes/global que acaban en la web publica: se vuelven a comprobar aqui (y otra vez en la web).
+    // Cada enlace debe ser http(s); las reglas no pueden recorrer listas, asi que eso lo comprueban el panel y la web.
+    function ajustesValidos() {
+      let d = request.resource.data;
+      return (!('enlaces' in d) || (d.enlaces is list && d.enlaces.size() <= 20))
+        && (!('adsense' in d) || (d.adsense is map
+          && d.adsense.activo is bool
+          && d.adsense.cliente is string && (d.adsense.cliente == '' || d.adsense.cliente.matches('^ca-pub-[0-9]{16}$'))
+          && d.adsense.bloque is string && (d.adsense.bloque == '' || d.adsense.bloque.matches('^[0-9]{10}$'))));
+    }
+
     // Ajustes: leen los autorizados, escribe solo el admin (incluye usuarios).
     match /ajustes/global {
       allow read: if autorizado();
       // Sin create/delete desde el cliente; siempre debe quedar algun admin.
       allow update: if esAdmin()
-        && request.resource.data.usuarios.values().hasAny(['admin']);
+        && request.resource.data.usuarios.values().hasAny(['admin'])
+        && ajustesValidos();
     }
 
     // Estado: los editores solo pueden cambiar publicarPendiente.

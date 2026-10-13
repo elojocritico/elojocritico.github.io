@@ -127,11 +127,15 @@ describe("publicar cambios", () => {
   it("cuenta los artículos cambiados después de la última exportación", async () => {
     await sembrar(async (db) => {
       await setDoc(doc(db, "estado/sistema"), { publicarPendiente: true, ultimaExportacion: ISO });
-      for (const [n, f] of [[1, "2024-05-01T00:00:00.000Z"], [2, "2024-06-02T00:00:00.000Z"], [3, "2024-06-03T00:00:00.000Z"]]) {
-        await setDoc(doc(db, "articulos/a" + n), { slug: "a" + n, titulo: "T" + n, estado: "publicado", actualizadoEn: f });
+      for (const [n, f, e] of [
+        [1, "2024-05-01T00:00:00.000Z", "publicado"], [2, "2024-06-02T00:00:00.000Z", "publicado"], [3, "2024-06-03T00:00:00.000Z", "programado"],
+        [4, "2024-06-04T00:00:00.000Z", "papelera"], [5, "2024-06-05T00:00:00.000Z", "borrador"],
+      ]) {
+        await setDoc(doc(db, "articulos/a" + n), { slug: "a" + n, titulo: "T" + n, estado: e, actualizadoEn: f });
       }
     });
-    expect(await contarCambios(como(EDITOR))).toEqual({ nunca: false, cambios: 2, pendiente: true });
+    // los borradores no cuentan: no cambian la web
+    expect(await contarCambios(como(EDITOR))).toEqual({ nunca: false, cambios: 3, pendiente: true });
   });
 
   it("marca publicarPendiente (un editor puede) y, sin dirección, será en menos de 1 hora", async () => {
@@ -146,6 +150,26 @@ describe("publicar cambios", () => {
     expect(f).toHaveBeenCalledWith("https://x.test/p", expect.objectContaining({ method: "POST", headers: { Authorization: "Bearer tok" } }));
     const mal = vi.fn(async () => { throw new Error("red"); });
     expect(await publicarCambios(como(ADMIN), { url: "https://x.test/p", obtenerToken: async () => "tok", fetchFn: mal })).toEqual({ rapido: false });
+  });
+
+  it("solo avisa a direcciones https (o localhost) y no sigue redirecciones", async () => {
+    const f = vi.fn(async () => ({ ok: true }));
+    const r = await publicarCambios(como(ADMIN), { url: "http://evil.test/p", obtenerToken: async () => "tok", fetchFn: f });
+    expect(r).toEqual({ rapido: false });
+    await publicarCambios(como(ADMIN), { url: "javascript:alert(1)", obtenerToken: async () => "tok", fetchFn: f });
+    expect(f).not.toHaveBeenCalled();
+    await publicarCambios(como(ADMIN), { url: "http://localhost:8787/p", obtenerToken: async () => "tok", fetchFn: f });
+    await publicarCambios(como(ADMIN), { url: "http://127.0.0.1:8787/p", obtenerToken: async () => "tok", fetchFn: f });
+    expect(f).toHaveBeenCalledTimes(2);
+    await publicarCambios(como(ADMIN), { url: "https://x.test/p", obtenerToken: async () => "tok", fetchFn: f });
+    expect(f).toHaveBeenLastCalledWith("https://x.test/p", expect.objectContaining({ redirect: "error" }));
+  });
+
+  it("si el token tarda más del tiempo máximo, no se queda colgado", async () => {
+    const f = vi.fn();
+    const r = await publicarCambios(como(ADMIN), { url: "https://x.test/p", obtenerToken: () => new Promise(() => {}), fetchFn: f, tiempoMs: 50 });
+    expect(r).toEqual({ rapido: false });
+    expect(f).not.toHaveBeenCalled();
   });
 
   it("si no se puede escribir la marca, falla y no se llama a la dirección", async () => {

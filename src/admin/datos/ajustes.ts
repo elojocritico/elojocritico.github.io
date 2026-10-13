@@ -3,6 +3,7 @@
 // si otra persona guardó mientras tanto, no se pisa su cambio.
 import { deleteField, doc, FieldPath, getDoc, runTransaction, type Firestore } from "firebase/firestore";
 import { sanear } from "../../lib/sanear";
+import { esBloque, esCliente, esUrlWeb } from "../../lib/validacion";
 import type { Papel } from "../sesion";
 
 export const MAX_ENLACES = 20;
@@ -43,18 +44,9 @@ export const AVISOS_AJUSTES: Record<string, string> = {
   "ajustes/destacado": "El artículo destacado no es válido.",
 };
 
-const CLIENTE = /^ca-pub-\d{16}$/;
-const BLOQUE = /^\d{10}$/;
 const CORREO = /^[^\s@,;<>()]+@[^\s@,;<>()]+\.[^\s@,;<>()]{2,}$/;
 
-export function esUrlWeb(valor: string): boolean {
-  try {
-    const u = new URL(valor.trim());
-    return u.protocol === "http:" || u.protocol === "https:";
-  } catch {
-    return false;
-  }
-}
+export { esUrlWeb };
 
 /** Devuelve el problema en llano o null si los enlaces están bien. */
 export function problemaDeEnlaces(enlaces: Enlace[]): string | null {
@@ -70,8 +62,8 @@ export function problemaDeEnlaces(enlaces: Enlace[]): string | null {
 export function problemaDeAdsense(a: Adsense): string | null {
   const cliente = a.cliente.trim(), bloque = a.bloque.trim();
   if (a.activo && (!cliente || !bloque)) return "Para activar la publicidad hay que rellenar el código de cuenta y el código de bloque.";
-  if (cliente && !CLIENTE.test(cliente)) return "El código de cuenta debe ser como ca-pub-1234567890123456 (ca-pub- y 16 números).";
-  if (bloque && !BLOQUE.test(bloque)) return "El código de bloque debe tener 10 números.";
+  if (cliente && !esCliente(cliente)) return "El código de cuenta debe ser como ca-pub-1234567890123456 (ca-pub- y 16 números).";
+  if (bloque && !esBloque(bloque)) return "El código de bloque debe tener 10 números.";
   return null;
 }
 

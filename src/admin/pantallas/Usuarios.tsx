@@ -15,6 +15,8 @@ import { SoloAdmin } from "./Ajustes";
 export const INSTRUCCIONES_NUEVO =
   "Dile a esa persona que entre en la web /admin/, pulse «¿Has olvidado la contraseña?» con su correo y siga el enlace; después tendrá que confirmar su correo.";
 
+export const NOTA_SIN_CUENTA = "(Si esa persona aún no tiene cuenta, el administrador técnico tendrá que crearla.)";
+
 type Mensaje = { tipo: "ok" | "error"; texto: string };
 const NOMBRE: Record<Papel, string> = { admin: "Administrador", editor: "Editor" };
 
@@ -162,6 +164,8 @@ function UsuariosAdmin({ usuario }: { usuario: User }) {
         {instrucciones && (
           <Aviso tipo="info">
             <strong>Falta un paso para {instrucciones}.</strong> {INSTRUCCIONES_NUEVO}
+            <br />
+            <small>{NOTA_SIN_CUENTA}</small>
           </Aviso>
         )}
       </section>
