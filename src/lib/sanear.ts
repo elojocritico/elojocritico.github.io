@@ -5,11 +5,12 @@ import sanitizeHtml from "sanitize-html";
 const ETIQUETAS = [
   "p", "br", "strong", "b", "em", "i", "u", "a", "img", "blockquote", "ul", "ol", "li",
   "h2", "h3", "h4", "figure", "figcaption", "table", "thead", "tbody", "tr", "td", "th",
-  "hr", "sup", "sub", "iframe",
+  "hr", "sup", "sub", "iframe", "span",
 ];
 const ATRIBUTOS: Record<string, string[]> = {
-  a: ["href", "title"],
-  img: ["src", "alt", "width", "height", "class"],
+  a: ["href", "title", "class"],
+  span: ["class"],
+  img: ["src", "alt", "width", "height", "class", "loading"],
   figure: ["class"],
   iframe: ["src", "width", "height", "allowfullscreen", "loading"],
   td: ["colspan", "rowspan"],
@@ -28,8 +29,20 @@ export function urlSegura(valor: string | undefined): boolean {
   return v.startsWith("http:") || v.startsWith("https:") || v.startsWith("mailto:") || v.startsWith("/") || v.startsWith("#") || !v.includes(":");
 }
 
+/** Etiqueta inventada que no está permitida: sanitize-html la quita y deja su texto. */
+const QUITAR = "x-quitar";
+
+/** Dirección https de un iframe permitido (YouTube, Vimeo, iVoox), o null si no se permite. */
+export function srcIframePermitido(src: string | null | undefined): string | null {
+  let u = src ?? "";
+  if (u.startsWith("//")) u = "https:" + u;
+  return IFRAME_OK.test(u) ? aHttps(u) : null;
+}
+
 type Atributos = Record<string, string>;
-const aHttps = (u: string) => (/^http:\/\//i.test(u) ? "https://" + u.slice(7) : u);
+function aHttps(u: string) {
+  return /^http:\/\//i.test(u) ? "https://" + u.slice(7) : u;
+}
 
 function transformar(tagName: string, attribs: Atributos) {
   let nombre = tagName.toLowerCase();
@@ -40,10 +53,22 @@ function transformar(tagName: string, attribs: Atributos) {
   const alinea = clases.map((c) => ALINEA[c]).find(Boolean);
   delete a.class;
   if ((nombre === "img" || nombre === "figure") && alinea) a.class = alinea;
-  if (nombre === "a" && !urlSegura(a.href)) nombre = "span"; // "span" no está permitido: se quita la etiqueta y queda el texto
+  // Marcas de la migración: enlaces rotos/archivados y "imagen no recuperada" (las clases las filtra allowedClasses).
+  if (nombre === "a") {
+    const marca = clases.find((c) => c === "roto" || c === "archivado");
+    if (marca) a.class = marca;
+  }
+  if (nombre === "span") {
+    if (clases.includes("img-perdida")) a.class = "img-perdida";
+    else nombre = QUITAR; // un span suelto no se publica, pero se conserva su texto
+  }
+  if (nombre === "a" && !urlSegura(a.href)) nombre = QUITAR;
   if (nombre === "img") {
     if (!urlSegura(a.src)) a = {}; // sin dirección válida: se descarta en el filtro de abajo
-    else a.src = aHttps(a.src);
+    else {
+      a.src = aHttps(a.src);
+      a.loading = "lazy";
+    }
   }
   if (nombre === "iframe") {
     if (a.src?.startsWith("//")) a.src = "https:" + a.src;
@@ -61,7 +86,7 @@ const OPCIONES: sanitizeHtml.IOptions = {
   allowedAttributes: ATRIBUTOS,
   allowedSchemes: ["http", "https", "mailto"],
   allowedSchemesAppliedToAttributes: ["href", "src"],
-  allowedClasses: { img: ["izq", "der", "centro"], figure: ["izq", "der", "centro"] },
+  allowedClasses: { img: ["izq", "der", "centro"], figure: ["izq", "der", "centro"], a: ["roto", "archivado"], span: ["img-perdida"] },
   allowProtocolRelative: true,
   nonTextTags: ELIMINAR_CON_CONTENIDO,
   disallowedTagsMode: "discard",

@@ -21,13 +21,17 @@ import { subirImagen, urlTarjeta, ErrorSubida } from "../subirImagen";
 import { sanear } from "../../lib/sanear";
 import { direccionDesdeTitulo, limpiarDireccion, problemaDeDireccion } from "../utiles/direccion";
 import { extractoDesde, textoPlano } from "../utiles/extracto";
+import { avisoDePerdidas } from "../utiles/perdidas";
+import { problemaDeTamano } from "../utiles/tamano";
 import { fechaHoraLlana, madridAUtc, utcAMadrid } from "../utiles/fechas";
 
 type Modo = "borrador" | "publicar" | "programar";
 type Mensaje = { tipo: "info" | "error" | "ok"; texto: string };
+type OpcionesGuardar = { forzar?: boolean; confirmadoBorrador?: boolean; confirmadoPerdidas?: boolean; fecha?: string };
 type Comprobacion = "ocupada" | "libre" | null;
 
 const SIN_CONEXION_CAMBIOS = "No hay conexión con el servidor; tus cambios no se han guardado.";
+const esDatos = (src: string | undefined) => !!src && src.startsWith("data:");
 const SERVIDOR = "elojocritico.github.io";
 
 const etiquetasDe = (texto: string) => Array.from(new Set(texto.split(",").map((e) => e.trim()).filter(Boolean)));
@@ -37,6 +41,12 @@ const NOMBRES_CAMPO: [keyof Campos, string][] = [
   ["titulo", "Título"], ["subtitulo", "Subtítulo"], ["cuerpoHtml", "Texto"], ["extracto", "Extracto"], ["autor", "Autor"],
   ["secciones", "Secciones"], ["etiquetas", "Etiquetas"], ["portada", "Foto de portada"], ["destacado", "Destacar en portada"],
 ];
+
+/** ¿Lo que hay ahora en el servidor es exactamente lo que yo intentaba guardar, y lo guardé yo? */
+function yaGuardado(otro: Articulo, intento: Campos | null, estado: Estado | null): boolean {
+  if (!intento || otro.estado !== estado) return false;
+  return JSON.stringify(camposDe(otro)) === JSON.stringify(camposDe(intento));
+}
 
 function resumenCampo(a: Articulo, k: keyof Campos): string {
   const v = a[k];
@@ -77,7 +87,16 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
   const [claveTexto, setClaveTexto] = useState(0);
   const [conflicto, setConflicto] = useState<{ otro: Articulo; modo: Modo; fecha?: string } | null>(null);
   const [verOtro, setVerOtro] = useState(false);
-  const [pregunta, setPregunta] = useState<null | { tipo: "borrador" } | { tipo: "salir" } | { tipo: "version"; version: Version }>(null);
+  const [pregunta, setPregunta] = useState<
+    null | { tipo: "borrador" } | { tipo: "salir" } | { tipo: "version"; version: Version }
+    | { tipo: "navegar"; destino: string } | { tipo: "perdidas"; texto: string; modo: Modo; opciones: OpcionesGuardar }
+  >(null);
+  const baseHtml = useRef(""); // el texto tal como estaba en el servidor, para detectar pérdidas al guardar
+  const sucioRef = useRef(false);
+  const hashActual = useRef(typeof window === "undefined" ? "" : window.location.hash);
+  sucioRef.current = sucio;
+  const guardadoIntento = useRef<Campos | null>(null);
+  const estadoIntento = useRef<Estado | null>(null);
   const guardando = useRef(false); // evita guardados dobles aunque se pulse dos veces antes de que React repinte
   const avisoRef = useRef<HTMLDivElement>(null);
   const tituloRef = useRef<HTMLInputElement>(null);
@@ -92,6 +111,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
       .then((a) => {
         if (!vigente) return;
         if (!a) return setErrorCarga("Este artículo no existe. Puede que se haya borrado.");
+        baseHtml.current = a.cuerpoHtml;
         setCampos(camposDe(a));
         setEtiquetasTexto(a.etiquetas.join(", "));
         setEstadoActual(a.estado);
@@ -115,6 +135,22 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
     window.addEventListener("beforeunload", aviso);
     return () => window.removeEventListener("beforeunload", aviso);
   }, [sucio]);
+
+  // Cambiar de pantalla con el botón «atrás» o el menú, con cambios sin guardar: se vuelve atrás y se pregunta.
+  useEffect(() => {
+    const alCambiarHash = () => {
+      const nuevo = window.location.hash;
+      if (nuevo === hashActual.current) return;
+      if (!sucioRef.current) {
+        hashActual.current = nuevo;
+        return;
+      }
+      window.location.hash = hashActual.current;
+      setPregunta({ tipo: "navegar", destino: nuevo });
+    };
+    window.addEventListener("hashchange", alCambiarHash);
+    return () => window.removeEventListener("hashchange", alCambiarHash);
+  }, []);
 
   useEffect(() => {
     if (mensaje) avisoRef.current?.focus();
@@ -158,7 +194,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
     setSubiendo(true);
     try {
       const r = await subirImagen(f);
-      const portada: Portada = { src: r.url, tarjeta: urlTarjeta(r.url), alt: campos.portada?.alt ?? "" };
+      const portada: Portada = { src: r.url, tarjeta: esDatos(r.url) ? "" : urlTarjeta(r.url), alt: campos.portada?.alt ?? "" };
       cambiar("portada", portada);
       setMensaje(r.aviso ? { tipo: "info", texto: r.aviso } : null);
     } catch (e) {
@@ -169,7 +205,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
   }
 
   // --- Guardar ------------------------------------------------------------------------------------------------------
-  async function guardar(modo: Modo, opciones: { forzar?: boolean; confirmadoBorrador?: boolean; fecha?: string } = {}) {
+  async function guardar(modo: Modo, opciones: OpcionesGuardar = {}) {
     if (!db || guardando.current) return;
     setMensaje(null);
     const error = (texto: string) => setMensaje({ tipo: "error", texto });
@@ -213,6 +249,14 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
       }
     }
 
+    if (!esNuevo && !opciones.confirmadoPerdidas) {
+      const texto = avisoDePerdidas(baseHtml.current, campos.cuerpoHtml);
+      if (texto) {
+        setPregunta({ tipo: "perdidas", texto, modo, opciones });
+        return;
+      }
+    }
+
     guardando.current = true;
     setOcupado(true);
     try {
@@ -220,15 +264,26 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
         ...campos,
         extracto: campos.extracto.trim() || extractoDesde(campos.cuerpoHtml),
         etiquetas: etiquetasDe(etiquetasTexto),
-        portada: campos.portada ? { ...campos.portada, tarjeta: campos.portada.tarjeta || urlTarjeta(campos.portada.src) } : null,
+        portada: campos.portada ? { ...campos.portada, tarjeta: esDatos(campos.portada.src) ? "" : campos.portada.tarjeta || urlTarjeta(campos.portada.src) } : null,
       };
       const id2 = esNuevo ? direccion : idArticulo || id!;
+      guardadoIntento.current = guardado;
+      estadoIntento.current = estado;
+      const grande = problemaDeTamano({ ...guardado, estado });
+      if (grande) {
+        error(grande);
+        return;
+      }
       const r = await guardarArticulo(db, {
         id: id2, esNuevo, cargadoEn, campos: guardado, estado, fechaPublicacion: fecha, usuario: correo, forzar: opciones.forzar,
       });
       const eraPublicable = estadoActual === "publicado" || estadoActual === "programado";
       if (estado !== "borrador" || eraPublicable) void marcarPublicarPendiente(db);
-      if (esNuevo) window.history.replaceState(null, "", "#/editar/" + encodeURIComponent(id2));
+      if (esNuevo) {
+        window.history.replaceState(null, "", "#/editar/" + encodeURIComponent(id2));
+        hashActual.current = window.location.hash;
+      }
+      baseHtml.current = guardado.cuerpoHtml;
       setIdArticulo(id2);
       setEsNuevo(false);
       setCargadoEn(r.actualizadoEn);
@@ -253,8 +308,18 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
           (estado === "borrador" ? "" : " Pulsa «Publicar cambios» en el inicio para que se vea en la web."),
       });
     } catch (e) {
-      if (e instanceof ErrorArticulo && e.code === "articulo/conflicto") {
-        setConflicto({ otro: e.detalle!.actual as Articulo, modo, fecha: opciones.fecha });
+      const otro = e instanceof ErrorArticulo && e.code === "articulo/conflicto" ? (e.detalle!.actual as Articulo) : null;
+      if (otro && otro.actualizadoPor === correo && yaGuardado(otro, guardadoIntento.current, estadoIntento.current)) {
+        // Lo que hay en el servidor es justo lo mío (p. ej. el guardado funcionó pero la respuesta no llegó): no hay nada que resolver.
+        baseHtml.current = otro.cuerpoHtml;
+        setCargadoEn(otro.actualizadoEn);
+        setEstadoActual(otro.estado);
+        setFechaActual(otro.fechaPublicacion);
+        setSucio(false);
+        setGuardados((n) => n + 1);
+        setMensaje({ tipo: "ok", texto: otro.estado === "borrador" ? "Borrador guardado." : "Guardado. Pulsa «Publicar cambios» en el inicio para que se vea en la web." });
+      } else if (otro) {
+        setConflicto({ otro, modo, fecha: opciones.fecha });
         setVerOtro(false);
       } else {
         setMensaje({ tipo: "error", texto: mensajeDeCambio(e) });
@@ -268,6 +333,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
   function quedarmeConLoDelOtro() {
     if (!conflicto) return;
     const { otro } = conflicto;
+    baseHtml.current = otro.cuerpoHtml;
     setCampos(camposDe(otro));
     setEtiquetasTexto(otro.etiquetas.join(", "));
     setEstadoActual(otro.estado);
@@ -316,6 +382,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
   const problemaDir = esNuevo ? problemaDeDireccion(direccion) : null;
   const bloqueado = ocupado || subiendo;
   const etiquetasPortada = campos.portada;
+  const hayFotosDePrueba = esDatos(campos.portada?.src) || /src="data:/i.test(campos.cuerpoHtml);
   const diferencias = conflicto ? NOMBRES_CAMPO.filter(([k]) => JSON.stringify(conflicto.otro[k]) !== JSON.stringify(k === "etiquetas" ? etiquetasDe(etiquetasTexto) : campos[k])) : [];
 
   return (
@@ -363,7 +430,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
           </label>
           <p id="ayuda-direccion" className="pista">
             Así se verá: {SERVIDOR}/<strong>{direccion || "…"}</strong>/
-            {!esNuevo && <> · La dirección no se puede cambiar una vez publicado.</>}
+            {!esNuevo && <> · La dirección no se puede cambiar una vez guardado el artículo.</>}
           </p>
           {problemaDir && direccion !== "" && <Aviso tipo="error">{problemaDir}</Aviso>}
           {esNuevo && !problemaDir && comprobacion === "ocupada" && (
@@ -463,7 +530,10 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
           <h1>{campos.titulo || "(Sin título)"}</h1>
           {campos.subtitulo && <p style={{ font: "20px/1.4 var(--serif)" }}>{campos.subtitulo}</p>}
           <div className="meta">{campos.autor}</div>
-          {campos.portada && <img className="portada-vista" src={campos.portada.src} alt={campos.portada.alt} />}
+          {hayFotosDePrueba && (
+            <p className="aviso aviso-info">Modo de prueba: las fotos de prueba no se muestran aquí ni en la web publicada.</p>
+          )}
+          {campos.portada && !esDatos(campos.portada.src) && <img className="portada-vista" src={campos.portada.src} alt={campos.portada.alt} />}
           <div className="cuerpo" style={{ marginTop: 24 }} dangerouslySetInnerHTML={{ __html: sanear(campos.cuerpoHtml) }} />
         </article>
       )}
@@ -580,11 +650,46 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
           alCancelar={() => setPregunta(null)}
           alConfirmar={() => {
             setPregunta(null);
+            sucioRef.current = false;
             setSucio(false);
             irA("articulos");
           }}
         >
           <p>Si sales ahora, se perderá lo que has escrito desde el último guardado.</p>
+        </Confirmar>
+      )}
+      {pregunta?.tipo === "navegar" && (
+        <Confirmar
+          titulo="Tienes cambios sin guardar"
+          textoSi="Salir sin guardar"
+          textoNo="Seguir editando"
+          peligro
+          alCancelar={() => setPregunta(null)}
+          alConfirmar={() => {
+            const destino = pregunta.destino;
+            setPregunta(null);
+            sucioRef.current = false;
+            setSucio(false);
+            irA(destino);
+          }}
+        >
+          <p>Si sales ahora, se perderá lo que has escrito desde el último guardado.</p>
+        </Confirmar>
+      )}
+      {pregunta?.tipo === "perdidas" && (
+        <Confirmar
+          titulo="Se perdería parte del artículo"
+          textoSi="Sí, guardar de todas formas"
+          textoNo="Cancelar"
+          peligro
+          alCancelar={() => setPregunta(null)}
+          alConfirmar={() => {
+            const { modo, opciones } = pregunta;
+            setPregunta(null);
+            void guardar(modo, { ...opciones, confirmadoPerdidas: true });
+          }}
+        >
+          <p>{pregunta.texto}</p>
         </Confirmar>
       )}
       {pregunta?.tipo === "version" && (

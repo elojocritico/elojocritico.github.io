@@ -2,13 +2,8 @@
 // títulos, negrita, cursiva, cita, listas, enlace, foto y vídeo de YouTube.
 import { useRef } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
-import Underline from "@tiptap/extension-underline";
-import Image from "@tiptap/extension-image";
-import Youtube from "@tiptap/extension-youtube";
-import Placeholder from "@tiptap/extension-placeholder";
 import { sanear, urlSegura } from "../../lib/sanear";
+import { extensionesEditor } from "./extensiones";
 import { subirImagen, ErrorSubida } from "../subirImagen";
 
 type Props = {
@@ -23,17 +18,7 @@ export function EditorTexto({ inicial, alCambiar, alAviso }: Props) {
   const archivo = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: { levels: [2, 3] },
-        link: false, underline: false, code: false, codeBlock: false, strike: false,
-      }),
-      Link.configure({ openOnClick: false, autolink: true, linkOnPaste: true, protocols: ["http", "https", "mailto"] }),
-      Underline,
-      Image.configure({ inline: false }),
-      Youtube.configure({ nocookie: true, controls: true, width: 560, height: 315 }),
-      Placeholder.configure({ placeholder: "Escribe aquí tu artículo…" }),
-    ],
+    extensions: extensionesEditor(),
     content: inicial,
     shouldRerenderOnTransaction: true,
     immediatelyRender: false,

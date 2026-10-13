@@ -201,7 +201,7 @@ describe("Editor: dirección de la página", () => {
     const campo = await screen.findByLabelText("Dirección de la página");
     expect(campo).toHaveAttribute("readonly");
     expect(campo).toHaveValue("viejo");
-    expect(screen.getByText(/La dirección no se puede cambiar una vez publicado/)).toBeInTheDocument();
+    expect(screen.getByText(/La dirección no se puede cambiar una vez guardado el artículo/)).toBeInTheDocument();
   });
 });
 

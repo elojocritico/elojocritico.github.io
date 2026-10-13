@@ -8,7 +8,7 @@ describe("sanear: lo peligroso", () => {
   it("quita onerror, onclick y cualquier atributo on*", () => {
     const s = sanear('<img src="/a.jpg" onerror="alert(1)" alt="x"><p onclick="x()">t</p>');
     expect(s).not.toMatch(/on(error|click)/i);
-    expect(s).toContain('<img alt="x" src="/a.jpg" />');
+    expect(s).toContain('<img alt="x" loading="lazy" src="/a.jpg" />');
   });
   it("quita enlaces javascript: (también disfrazados) pero conserva el texto", () => {
     for (const h of ["javascript:alert(1)", "JaVaScRiPt:alert(1)", " java\tscript:alert(1)", "&#106;avascript:alert(1)", "vbscript:x", "data:text/html,<b>"]) {
@@ -52,7 +52,7 @@ describe("sanear: lo permitido", () => {
     expect(sanear('<p><a href="https://a.es" target="_blank" rel="x">e</a></p>')).toBe('<p><a href="https://a.es">e</a></p>');
   });
   it("pasa las imágenes http a https", () => {
-    expect(sanear('<img src="http://a.es/f.jpg" alt="x" width="10" height="5">')).toBe('<img alt="x" height="5" src="https://a.es/f.jpg" width="10" />');
+    expect(sanear('<img src="http://a.es/f.jpg" alt="x" width="10" height="5">')).toBe('<img alt="x" height="5" loading="lazy" src="https://a.es/f.jpg" width="10" />');
   });
   it("conserva los iframes de YouTube, Vimeo e iVoox, los pasa a https y los carga en diferido", () => {
     for (const src of ["https://www.youtube.com/embed/abc", "https://www.youtube-nocookie.com/embed/abc", "https://player.vimeo.com/video/1", "https://www.ivoox.com/player_ej_1.html", "http://www.youtube.com/embed/abc", "//www.youtube.com/embed/abc"]) {
@@ -61,17 +61,17 @@ describe("sanear: lo permitido", () => {
     }
   });
   it("las clases de alineación se reducen a izq, der y centro", () => {
-    expect(sanear('<img class="alignleft size-full" src="/a.jpg">')).toBe('<img class="izq" src="/a.jpg" />');
-    expect(sanear('<figure class="aligncenter"><img src="/a.jpg"></figure>')).toBe('<figure class="centro"><img src="/a.jpg" /></figure>');
-    expect(sanear('<img class="der" src="/a.jpg">')).toBe('<img class="der" src="/a.jpg" />');
-    expect(sanear('<img class="malo" src="/a.jpg">')).toBe('<img src="/a.jpg" />');
+    expect(sanear('<img class="alignleft size-full" src="/a.jpg">')).toBe('<img class="izq" loading="lazy" src="/a.jpg" />');
+    expect(sanear('<figure class="aligncenter"><img src="/a.jpg"></figure>')).toBe('<figure class="centro"><img loading="lazy" src="/a.jpg" /></figure>');
+    expect(sanear('<img class="der" src="/a.jpg">')).toBe('<img class="der" loading="lazy" src="/a.jpg" />');
+    expect(sanear('<img class="malo" src="/a.jpg">')).toBe('<img loading="lazy" src="/a.jpg" />');
   });
   it("convierte los recuadros de pie de foto de WordPress", () => {
-    expect(sanear('<div class="wp-caption"><img src="/a.jpg"><p class="wp-caption-text">Pie</p></div>')).toBe('<figure><img src="/a.jpg" /><figcaption>Pie</figcaption></figure>');
+    expect(sanear('<div class="wp-caption"><img src="/a.jpg"><p class="wp-caption-text">Pie</p></div>')).toBe('<figure><img loading="lazy" src="/a.jpg" /><figcaption>Pie</figcaption></figure>');
   });
   it("elimina párrafos vacíos, salvo los que llevan imagen o vídeo", () => {
     expect(sanear("<p>a</p><p>&nbsp;</p><p> </p><p><br></p><p>b</p>")).toBe("<p>a</p><p>b</p>");
-    expect(sanear('<p><img src="/a.jpg"></p>')).toBe('<p><img src="/a.jpg" /></p>');
+    expect(sanear('<p><img src="/a.jpg"></p>')).toBe('<p><img loading="lazy" src="/a.jpg" /></p>');
   });
   it("es idempotente", () => {
     const una = sanear('<p>a <a href="javascript:x">b</a></p><iframe src="http://www.youtube.com/embed/1"></iframe><img src="http://a.es/x.jpg">');
@@ -80,5 +80,31 @@ describe("sanear: lo permitido", () => {
   it("no se rompe con entradas vacías", () => {
     expect(sanear("")).toBe("");
     expect(sanear(undefined as never)).toBe("");
+  });
+});
+
+import migrados from "./fixtures/migrados.json";
+
+const contar = (html: string, patron: RegExp) => (html.match(patron) ?? []).length;
+const MARCAS: [string, RegExp][] = [
+  ["span.img-perdida", /<span class="img-perdida"/g], ["a.roto", /<a [^>]*class="roto"/g], ["a.archivado", /<a [^>]*class="archivado"/g],
+  ["img", /<img\b/g], ["iframe", /<iframe\b/g], ["table", /<table\b/g], ["figure", /<figure\b/g], ["figcaption", /<figcaption\b/g],
+  ["sup", /<sup\b/g], ["sub", /<sub\b/g], ["h4", /<h4\b/g], ["clase de imagen", /<img [^>]*class="(izq|der|centro)"/g],
+];
+
+describe("sanear: contenido real migrado", () => {
+  for (const [slug, html] of Object.entries(migrados as Record<string, string>)) {
+    it(`conserva las marcas y los elementos de «${slug}» y es idempotente`, () => {
+      const limpio = sanear(html);
+      for (const [nombre, patron] of MARCAS) expect(contar(limpio, patron), nombre).toBe(contar(html, patron));
+      expect(sanear(limpio)).toBe(limpio);
+    });
+  }
+  it("las imágenes siempre llevan loading=lazy y los iframes también", () => {
+    expect(sanear('<img src="/a.jpg" loading="eager">')).toContain('loading="lazy"');
+  });
+  it("un span suelto se quita (queda el texto); un enlace roto conserva su marca y su título", () => {
+    expect(sanear('<p><span style="x" class="otra">texto</span></p>')).toBe("<p>texto</p>");
+    expect(sanear('<p><a class="roto archivado x" href="http://a.es" title="Enlace caído">e</a></p>')).toBe('<p><a class="roto" href="http://a.es" title="Enlace caído">e</a></p>');
   });
 });

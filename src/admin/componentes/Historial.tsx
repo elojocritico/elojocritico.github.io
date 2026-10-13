@@ -17,6 +17,11 @@ type Props = {
   alCerrar: () => void;
 };
 
+const autorDe = (v: Version) => {
+  const quien = v.actualizadoPor || v.guardadoPor;
+  return quien === "migración" ? "Importado de la web antigua" : quien || "autor desconocido";
+};
+
 /** Lista de versiones anteriores del artículo (cada guardado crea una). */
 export function Historial({ db, id, version, alVolver, alCerrar }: Props) {
   const [lista, setLista] = useState<Version[] | null>(null);
@@ -49,7 +54,7 @@ export function Historial({ db, id, version, alVolver, alCerrar }: Props) {
             <li key={v.id}>
               <div>
                 <strong>{fechaHoraLlana(v.actualizadoEn || v.guardadoEn) || "Fecha desconocida"}</strong>
-                <span> · {v.actualizadoPor || v.guardadoPor || "autor desconocido"} · {NOMBRE_ESTADO[v.estado] ?? v.estado}</span>
+                <span> · {autorDe(v)} · {NOMBRE_ESTADO[v.estado] ?? v.estado}</span>
                 <div className="meta-articulo">{v.titulo || "(Sin título)"}</div>
               </div>
               <Boton onClick={() => alVolver(v)}>Volver a esta versión</Boton>
