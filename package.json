@@ -13,7 +13,8 @@
     "simulador": "node scripts/con-java.mjs firebase emulators:start --only auth,firestore --project demo-elojocritico",
     "test:reglas": "node scripts/con-java.mjs firebase emulators:exec --only firestore --project demo-elojocritico \"vitest run -c vitest.reglas.config.mjs\"",
     "test:emulador": "node scripts/con-java.mjs firebase emulators:exec --only auth,firestore --project demo-elojocritico \"vitest run -c vitest.emulador.config.mjs\"",
-    "admin:dev": "node scripts/admin-dev.mjs"
+    "admin:dev": "node scripts/admin-dev.mjs",
+    "importar": "node scripts/importar.mjs"
   },
   "keywords": [],
   "author": "",
