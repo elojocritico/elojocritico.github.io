@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Confirmar } from "../componentes/Confirmar";
 import { AVISOS_AJUSTES, ErrorAjustes, cambiarUsuario, esCorreo, leerAjustes, normalizarCorreo } from "../datos/ajustes";
@@ -113,7 +114,10 @@ function UsuariosAdmin({ usuario }: { usuario: User }) {
     <main className="pantalla-usuarios">
       <header className="barra">
         <h1>Usuarios</h1>
-        <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="dar-acceso" />
+          <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        </div>
       </header>
       <p className="meta">Estas son las personas que pueden entrar en el panel. Los administradores lo pueden todo; los editores solo escriben artículos y moderan comentarios.</p>
       {mensaje && <Aviso ref={avisoRef} tipo={mensaje.tipo}>{mensaje.texto}</Aviso>}

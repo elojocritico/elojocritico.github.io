@@ -6,3 +6,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_CLOUDINARY_PRESET?: string;
   readonly PUBLIC_URL_PUBLICAR?: string;
 }
+
+declare module "*.md?raw" {
+  const texto: string;
+  export default texto;
+}

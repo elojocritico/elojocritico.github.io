@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Confirmar } from "../componentes/Confirmar";
 import {
@@ -138,7 +139,10 @@ export function Articulos({ usuario, papel }: { usuario: User; papel: Papel }) {
     <main className="pantalla-articulos">
       <header className="barra">
         <h1>Mis artículos</h1>
-        <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="editar-y-deshacer" />
+          <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        </div>
       </header>
 
       <div className="fila-botones fila-izquierda">

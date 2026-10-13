@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Confirmar } from "../componentes/Confirmar";
 import { EditorTexto } from "../componentes/EditorTexto";
@@ -120,7 +121,10 @@ function AjustesAdmin({ usuario }: { usuario: User }) {
     <main className="pantalla-ajustes">
       <header className="barra">
         <h1>Ajustes de la web</h1>
-        <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="ajustes" />
+          <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        </div>
       </header>
       {mensaje && <Aviso ref={avisoRef} tipo={mensaje.tipo}>{mensaje.texto}</Aviso>}
       {mensaje?.tipo === "error" && mensaje.texto === AVISOS_AJUSTES["ajustes/conflicto"] && (

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { CORREO_ENVIADO, mensajeDeError } from "../mensajes";
@@ -69,7 +70,10 @@ export function Entrar({ errorInicial }: { errorInicial?: string | null }) {
 
   return (
     <main className="pantalla-entrar">
-      <h1>Panel de El Ojo Crítico</h1>
+      <div className="barra">
+        <h1>Panel de El Ojo Crítico</h1>
+        <BotonAyuda seccion="entrar" />
+      </div>
       <p>Entra con tu correo y tu contraseña.</p>
       <form onSubmit={entrar}>
         <label>

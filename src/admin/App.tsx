@@ -12,6 +12,7 @@ import { Editor } from "./pantallas/Editor";
 import { Ajustes } from "./pantallas/Ajustes";
 import { Usuarios } from "./pantallas/Usuarios";
 import { Publicar } from "./pantallas/Publicar";
+import { Ayuda } from "./pantallas/Ayuda";
 import { SIN_CONFIGURAR } from "./mensajes";
 
 function Pronto() {
@@ -26,6 +27,8 @@ function Pronto() {
 function Panel() {
   const sesion = usarSesion();
   const ruta = usarRuta();
+  // El manual es público dentro del panel: se puede leer antes de entrar (por ejemplo, la parte de "Entrar").
+  if (ruta.pantalla === "ayuda") return <Ayuda seccion={ruta.id} />;
   if (sesion.cargando) return <Cargando />;
   if (!sesion.usuario || !sesion.papel) return <Entrar errorInicial={sesion.error} />;
   if (ruta.pantalla === "inicio") return <Inicio usuario={sesion.usuario} papel={sesion.papel} />;

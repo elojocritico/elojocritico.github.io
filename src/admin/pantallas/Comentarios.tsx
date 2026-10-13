@@ -4,6 +4,7 @@ import { db } from "../firebase";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import {
   cambiarOculto, cargarArchivo, leerOcultos, listarPendientes, moderar, textoPlano, titulosDe,
@@ -277,7 +278,10 @@ export function Comentarios(_: { usuario: User }) {
     <main className="pantalla-articulos">
       <header className="barra">
         <h1>Comentarios</h1>
-        <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="comentarios" />
+          <Boton onClick={() => irA("")}>Volver al inicio</Boton>
+        </div>
       </header>
       <div className="fila-botones fila-izquierda" role="tablist" aria-label="Qué comentarios ver">
         <Boton role="tab" aria-selected={pestana === "pendientes"} variante={pestana === "pendientes" ? "principal" : "secundario"} onClick={() => setPestana("pendientes")}>

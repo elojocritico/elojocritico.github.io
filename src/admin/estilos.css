@@ -30,6 +30,10 @@
 .aviso-ok { border-color: #2f7d4f; background: #12261a; }
 .cargando { color: var(--gris); }
 
+.barra-botones { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.boton-ayuda { min-width: 44px; font-weight: 700; }
+.pantalla-ayuda section { margin-top: 24px; }
+.pantalla-ayuda pre { overflow-x: auto; padding: 12px; background: var(--fondo-2); border-radius: 6px; }
 .barra { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .papel { margin: 4px 0 24px; font: 12px var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--gris) !important; }
 .botones-grandes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 36px; }

@@ -5,6 +5,7 @@ import { db } from "../firebase";
 import { Aviso } from "../componentes/Aviso";
 import { Ayuda } from "../componentes/Ayuda";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Confirmar } from "../componentes/Confirmar";
 import { EditorTexto } from "../componentes/EditorTexto";
@@ -382,7 +383,10 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
     <main className="pantalla-editor">
       <header className="barra">
         <h1>{esNuevo ? "Escribir artículo" : "Editar artículo"}</h1>
-        <Boton onClick={salir}>Volver a Mis artículos</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="escribir-y-publicar" />
+          <Boton onClick={salir}>Volver a Mis artículos</Boton>
+        </div>
       </header>
       {estadoActual && (
         <p className="meta-articulo">

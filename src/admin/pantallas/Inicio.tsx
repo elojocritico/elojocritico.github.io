@@ -3,6 +3,7 @@ import { signOut, type User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { Boton } from "../componentes/Boton";
+import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Ayuda } from "../componentes/Ayuda";
 import { suscribirPendientes } from "../datos/comentarios";
@@ -48,7 +49,10 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
     <main className="pantalla-inicio">
       <header className="barra">
         <h1>Hola, {nombre}</h1>
-        <Boton onClick={() => auth && signOut(auth)}>Salir</Boton>
+        <div className="barra-botones">
+          <BotonAyuda seccion="el-semaforo" />
+          <Boton onClick={() => auth && signOut(auth)}>Salir</Boton>
+        </div>
       </header>
       <p className="papel">{papel === "admin" ? "Administrador" : "Editor"}</p>
 
@@ -66,12 +70,15 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
           Publicar cambios{estado !== undefined && <span className="contador">{publicarPendiente ? " (hay cambios)" : " (al día)"}</span>}
         </Boton>
       </nav>
-      {papel === "admin" && (
-        <nav className="fila-botones fila-izquierda" aria-label="Administración">
-          <Boton onClick={() => irA("ajustes")}>Ajustes de la web</Boton>
-          <Boton onClick={() => irA("usuarios")}>Usuarios</Boton>
-        </nav>
-      )}
+      <nav className="fila-botones fila-izquierda" aria-label="Más opciones">
+        {papel === "admin" && (
+          <>
+            <Boton onClick={() => irA("ajustes")}>Ajustes de la web</Boton>
+            <Boton onClick={() => irA("usuarios")}>Usuarios</Boton>
+          </>
+        )}
+        <Boton onClick={() => irA("ayuda")}>Ayuda</Boton>
+      </nav>
 
       <section className="semaforo" aria-label="Estado de la web">
         <h2>Estado de la web</h2>
