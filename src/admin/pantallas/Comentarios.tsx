@@ -232,14 +232,29 @@ function Archivo() {
             <ul className="lista-articulos">
               {comentarios.map((c) => {
                 const oculto = ocultos.includes(c.id);
+                const sinTexto = c.oculto === true || c.html === "";
                 return (
                   <li key={c.id} className="articulo comentario">
-                    <p className="meta-articulo">
-                      <strong>{c.autor}</strong>
-                      {c.fecha && <span>{fechaLlana(c.fecha)}</span>}
-                      {oculto && <span className="etiqueta etiqueta-papelera">Oculto</span>}
-                    </p>
-                    <p className="texto-comentario">{textoPlano(c.html)}</p>
+                    {oculto ? (
+                      <p className="meta-articulo">
+                        <strong>Comentario oculto (nº {c.id})</strong>
+                        {c.fecha && <span>{fechaLlana(c.fecha)}</span>}
+                        <span className="etiqueta etiqueta-papelera">Oculto</span>
+                      </p>
+                    ) : sinTexto ? (
+                      <p className="meta-articulo">
+                        <strong>Comentario nº {c.id}</strong>
+                        <span>Volverá a verse en la web cuando pulses «Publicar cambios».</span>
+                      </p>
+                    ) : (
+                      <>
+                        <p className="meta-articulo">
+                          <strong>{c.autor}</strong>
+                          {c.fecha && <span>{fechaLlana(c.fecha)}</span>}
+                        </p>
+                        <p className="texto-comentario">{textoPlano(c.html)}</p>
+                      </>
+                    )}
                     <div className="acciones">
                       <Boton disabled={ocupado} onClick={() => alternar(c)}>
                         {oculto ? "Mostrar" : "Ocultar"}

@@ -5,6 +5,15 @@ export const MENSAJE_FALLO = "No se ha podido enviar ahora. Inténtalo más tard
 
 export type DatosComentario = { articuloSlug: string; nombre: string; texto: string; correo?: string; trampa?: string };
 
+/** Campo del formulario al que se refiere un aviso. */
+export function campoDelAviso(d: DatosComentario): "nombre" | "texto" | "correo" | null {
+  const nombre = d.nombre.trim(), texto = d.texto.trim(), correo = (d.correo ?? "").trim();
+  if (!nombre || nombre.length > LIMITES.nombre) return "nombre";
+  if (!texto || texto.length > LIMITES.texto) return "texto";
+  if (correo.length > LIMITES.correo) return "correo";
+  return null;
+}
+
 /** Devuelve un aviso en llano si algo no cumple los límites, o null si todo está bien. */
 export function revisar(d: DatosComentario): string | null {
   const nombre = d.nombre.trim(), texto = d.texto.trim(), correo = (d.correo ?? "").trim();

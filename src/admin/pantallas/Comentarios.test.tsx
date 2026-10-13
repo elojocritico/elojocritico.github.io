@@ -29,7 +29,7 @@ beforeEach(() => {
   d.cambiarOculto.mockImplementation(async (_b: unknown, _s: string, id: string, ocultar: boolean) => (ocultar ? ["2", id] : []));
   d.cargarArchivo.mockResolvedValue([
     { id: "1", autor: "Pepe", fecha: "2014-12-30T20:41", html: "<p>Hola <b>mundo</b></p>", respuestaA: null },
-    { id: "2", autor: "Quico", fecha: "2014-12-31T10:00", html: "<p>Otro</p>", respuestaA: "1" },
+    { id: "2", autor: "", fecha: "2014-12-31T10:00", html: "", respuestaA: "1", oculto: true },
   ]);
   d.listarArticulos.mockResolvedValue({ articulos: [{ id: "x", slug: "mi-art", titulo: "Mi artículo", estado: "publicado", secciones: [] }], cursor: null, hayMas: false, modo: "indice", truncado: false });
 });
@@ -102,8 +102,9 @@ describe("Comentarios: archivo", () => {
     expect(d.cargarArchivo).toHaveBeenCalledWith("mi-art");
     expect(d.leerOcultos).toHaveBeenCalledWith(BD, "mi-art");
     expect(screen.getByText("Hola mundo")).toBeInTheDocument();
-    expect(within(tarjeta("Quico")).getByText("Oculto")).toBeInTheDocument();
-    expect(within(tarjeta("Quico")).getByRole("button", { name: "Mostrar" })).toBeInTheDocument();
+    expect(within(tarjeta("Comentario oculto (nº 2)")).getByText("Oculto")).toBeInTheDocument();
+    expect(within(tarjeta("Comentario oculto (nº 2)")).getByRole("button", { name: "Mostrar" })).toBeInTheDocument();
+    expect(screen.queryByText("Quico")).toBeNull();
     expect(within(tarjeta("Pepe")).getByRole("button", { name: "Ocultar" })).toBeInTheDocument();
   });
 
@@ -111,10 +112,13 @@ describe("Comentarios: archivo", () => {
     await abrir();
     await userEvent.click(within(tarjeta("Pepe")).getByRole("button", { name: "Ocultar" }));
     await waitFor(() => expect(d.cambiarOculto).toHaveBeenCalledWith(BD, "mi-art", "1", true));
-    expect(await within(tarjeta("Pepe")).findByText("Oculto")).toBeInTheDocument();
-    await userEvent.click(within(tarjeta("Quico")).getByRole("button", { name: "Mostrar" }));
+    expect(await within((await screen.findByText("Comentario oculto (nº 1)")).closest("li")!).findByText("Oculto")).toBeInTheDocument();
+    await userEvent.click(within(tarjeta("Comentario oculto (nº 2)")).getByRole("button", { name: "Mostrar" }));
     await waitFor(() => expect(d.cambiarOculto).toHaveBeenLastCalledWith(BD, "mi-art", "2", false));
-    await waitFor(() => expect(within(tarjeta("Quico")).queryByText("Oculto")).toBeNull());
+    const vuelve = (await screen.findByText("Comentario nº 2")).closest("li")!;
+    expect(within(vuelve).queryByText("Oculto")).toBeNull();
+    expect(within(vuelve).getByText(/Publicar cambios/)).toBeInTheDocument();
+    expect(within(vuelve).getByRole("button", { name: "Ocultar" })).toBeInTheDocument();
   });
 
   it("si el cambio falla, avisa y no cambia lo que se ve", async () => {

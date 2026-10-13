@@ -76,10 +76,21 @@ describe("comentarios en la página del artículo", () => {
     expect(pagina("con")).not.toContain("Escribir un comentario");
   });
 
-  it("el panel puede leer los comentarios del archivo completos (con los ocultos) en /comentarios-archivo/", () => {
-    expect(existsSync(join(salida, "comentarios-archivo", "con.json"))).toBe(true);
-    const todos = JSON.parse(readFileSync(join(salida, "comentarios-archivo", "con.json"), "utf-8"));
+  it("el JSON del panel deja los ocultos sin texto (no quedan públicos)", () => {
+    const bruto = readFileSync(join(salida, "comentarios-archivo", "con.json"), "utf-8");
+    const todos = JSON.parse(bruto);
     expect(todos.map((c) => c.id)).toEqual(["1", "2", "3"]);
+    expect(todos[1]).toEqual({ id: "2", autor: "", fecha: "2014-12-31T10:00", html: "", respuestaA: null, oculto: true });
+    expect(bruto).not.toContain("Comentario oculto del archivo");
+    expect(todos[0].html).toContain("Comentario visible");
     expect(readdirSync(join(salida, "comentarios-archivo"))).toEqual(["con.json"]);
+  });
+
+  it("robots.txt bloquea el panel y el archivo de comentarios e indica el mapa del sitio", () => {
+    const r = readFileSync(join(salida, "robots.txt"), "utf-8");
+    expect(r).toContain("User-agent: *");
+    expect(r).toContain("Disallow: /comentarios-archivo/");
+    expect(r).toContain("Disallow: /admin/");
+    expect(r).toMatch(/Sitemap: https?:\/\/\S+\/sitemap-index\.xml/);
   });
 });

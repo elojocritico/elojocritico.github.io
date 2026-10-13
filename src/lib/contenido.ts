@@ -65,6 +65,12 @@ export function slugsComentariosArchivo(): string[] {
   const dir = join(RAIZ_CONTENIDO(), "comentarios-archivo");
   return existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5)) : [];
 }
+/** Lo que se publica para el panel: los ocultos van sin texto ni autor (solo su número), para que no queden públicos. */
+export function comentariosArchivoParaPanel(slug: string) {
+  const ocultos = ocultosArchivo(slug);
+  return comentariosArchivoTodos(slug).map((c) =>
+    ocultos.has(c.id) ? { id: c.id, autor: "", fecha: c.fecha, html: "", respuestaA: c.respuestaA, oculto: true } : c);
+}
 /** Comentarios del archivo que se muestran en la web: sin los ocultos. */
 export function comentariosArchivo(slug: string): Comentario[] {
   const ocultos = ocultosArchivo(slug);

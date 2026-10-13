@@ -7,7 +7,7 @@ const { slug } = Astro.props;
 const disponible = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG) !== null;
 ---
 {disponible && (
-  <section class="escribir" data-form-comentario data-slug={slug} style="margin-top:40px;border-top:1px solid var(--linea);padding-top:16px">
+  <section class="escribir" aria-label="Escribir un comentario" data-form-comentario data-slug={slug} style="margin-top:40px;border-top:1px solid var(--linea);padding-top:16px">
     <button type="button" class="abrir" data-abrir>Escribir un comentario</button>
     <form data-formulario hidden novalidate>
       <label>Tu nombre
@@ -22,12 +22,12 @@ const disponible = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG) !==
       </label>
       <div class="trampa" aria-hidden="true">
         <label>No rellenes este campo
-          <input name="web" tabindex="-1" autocomplete="off" />
+          <input name="eoc_hp_x" tabindex="-1" autocomplete="new-password" />
         </label>
       </div>
       <button type="submit" class="enviar">Enviar comentario</button>
     </form>
-    <p class="mensaje" data-mensaje role="status" aria-live="polite"></p>
+    <p class="mensaje" data-mensaje role="status" aria-live="polite" tabindex="-1"></p>
   </section>
 )}
 
@@ -79,18 +79,26 @@ const disponible = leerConfiguracion(import.meta.env.PUBLIC_FIREBASE_CONFIG) !==
       try {
         const { db, enviar } = await pedir();
         const r = await enviar(db, {
-          articuloSlug: caja.dataset.slug ?? "", nombre: campo("nombre"), texto: campo("texto"), correo: campo("correo"), trampa: campo("web"),
+          articuloSlug: caja.dataset.slug ?? "", nombre: campo("nombre"), texto: campo("texto"), correo: campo("correo"), trampa: campo("eoc_hp_x"),
         });
         if (r.ok) {
           form.hidden = true;
           form.reset();
           mensaje.textContent = MENSAJE_GRACIAS;
+          mensaje.focus();
         } else {
           mensaje.textContent = r.error;
+          for (const n of ["nombre", "texto", "correo"]) form.elements.namedItem(n)?.removeAttribute?.("aria-invalid");
+          const mal = r.campo ? (form.elements.namedItem(r.campo) as HTMLElement | null) : null;
+          if (mal) {
+            mal.setAttribute("aria-invalid", "true");
+            mal.focus();
+          } else mensaje.focus();
         }
       } catch {
         servicios = null;
         mensaje.textContent = MENSAJE_FALLO;
+        mensaje.focus();
       } finally {
         delete form.dataset.enviando;
       }

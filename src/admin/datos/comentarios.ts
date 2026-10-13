@@ -13,7 +13,7 @@ export type Cursor = DocumentSnapshot;
 export type Pagina = { comentarios: Pendiente[]; cursor: Cursor | null; hayMas: boolean };
 
 /** Un comentario del archivo (el que viene de la web antigua), tal como lo publica /comentarios-archivo/<dirección>.json. */
-export type ComentarioArchivo = { id: string; autor: string; fecha: string; html: string; respuestaA: string | null };
+export type ComentarioArchivo = { id: string; autor: string; fecha: string; html: string; respuestaA: string | null; oculto?: boolean };
 
 function aFecha(v: unknown): string {
   if (typeof v === "string") return v;
