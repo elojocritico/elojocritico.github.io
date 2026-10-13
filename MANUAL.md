@@ -11,7 +11,7 @@ Dos ideas para empezar:
 
 ## Entrar {#entrar}
 
-1. Abre la dirección del panel, que termina en `/admin/`.
+1. En cualquier página de la web, pulsa **7 veces seguidas y rápido** el logo de arriba, donde pone eoc EL OJO CRÍTICO. Se abre el panel. También puedes abrir directamente la dirección del panel, que termina en `/admin/`.
 2. Escribe tu correo y tu contraseña.
 3. Pulsa «Entrar».
 

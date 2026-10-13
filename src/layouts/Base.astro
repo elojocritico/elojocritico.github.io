@@ -42,5 +42,10 @@ const tituloCompleto = titulo === "El Ojo Crítico" ? titulo : `${titulo} · El 
     <footer class="pie">
       <div class="contenedor">El Ojo Crítico · Cuadernos de Investigación para Investigadores de Anomalías · <a href="/rss.xml">RSS</a></div>
     </footer>
+    <script>
+      import { engancharGestoAdmin } from "../lib/gestoAdmin";
+      const logo = document.querySelector<HTMLAnchorElement>(".cabecera .logo");
+      if (logo) engancharGestoAdmin(logo);
+    </script>
   </body>
 </html>
