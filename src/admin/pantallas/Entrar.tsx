@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { Boton } from "../componentes/Boton";
@@ -14,6 +14,19 @@ export function Entrar({ errorInicial }: { errorInicial?: string | null }) {
   const [ocupado, setOcupado] = useState(false);
   const [mensaje, setMensaje] = useState<Mensaje | null>(errorInicial ? { tipo: "error", texto: errorInicial } : null);
   const [sinVerificar, setSinVerificar] = useState(false);
+  const avisoRef = useRef<HTMLDivElement>(null);
+
+  // Si la sesion rechaza al usuario con la pantalla ya abierta, el mensaje nuevo tiene que verse.
+  useEffect(() => {
+    if (errorInicial) setMensaje({ tipo: "error", texto: errorInicial });
+  }, [errorInicial]);
+
+  // Al aparecer un mensaje, el foco va a el para que lo lean tambien los lectores de pantalla.
+  useEffect(() => {
+    if (mensaje) avisoRef.current?.focus();
+  }, [mensaje]);
+
+  const conError = mensaje?.tipo === "error";
 
   async function entrar(e?: FormEvent) {
     e?.preventDefault();
@@ -61,13 +74,13 @@ export function Entrar({ errorInicial }: { errorInicial?: string | null }) {
       <form onSubmit={entrar}>
         <label>
           Correo
-          <input type="email" autoComplete="username" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
+          <input type="email" autoComplete="username" aria-invalid={conError || undefined} aria-describedby={conError ? "aviso-entrar" : undefined} value={correo} onChange={(e) => setCorreo(e.target.value)} required />
         </label>
         <label>
           Contraseña
-          <input type="password" autoComplete="current-password" value={clave} onChange={(e) => setClave(e.target.value)} required />
+          <input type="password" autoComplete="current-password" aria-invalid={conError || undefined} aria-describedby={conError ? "aviso-entrar" : undefined} value={clave} onChange={(e) => setClave(e.target.value)} required />
         </label>
-        {mensaje && <Aviso tipo={mensaje.tipo}>{mensaje.texto}</Aviso>}
+        {mensaje && <Aviso id="aviso-entrar" ref={avisoRef} tipo={mensaje.tipo}>{mensaje.texto}</Aviso>}
         <Boton type="submit" variante="principal" disabled={ocupado}>
           {ocupado ? "Un momento…" : "Entrar"}
         </Boton>

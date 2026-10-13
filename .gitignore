@@ -5,3 +5,11 @@ public/img/
 firestore-debug.log
 ui-debug.log
 firebase-debug.log
+
+# Secretos del panel
+.env
+.env.*
+!.env.desarrollo.example
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+claves/

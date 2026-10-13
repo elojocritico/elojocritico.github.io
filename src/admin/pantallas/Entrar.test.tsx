@@ -86,3 +86,23 @@ describe("Entrar", () => {
     expect(f.reset).toHaveBeenCalledWith({ nombre: "auth" }, "ana@x.es");
   });
 });
+
+describe("Entrar: avisos", () => {
+  it("un error nuevo que llega con la pantalla abierta se muestra", () => {
+    const { rerender } = render(<Entrar errorInicial={null} />);
+    expect(screen.queryByRole("alert")).toBeNull();
+    rerender(<Entrar errorInicial="Tu correo no tiene permiso para entrar. Pide acceso a un administrador." />);
+    expect(screen.getByRole("alert")).toHaveTextContent("Tu correo no tiene permiso para entrar");
+  });
+
+  it("con error: campos marcados, descritos por el aviso, y foco en el aviso", async () => {
+    f.signIn.mockRejectedValue({ code: "auth/invalid-credential" });
+    render(<Entrar />);
+    const u = await rellenar();
+    await u.click(screen.getByRole("button", { name: "Entrar" }));
+    const aviso = await screen.findByRole("alert");
+    expect(screen.getByLabelText("Correo")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("Contraseña")).toHaveAttribute("aria-describedby", aviso.id);
+    await waitFor(() => expect(aviso).toHaveFocus());
+  });
+});

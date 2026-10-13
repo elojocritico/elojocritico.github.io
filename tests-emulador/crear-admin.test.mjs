@@ -70,4 +70,14 @@ describe("crear-admin (simulador)", () => {
     expect(r.status, r.stderr).toBe(0);
     expect(r.stdout).toContain("cli@ejemplo.es es administrador");
   });
+
+  it("acepta la contraseña por CONTRASENA_ADMIN y avisa si la cuenta ya existía", () => {
+    const env = { ...process.env, CONTRASENA_ADMIN: "clave-segura-1" };
+    const a = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env });
+    expect(a.status, a.stderr).toBe(0);
+    expect(a.stderr).not.toContain("Atención");
+    const b = spawnSync(process.execPath, ["scripts/crear-admin.mjs", "env@ejemplo.es"], { encoding: "utf-8", env });
+    expect(b.status, b.stderr).toBe(0);
+    expect(b.stderr).toContain("ya existía y su contraseña se ha cambiado");
+  });
 });

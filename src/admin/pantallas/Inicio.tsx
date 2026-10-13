@@ -18,13 +18,18 @@ function fechaCorta(ms: number | null) {
 export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
   const [estado, setEstado] = useState<Record<string, unknown> | null | undefined>(undefined);
   const [pendientes, setPendientes] = useState<number | null>(null);
+  const [noConsultable, setNoConsultable] = useState(false);
 
   useEffect(() => {
     if (!db) return;
     let vigente = true;
     getDoc(doc(db, "estado", "sistema"))
       .then((d) => vigente && setEstado(d.exists() ? d.data() : null))
-      .catch(() => vigente && setEstado(null));
+      .catch(() => {
+        if (!vigente) return;
+        setNoConsultable(true);
+        setEstado(null);
+      });
     // Unica escucha en tiempo real del panel: el contador de comentarios pendientes.
     const cancelar = onSnapshot(
       query(collection(db, "comentarios"), where("estado", "==", "pendiente")),
@@ -71,14 +76,14 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
           <Cargando />
         ) : !hayDatos ? (
           <p className="punto">
-            <span className="luz luz-gris" aria-hidden="true" /> Aún no hay datos
+            <span className="luz luz-gris" aria-hidden="true" /> {noConsultable ? "No se puede consultar" : "Aún no hay datos"}
           </p>
         ) : (
           <ul>
             {puntos.map((p) => (
               <li key={p.campo} className="punto">
                 <span className={`luz luz-${p.color}`} aria-hidden="true" />
-                <strong>{p.nombre}</strong>: {p.fecha ? fechaCorta(p.fecha) : "sin datos"} <span className="meta">{TEXTO_COLOR[p.color]}</span>
+                <strong>{p.nombre}</strong>: {p.fecha ? fechaCorta(p.fecha) : "Aún no hay datos"} <span className="meta">{TEXTO_COLOR[p.color]}</span>
               </li>
             ))}
           </ul>

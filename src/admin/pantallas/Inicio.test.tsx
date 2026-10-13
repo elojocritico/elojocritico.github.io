@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-const f = vi.hoisted(() => ({ estado: null as null | Record<string, unknown>, pendientes: 3 }));
+const f = vi.hoisted(() => ({ estado: null as null | Record<string, unknown>, pendientes: 3, fallo: false }));
 vi.mock("../firebase", () => ({ auth: {}, db: {}, configurado: true }));
 vi.mock("firebase/auth", () => ({ signOut: vi.fn() }));
 vi.mock("firebase/firestore", () => ({
@@ -9,7 +9,7 @@ vi.mock("firebase/firestore", () => ({
   collection: () => ({}),
   query: () => ({}),
   where: () => ({}),
-  getDoc: async () => ({ exists: () => f.estado !== null, data: () => f.estado }),
+  getDoc: async () => { if (f.fallo) throw { code: "permission-denied" }; return { exists: () => f.estado !== null, data: () => f.estado }; },
   onSnapshot: (_q: unknown, ok: (s: { size: number }) => void) => {
     ok({ size: f.pendientes });
     return () => {};
@@ -50,5 +50,15 @@ describe("Inicio", () => {
     expect(document.querySelectorAll(".luz-amarillo").length).toBe(1);
     expect(document.querySelectorAll(".luz-rojo").length).toBe(1);
     expect(document.querySelectorAll(".luz-gris").length).toBe(1);
+  });
+});
+
+describe("Inicio sin acceso al estado", () => {
+  it("si la lectura falla: gris con 'No se puede consultar'", async () => {
+    f.fallo = true;
+    render(<Inicio usuario={usuario} papel="admin" />);
+    expect(await screen.findByText("No se puede consultar")).toBeInTheDocument();
+    expect(screen.queryByText("Aún no hay datos")).toBeNull();
+    f.fallo = false;
   });
 });

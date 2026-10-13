@@ -1,6 +1,6 @@
 export const SIN_PERMISO = "Tu correo no tiene permiso para entrar. Pide acceso a un administrador.";
 export const SIN_CONEXION = "No hay conexión con el servidor. Revisa tu internet y vuelve a intentarlo.";
-export const SIN_CONFIGURAR = "El panel aún no está configurado. Consulta la Ayuda.";
+export const SIN_CONFIGURAR = "El panel aún no está configurado. Avisa a la persona que administra la web.";
 export const CORREO_ENVIADO =
   "Te hemos enviado un correo para confirmar tu dirección. Ábrelo, pulsa el enlace y vuelve a entrar.";
 

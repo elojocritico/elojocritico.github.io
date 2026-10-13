@@ -1,7 +1,7 @@
 // Crea (o actualiza) un administrador: usuario de Auth con el correo confirmado + entrada en ajustes/global.usuarios.
 // Tambien deja listos ajustes/global y estado/sistema, que el panel no puede crear por las reglas.
 //
-// Uso:  node scripts/crear-admin.mjs correo@x.es contraseña
+// Uso:  node scripts/crear-admin.mjs correo@x.es contraseña   (o CONTRASENA_ADMIN=... node scripts/crear-admin.mjs correo@x.es)
 // Simulador: define FIREBASE_AUTH_EMULATOR_HOST y FIRESTORE_EMULATOR_HOST (los pone `firebase emulators:exec`).
 // Proyecto real: define GOOGLE_APPLICATION_CREDENTIALS (y GCLOUD_PROJECT si la clave no trae el proyecto).
 import { initializeApp, getApps, applicationDefault } from "firebase-admin/app";
@@ -63,15 +63,18 @@ export async function crearAdmin({ correo, contrasena, auth = getAuth(), db = ge
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const [correo, contrasena] = process.argv.slice(2);
+  const [correo, contrasenaArg] = process.argv.slice(2);
+  // Mejor por variable de entorno: asi la contraseña no queda en el historial de la terminal.
+  const contrasena = contrasenaArg || process.env.CONTRASENA_ADMIN;
   if (!correo || !contrasena) {
-    console.error("Uso: node scripts/crear-admin.mjs correo@x.es contraseña");
+    console.error("Uso: node scripts/crear-admin.mjs correo@x.es [contraseña]  (o define CONTRASENA_ADMIN)");
     process.exit(2);
   }
   try {
     iniciarAdmin();
     const r = await crearAdmin({ correo, contrasena });
-    console.log(`✓ ${r.email} es administrador (${r.usuarioNuevo ? "cuenta creada" : "cuenta ya existía; contraseña actualizada"}).`);
+    console.log(`✓ ${r.email} es administrador (${r.usuarioNuevo ? "cuenta creada" : "cuenta ya existía"}).`);
+    if (!r.usuarioNuevo) console.warn("⚠ Atención: esa cuenta ya existía y su contraseña se ha cambiado por la nueva.");
   } catch (e) {
     console.error("✗ No se ha podido crear el administrador:", e?.message ?? e);
     process.exit(1);

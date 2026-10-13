@@ -38,6 +38,8 @@ export function usarSesion(): Sesion {
         setSesion((anterior) => ({ usuario: null, papel: null, cargando: false, error: usuario ? null : anterior.error }));
         return;
       }
+      // Mientras se comprueba la lista de autorizados, la pantalla muestra "Cargando" y el formulario no se puede usar.
+      poner({ usuario: null, papel: null, cargando: true, error: null });
       try {
         const ajustes = await getDoc(doc(basededatos, "ajustes", "global"));
         const papel = papelDe(ajustes.data()?.usuarios, usuario.email);

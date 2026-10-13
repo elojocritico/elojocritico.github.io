@@ -29,7 +29,7 @@ export function colorDeAntiguedad(valor: unknown, ahora: number): Color {
 
 export const PUNTOS = [
   { campo: "ultimaPublicacion", nombre: "Última publicación" },
-  { campo: "ultimaExportacion", nombre: "Última exportación del contenido" },
+  { campo: "ultimaExportacion", nombre: "Última preparación de la web" },
   { campo: "ultimaSincronizacionMedios", nombre: "Última revisión de podcast y vídeos" },
   { campo: "ultimaCopia", nombre: "Última copia de seguridad" },
 ] as const;
