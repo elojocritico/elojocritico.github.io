@@ -4,6 +4,8 @@ import Tarjeta from "../components/Tarjeta.astro";
 import Anuncio from "../components/Anuncio.astro";
 import { articulos, destacado, ajustes, secciones, fechaLarga, minutosLectura, nombreSeccion } from "../lib/contenido";
 import { numeros, urlPortada } from "../lib/revista";
+import Foto from "../components/Foto.astro";
+import { portadaDe, UMBRAL_DESTACADO } from "../lib/fotos";
 import Episodio from "../components/Episodio.astro";
 import VideoYoutube from "../components/VideoYoutube.astro";
 import ScriptVideo from "../components/ScriptVideo.astro";
@@ -11,6 +13,7 @@ import { episodios, videos } from "../lib/medios";
 const todos = articulos();
 const aj = ajustes();
 const dest = destacado(todos, aj);
+const portadaDest = portadaDe(dest);
 const ultimos = todos.filter((a) => a.slug !== dest.slug).slice(0, 6);
 const revista = numeros();
 const ultimoEp = episodios()[0];
@@ -21,7 +24,7 @@ const ultimoVideo = videos()[0];
     <h2 class="seccion-titulo">Destacado</h2>
     <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:28px" class="portada-hero">
       <a href={`/${dest.slug}/`} style="text-decoration:none">
-        <div class="rayas" style="aspect-ratio:16/9;border-radius:3px;overflow:hidden">{dest.portada && <img src={dest.portada.src} alt={dest.portada.alt} style="width:100%;height:100%;object-fit:cover" />}</div>
+        <div class="rayas" style="aspect-ratio:16/9;border-radius:3px;overflow:hidden">{portadaDest && <Foto src={portadaDest.src} alt={portadaDest.alt} ancho={portadaDest.anchoSrc} umbral={UMBRAL_DESTACADO} />}</div>
         {dest.secciones[0] && <div class="etiqueta" style="margin-top:12px">{nombreSeccion(dest.secciones[0])}</div>}
         <h1 style="font:700 clamp(26px,4vw,38px)/1.1 var(--serif);margin:8px 0">{dest.titulo}</h1>
         <div class="meta">{dest.autor} · {fechaLarga(dest.fecha)} · {minutosLectura(dest.cuerpoHtml)} min</div>

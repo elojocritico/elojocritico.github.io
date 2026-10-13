@@ -1,0 +1,17 @@
+---
+// Foto de portada/tarjeta. Si es más estrecha que su hueco se muestra a su tamaño, centrada, sobre un fondo
+// difuminado y oscurecido hecho con la propia foto (la copia decorativa va con alt vacío y aria-hidden).
+interface Props { src: string; alt: string; ancho: number | null; umbral: number; lazy?: boolean; width?: number; height?: number }
+import { esPequena } from "../lib/fotos";
+const { src, alt, ancho, umbral, lazy = false, width, height } = Astro.props;
+const pequena = esPequena(ancho, umbral);
+const carga = lazy ? "lazy" : undefined;
+---
+{pequena ? (
+  <div class="foto-pequena">
+    <img class="fondo" src={src} alt="" aria-hidden="true" loading={carga} decoding="async" />
+    <img class="frente" src={src} alt={alt} loading={carga} width={width} height={height} />
+  </div>
+) : (
+  <img class="foto-llena" src={src} alt={alt} loading={carga} width={width} height={height} />
+)}
