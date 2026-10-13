@@ -1,23 +1,23 @@
 {
- "slug": "no-101-las-apariciones-de-zeitun",
- "titulo": "Nº 101 LAS APARICIONES DE ZEITUN",
- "subtitulo": "",
- "fecha": "2015-03-29",
- "autor": "El Ojo Crítico",
- "secciones": [
-  "cronicas-del-misterio"
- ],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2015/03/zeitun2.webp",
-  "tarjeta": "/img/2015/03/zeitun2-640.webp",
-  "alt": "Zeitun2"
- },
- "extracto": "Manuel Carballal y Lorenzo Fernández analizan las apariciones marianas en Egipto. Especialmente las que se produjeron en el barrio copto de Zeitun en El Cairo. Más audios en Onda Cero",
- "cuerpoHtml": "<p><a href=\"/img/2015/03/zeitun2.webp\"><img alt=\"Zeitun2\" class=\"izq\" height=\"125\" loading=\"lazy\" src=\"/img/2015/03/zeitun2.webp\" width=\"150\"/></a>Manuel Carballal y Lorenzo Fernández analizan las apariciones marianas en Egipto. Especialmente las que se produjeron en el barrio copto de Zeitun en El Cairo.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
- "destacado": false,
- "origen": "https://elojocritico.info/no-101-las-apariciones-de-zeitun/",
- "enlacesExternos": [
-  "http://www.ondacero.es/audios-online"
- ]
+  "slug": "no-101-las-apariciones-de-zeitun",
+  "titulo": "Nº 101 LAS APARICIONES DE ZEITUN",
+  "subtitulo": "",
+  "fecha": "2015-03-29",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "cronicas-del-misterio"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2015/03/zeitun2.webp",
+    "tarjeta": "/img/2015/03/zeitun2-640.webp",
+    "alt": "Zeitun2"
+  },
+  "extracto": "Manuel Carballal y Lorenzo Fernández analizan las apariciones marianas en Egipto. Especialmente las que se produjeron en el barrio copto de Zeitun en El Cairo. Más audios en Onda Cero",
+  "cuerpoHtml": "<p><a href=\"/img/2015/03/zeitun2.webp\"><img alt=\"Zeitun2\" class=\"izq\" height=\"125\" loading=\"lazy\" src=\"/img/2015/03/zeitun2.webp\" width=\"150\" /></a>Manuel Carballal y Lorenzo Fernández analizan las apariciones marianas en Egipto. Especialmente las que se produjeron en el barrio copto de Zeitun en El Cairo.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/no-101-las-apariciones-de-zeitun/",
+  "enlacesExternos": [
+    "http://www.ondacero.es/audios-online"
+  ]
 }

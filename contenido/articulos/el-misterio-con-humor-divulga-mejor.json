@@ -1,23 +1,23 @@
 {
- "slug": "el-misterio-con-humor-divulga-mejor",
- "titulo": "EL MISTERIO CON HUMOR, DIVULGA MEJOR",
- "subtitulo": "",
- "fecha": "2020-12-28",
- "autor": "El Ojo Crítico",
- "secciones": [
-  "confidenciales"
- ],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2020/12/jose-gregorio.webp",
-  "tarjeta": "/img/2020/12/jose-gregorio-640.webp",
-  "alt": "jose gregorio"
- },
- "extracto": "Publicado en EOC nº 92. El influyente filósofo Friedrich Nietzsche dijo el siglo XIX: « La potencia intelectual de un hombre se mide por la dosis de humor que es capaz de utilizar » . Un siglo más tarde, la ciencia demostró la correlación…",
- "cuerpoHtml": "<p><a href=\"/img/2020/12/jose-gregorio.webp\"><img alt=\"jose gregorio\" class=\"izq\" height=\"215\" loading=\"lazy\" src=\"/img/2020/12/jose-gregorio.webp\" width=\"418\"/></a>Publicado en <strong>EOC</strong> nº 92. El influyente filósofo Friedrich Nietzsche dijo el siglo XIX: «<em>La potencia intelectual de un hombre se mide por la dosis de humor que es capaz de utilizar</em>» . Un siglo más tarde, la ciencia demostró la correlación entre inteligencia, humor y creatividad. Y aunque nunca nadie dudó de la creatividad, inteligencia y lucidez de nuestro compañero José Gregorio González, director del programa  <em>Crónicas de San Borondón</em>, su paso por el programa <em>Riete Tú</em>, de la RTVC, nos descubierto su magnífico, irónico y elegante sentido de humor. Porque lejos del planteamiento oscuro, siniestro y macabro que algunos intentan dar al misterio, este puede ser brillante, luminoso y divertido.</p>\n<p><em>Ríete tú</em>. 18 de diciembre de 2020:<br/>\n<iframe allowfullscreen=\"\" height=\"315\" loading=\"lazy\" src=\"https://www.youtube.com/embed/Kaa9Okx3cI0\" width=\"560\"></iframe></p>",
- "destacado": false,
- "origen": "https://elojocritico.info/el-misterio-con-humor-divulga-mejor/",
- "enlacesExternos": [
-  "https://www.jotdown.es/2016/08/esceptico-lo-esceptico/"
- ]
+  "slug": "el-misterio-con-humor-divulga-mejor",
+  "titulo": "EL MISTERIO CON HUMOR, DIVULGA MEJOR",
+  "subtitulo": "",
+  "fecha": "2020-12-28",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "confidenciales"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2020/12/jose-gregorio.webp",
+    "tarjeta": "/img/2020/12/jose-gregorio-640.webp",
+    "alt": "jose gregorio"
+  },
+  "extracto": "Publicado en EOC nº 92. El influyente filósofo Friedrich Nietzsche dijo el siglo XIX: « La potencia intelectual de un hombre se mide por la dosis de humor que es capaz de utilizar » . Un siglo más tarde, la ciencia demostró la correlación…",
+  "cuerpoHtml": "<p><a href=\"/img/2020/12/jose-gregorio.webp\"><img alt=\"jose gregorio\" class=\"izq\" height=\"215\" loading=\"lazy\" src=\"/img/2020/12/jose-gregorio.webp\" width=\"418\" /></a>Publicado en <strong>EOC</strong> nº 92. El influyente filósofo Friedrich Nietzsche dijo el siglo XIX: «<em>La potencia intelectual de un hombre se mide por la dosis de humor que es capaz de utilizar</em>» . Un siglo más tarde, la ciencia demostró la correlación entre inteligencia, humor y creatividad. Y aunque nunca nadie dudó de la creatividad, inteligencia y lucidez de nuestro compañero José Gregorio González, director del programa  <em>Crónicas de San Borondón</em>, su paso por el programa <em>Riete Tú</em>, de la RTVC, nos descubierto su magnífico, irónico y elegante sentido de humor. Porque lejos del planteamiento oscuro, siniestro y macabro que algunos intentan dar al misterio, este puede ser brillante, luminoso y divertido.</p>\n<p><em>Ríete tú</em>. 18 de diciembre de 2020:<br />\n<iframe allowfullscreen height=\"315\" loading=\"lazy\" src=\"https://www.youtube.com/embed/Kaa9Okx3cI0\" width=\"560\"></iframe></p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/el-misterio-con-humor-divulga-mejor/",
+  "enlacesExternos": [
+    "https://www.jotdown.es/2016/08/esceptico-lo-esceptico/"
+  ]
 }

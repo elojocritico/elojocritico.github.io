@@ -1,23 +1,23 @@
 {
- "slug": "no-72-el-enigma-the-hum-el-zumbido",
- "titulo": "Nº 72: EL ENIGMA “THE HUM” (EL ZUMBIDO)",
- "subtitulo": "",
- "fecha": "2014-05-25",
- "autor": "El Ojo Crítico",
- "secciones": [
-  "cronicas-del-misterio"
- ],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2014/05/the-hum.webp",
-  "tarjeta": "/img/2014/05/the-hum-640.webp",
-  "alt": "the-hum"
- },
- "extracto": "Manuel Carballal y Lorenzo Fernández nos traen un tema casi exclusivo de las redes sociales. El ruido de la tierra bajo el nombre de The Hum, un zumbido cuyo origen ¿es un verdadero misterio? Más audios en Onda Cero",
- "cuerpoHtml": "<p><a href=\"/img/2014/05/the-hum.webp\"><img alt=\"the-hum\" class=\"izq\" height=\"225\" loading=\"lazy\" src=\"/img/2014/05/the-hum.webp\" width=\"300\"/></a>Manuel Carballal y Lorenzo Fernández nos traen un tema casi exclusivo de las redes sociales. El ruido de la tierra bajo el nombre de The Hum, un zumbido cuyo origen ¿es un verdadero misterio?</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
- "destacado": false,
- "origen": "https://elojocritico.info/no-72-el-enigma-the-hum-el-zumbido/",
- "enlacesExternos": [
-  "http://www.ondacero.es/audios-online"
- ]
+  "slug": "no-72-el-enigma-the-hum-el-zumbido",
+  "titulo": "Nº 72: EL ENIGMA “THE HUM” (EL ZUMBIDO)",
+  "subtitulo": "",
+  "fecha": "2014-05-25",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "cronicas-del-misterio"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2014/05/the-hum.webp",
+    "tarjeta": "/img/2014/05/the-hum-640.webp",
+    "alt": "the-hum"
+  },
+  "extracto": "Manuel Carballal y Lorenzo Fernández nos traen un tema casi exclusivo de las redes sociales. El ruido de la tierra bajo el nombre de The Hum, un zumbido cuyo origen ¿es un verdadero misterio? Más audios en Onda Cero",
+  "cuerpoHtml": "<p><a href=\"/img/2014/05/the-hum.webp\"><img alt=\"the-hum\" class=\"izq\" height=\"225\" loading=\"lazy\" src=\"/img/2014/05/the-hum.webp\" width=\"300\" /></a>Manuel Carballal y Lorenzo Fernández nos traen un tema casi exclusivo de las redes sociales. El ruido de la tierra bajo el nombre de The Hum, un zumbido cuyo origen ¿es un verdadero misterio?</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/no-72-el-enigma-the-hum-el-zumbido/",
+  "enlacesExternos": [
+    "http://www.ondacero.es/audios-online"
+  ]
 }

@@ -1,19 +1,19 @@
 {
- "slug": "parapsicologia-ciencia-y-ficcion",
- "titulo": "PARAPSICOLOGÍA: Ciencia y ficción",
- "subtitulo": "",
- "fecha": "2020-09-13",
- "autor": "El Ojo Crítico",
- "secciones": [],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2020/09/eoc-parapsi.webp",
-  "tarjeta": "/img/2020/09/eoc-parapsi-640.webp",
-  "alt": "EOC PARAPSI"
- },
- "extracto": "PARAPSICOLOGÍA: CIENCIA Y FICCIÓN Varios autores Próximamente",
- "cuerpoHtml": "<p><strong><a href=\"/img/2020/09/eoc-parapsi.webp\"><img alt=\"EOC PARAPSI\" class=\"izq\" height=\"215\" loading=\"lazy\" src=\"/img/2020/09/eoc-parapsi.webp\" width=\"418\"/></a>PARAPSICOLOGÍA: CIENCIA Y FICCIÓN</strong></p>\n<p><strong>Varios autores</strong></p>\n<p>Próximamente</p>",
- "destacado": false,
- "origen": "https://elojocritico.info/parapsicologia-ciencia-y-ficcion/",
- "enlacesExternos": []
+  "slug": "parapsicologia-ciencia-y-ficcion",
+  "titulo": "PARAPSICOLOGÍA: Ciencia y ficción",
+  "subtitulo": "",
+  "fecha": "2020-09-13",
+  "autor": "El Ojo Crítico",
+  "secciones": [],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2020/09/eoc-parapsi.webp",
+    "tarjeta": "/img/2020/09/eoc-parapsi-640.webp",
+    "alt": "EOC PARAPSI"
+  },
+  "extracto": "PARAPSICOLOGÍA: CIENCIA Y FICCIÓN Varios autores Próximamente",
+  "cuerpoHtml": "<p><strong><a href=\"/img/2020/09/eoc-parapsi.webp\"><img alt=\"EOC PARAPSI\" class=\"izq\" height=\"215\" loading=\"lazy\" src=\"/img/2020/09/eoc-parapsi.webp\" width=\"418\" /></a>PARAPSICOLOGÍA: CIENCIA Y FICCIÓN</strong></p>\n<p><strong>Varios autores</strong></p>\n<p>Próximamente</p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/parapsicologia-ciencia-y-ficcion/",
+  "enlacesExternos": []
 }

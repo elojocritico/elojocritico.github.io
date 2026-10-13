@@ -1,21 +1,21 @@
 {
- "slug": "nuevo-concurso-y-tu-donde-lees-eoc",
- "titulo": "NUEVO CONCURSO: Y TU DONDE LEES EOC?",
- "subtitulo": "",
- "fecha": "2015-07-01",
- "autor": "El Ojo Crítico",
- "secciones": [
-  "confidenciales"
- ],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2015/07/contra.webp",
-  "tarjeta": "/img/2015/07/contra-640.webp",
-  "alt": "Contra"
- },
- "extracto": "Te apetece ganar una mini biblioteca especializada en anomalías? Libros de Javier Sierra, J.J. Benitez, Andreas Faber Kaiser, Clara Tahoces, Juan Ignacio Blanco, Bruno Cardeñosa, Manuel Carballal… Envianos una foto divertida ilustrando…",
- "cuerpoHtml": "<p><a href=\"/img/2015/07/contra.webp\"><img alt=\"Contra\" class=\"izq\" height=\"300\" loading=\"lazy\" src=\"/img/2015/07/contra.webp\" width=\"211\"/></a>Te apetece ganar una mini biblioteca especializada en anomalías? Libros de Javier Sierra, J.J. Benitez, Andreas Faber Kaiser, Clara Tahoces, Juan Ignacio Blanco, Bruno Cardeñosa, Manuel Carballal…</p>\n<p>Envianos una foto divertida ilustrando donde lees El Ojo Crítico y participa…</p>",
- "destacado": false,
- "origen": "https://elojocritico.info/nuevo-concurso-y-tu-donde-lees-eoc/",
- "enlacesExternos": []
+  "slug": "nuevo-concurso-y-tu-donde-lees-eoc",
+  "titulo": "NUEVO CONCURSO: Y TU DONDE LEES EOC?",
+  "subtitulo": "",
+  "fecha": "2015-07-01",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "confidenciales"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2015/07/contra.webp",
+    "tarjeta": "/img/2015/07/contra-640.webp",
+    "alt": "Contra"
+  },
+  "extracto": "Te apetece ganar una mini biblioteca especializada en anomalías? Libros de Javier Sierra, J.J. Benitez, Andreas Faber Kaiser, Clara Tahoces, Juan Ignacio Blanco, Bruno Cardeñosa, Manuel Carballal… Envianos una foto divertida ilustrando…",
+  "cuerpoHtml": "<p><a href=\"/img/2015/07/contra.webp\"><img alt=\"Contra\" class=\"izq\" height=\"300\" loading=\"lazy\" src=\"/img/2015/07/contra.webp\" width=\"211\" /></a>Te apetece ganar una mini biblioteca especializada en anomalías? Libros de Javier Sierra, J.J. Benitez, Andreas Faber Kaiser, Clara Tahoces, Juan Ignacio Blanco, Bruno Cardeñosa, Manuel Carballal…</p>\n<p>Envianos una foto divertida ilustrando donde lees El Ojo Crítico y participa…</p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/nuevo-concurso-y-tu-donde-lees-eoc/",
+  "enlacesExternos": []
 }

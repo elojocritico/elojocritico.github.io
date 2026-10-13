@@ -1,21 +1,21 @@
 {
- "slug": "el-humor-critico-de-manuel-berrocal",
- "titulo": "EL HUMOR CRITICO DE MANUEL BERROCAL",
- "subtitulo": "",
- "fecha": "2013-11-13",
- "autor": "El Ojo Crítico",
- "secciones": [
-  "humor"
- ],
- "etiquetas": [],
- "portada": {
-  "src": "/img/2013/11/chiste-2.webp",
-  "tarjeta": "/img/2013/11/chiste-2-640.webp",
-  "alt": "chiste_2"
- },
- "extracto": "",
- "cuerpoHtml": "<p><a href=\"/img/2013/11/chiste-2.webp\"><img alt=\"chiste_2\" class=\"centro\" height=\"687\" loading=\"lazy\" src=\"/img/2013/11/chiste-2.webp\" width=\"516\"/></a></p>\n<hr/>\n<p><a href=\"/img/2013/11/chiste.webp\"><br/>\n<img alt=\"chiste\" class=\"centro\" height=\"857\" loading=\"lazy\" src=\"/img/2013/11/chiste.webp\" width=\"657\"/></a></p>\n<hr/>\n<p><a href=\"/img/2013/11/berrocal.webp\"><img alt=\"berrocal\" class=\"centro\" height=\"718\" loading=\"lazy\" src=\"/img/2013/11/berrocal.webp\" width=\"960\"/></a></p>",
- "destacado": false,
- "origen": "https://elojocritico.info/el-humor-critico-de-manuel-berrocal/",
- "enlacesExternos": []
+  "slug": "el-humor-critico-de-manuel-berrocal",
+  "titulo": "EL HUMOR CRITICO DE MANUEL BERROCAL",
+  "subtitulo": "",
+  "fecha": "2013-11-13",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "humor"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2013/11/chiste-2.webp",
+    "tarjeta": "/img/2013/11/chiste-2-640.webp",
+    "alt": "chiste_2"
+  },
+  "extracto": "",
+  "cuerpoHtml": "<p><a href=\"/img/2013/11/chiste-2.webp\"><img alt=\"chiste_2\" class=\"centro\" height=\"687\" loading=\"lazy\" src=\"/img/2013/11/chiste-2.webp\" width=\"516\" /></a></p>\n<hr />\n<p><a href=\"/img/2013/11/chiste.webp\"><br />\n<img alt=\"chiste\" class=\"centro\" height=\"857\" loading=\"lazy\" src=\"/img/2013/11/chiste.webp\" width=\"657\" /></a></p>\n<hr />\n<p><a href=\"/img/2013/11/berrocal.webp\"><img alt=\"berrocal\" class=\"centro\" height=\"718\" loading=\"lazy\" src=\"/img/2013/11/berrocal.webp\" width=\"960\" /></a></p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/el-humor-critico-de-manuel-berrocal/",
+  "enlacesExternos": []
 }
