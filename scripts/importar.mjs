@@ -1,11 +1,15 @@
 // Importa el contenido migrado (contenido/) a Firestore. Idempotente: no reescribe lo que ya es igual.
 // Uso:  node scripts/importar.mjs [directorio-contenido]
 // Simulador: define FIRESTORE_EMULATOR_HOST (y GCLOUD_PROJECT). Proyecto real: GOOGLE_APPLICATION_CREDENTIALS.
+// Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
+// RESERVADO: el valor "migración" en actualizadoPor es solo de este script. El panel NUNCA debe escribirlo
+// (el editor de artículos debe imponerlo): con él el importador se creería dueño del artículo y lo pisaría.
 // Los comentarios del archivo NO se importan (siguen en el repositorio).
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { getFirestore } from "firebase-admin/firestore";
+import { resolverDestino } from "./destino-firebase.mjs";
 import { iniciarAdmin, AJUSTES_POR_DEFECTO, ESTADO_POR_DEFECTO } from "./crear-admin.mjs";
 
 const LOTE = 400;
@@ -106,9 +110,11 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   try {
+    const destino = resolverDestino();
+    console.log(destino.mensaje);
     iniciarAdmin();
     const t = Date.now();
-    await importar({ dirContenido: process.argv[2] ? resolve(process.argv[2]) : undefined });
+    await importar({ dirContenido: destino.args[0] ? resolve(destino.args[0]) : undefined });
     console.log(`✓ Hecho en ${((Date.now() - t) / 1000).toFixed(1)} s.`);
   } catch (e) {
     console.error("✗ No se ha podido importar:", e?.message ?? e);

@@ -3,7 +3,9 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { spawnSync } from "node:child_process";
 import { getFirestore } from "firebase-admin/firestore";
+import { resolverDestino } from "../scripts/destino-firebase.mjs";
 import { iniciarAdmin } from "../scripts/crear-admin.mjs";
 import { importar } from "../scripts/importar.mjs";
 
@@ -71,5 +73,41 @@ describe("importar (simulador)", () => {
     expect(a.enlaces).toEqual([{ nombre: "a", url: "/a" }]);
     expect(a.queEsEoc.titulo).toBe("Qué");
     expect((await db.doc("estado/sistema").get()).data()).toEqual({ publicarPendiente: true });
+  });
+});
+
+describe("importar como comando: protección del proyecto real", () => {
+  const limpio = () => {
+    const env = { ...process.env };
+    for (const k of ["FIRESTORE_EMULATOR_HOST", "FIREBASE_AUTH_EMULATOR_HOST", "GOOGLE_APPLICATION_CREDENTIALS", "GCLOUD_PROJECT", "GOOGLE_CLOUD_PROJECT"]) delete env[k];
+    return env;
+  };
+  const correr = (args, env) => spawnSync(process.execPath, ["scripts/importar.mjs", ...args], { encoding: "utf-8", env });
+
+  it("sin simulador y sin --real se niega y no escribe nada", async () => {
+    const r = correr([dir], limpio());
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain("--real");
+    expect((await db.collection("articulos").get()).size).toBe(0);
+  });
+
+  it("con --real pero sin credenciales también se niega", () => {
+    const r = correr([dir, "--real"], limpio());
+    expect(r.status).toBe(1);
+    expect(r.stderr).toContain("GOOGLE_APPLICATION_CREDENTIALS");
+  });
+
+  it("con el simulador funciona e indica el destino", async () => {
+    const r = correr([dir], process.env);
+    expect(r.status, r.stderr).toBe(0);
+    expect(r.stdout).toContain("Destino: simulador");
+    expect((await db.collection("articulos").get()).size).toBe(3);
+  });
+});
+
+describe("resolverDestino", () => {
+  it("anuncia el proyecto real solo con --real y credenciales", () => {
+    const d = resolverDestino(["x", "--real"], { GOOGLE_APPLICATION_CREDENTIALS: "k.json", GCLOUD_PROJECT: "eoc" });
+    expect(d).toMatchObject({ real: true, args: ["x"], mensaje: "Destino: proyecto REAL eoc" });
   });
 });

@@ -2,12 +2,14 @@
 // Tambien deja listos ajustes/global y estado/sistema, que el panel no puede crear por las reglas.
 //
 // Uso:  node scripts/crear-admin.mjs correo@x.es contraseña   (o CONTRASENA_ADMIN=... node scripts/crear-admin.mjs correo@x.es)
+// Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
 // Simulador: define FIREBASE_AUTH_EMULATOR_HOST y FIRESTORE_EMULATOR_HOST (los pone `firebase emulators:exec`).
 // Proyecto real: define GOOGLE_APPLICATION_CREDENTIALS (y GCLOUD_PROJECT si la clave no trae el proyecto).
 import { initializeApp, getApps, applicationDefault } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { fileURLToPath } from "node:url";
+import { resolverDestino } from "./destino-firebase.mjs";
 
 export const AJUSTES_POR_DEFECTO = {
   destacado: null,
@@ -63,11 +65,19 @@ export async function crearAdmin({ correo, contrasena, auth = getAuth(), db = ge
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const [correo, contrasenaArg] = process.argv.slice(2);
+  let destino;
+  try {
+    destino = resolverDestino();
+  } catch (e) {
+    console.error("✗", e.message);
+    process.exit(1);
+  }
+  console.log(destino.mensaje);
+  const [correo, contrasenaArg] = destino.args;
   // Mejor por variable de entorno: asi la contraseña no queda en el historial de la terminal.
   const contrasena = contrasenaArg || process.env.CONTRASENA_ADMIN;
   if (!correo || !contrasena) {
-    console.error("Uso: node scripts/crear-admin.mjs correo@x.es [contraseña]  (o define CONTRASENA_ADMIN)");
+    console.error("Uso: node scripts/crear-admin.mjs correo@x.es [contraseña] [--real]  (o define CONTRASENA_ADMIN)");
     process.exit(2);
   }
   try {
