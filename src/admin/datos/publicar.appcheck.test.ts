@@ -4,7 +4,7 @@ vi.mock("firebase/firestore", () => ({ doc: vi.fn(), updateDoc: vi.fn(async () =
 import { publicarCambios } from "./publicar";
 
 const BD = {} as never;
-const ok = () => vi.fn(async () => ({ ok: true }) as Response);
+const ok = () => vi.fn(async (_u: string, _i: RequestInit) => ({ ok: true }) as Response);
 
 describe("publicarCambios y App Check", () => {
   it("envía X-Firebase-AppCheck cuando hay token", async () => {
