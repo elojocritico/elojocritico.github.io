@@ -12,10 +12,12 @@ function fuentes(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);
     if (statSync(p).isDirectory()) return fuentes(p);
-    return /\.(tsx?|css)$/.test(n) && !/\.test\./.test(n) ? [p] : [];
+    return /\.tsx?$/.test(n) && !/\.test\./.test(n) ? [p] : [];
   });
 }
-const codigo = fuentes(__dirname).map((p) => readFileSync(p, "utf-8")).join("\n");
+// Solo código (.ts/.tsx) y sin comentarios: un texto que solo aparezca en un comentario no cuenta como interfaz.
+const sinComentarios = (t: string) => t.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "").replace(/\s\/\/ .*$/gm, "");
+const codigo = fuentes(__dirname).map((p) => sinComentarios(readFileSync(p, "utf-8"))).join("\n");
 
 const REQUERIDAS = [
   "Entrar", "Escribir y publicar", "Programar", "Editar y deshacer (historial)", "Papelera", "Comentarios", "Publicar cambios",

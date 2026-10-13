@@ -29,6 +29,7 @@ export function Ayuda({ seccion }: { seccion?: string }) {
       </header>
 
       {!elegida && MANUAL.intro.length > 0 && <Bloques bloques={MANUAL.intro} clave="intro" />}
+      {elegida && <p>Lo que ves entre comillas angulares, como «Publicar cambios», es el texto exacto de un botón o de un mensaje del panel.</p>}
       {seccion && !elegida && <p>No se ha encontrado esa parte del manual. Aquí tienes todo.</p>}
 
       {!elegida && (

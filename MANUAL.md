@@ -6,7 +6,7 @@ Lo que ves entre comillas angulares, como «Publicar cambios», es el texto exac
 
 Dos ideas para empezar:
 
-- **Guardar no es publicar.** Todo lo que guardas queda a salvo en el panel, pero la web no cambia hasta que se publica (mira la sección “Publicar cambios”).
+- **Guardar no es publicar.** Todo lo que guardas queda a salvo en el panel, pero la web no cambia hasta que se publica (mira la sección [Publicar cambios](#/ayuda/publicar-cambios)).
 - **Casi nada se pierde.** Cada vez que guardas un artículo se conserva una copia, y lo que borras va primero a una papelera durante 30 días.
 
 ## Entrar {#entrar}
@@ -25,7 +25,7 @@ Si el correo no llega, pulsa «Reenviar el correo».
 
 **Si has olvidado la contraseña:** escribe tu correo y pulsa «¿Has olvidado la contraseña?». Te llegará un enlace para elegir una contraseña nueva.
 
-**Si aparece este mensaje:** «Tu correo no tiene permiso para entrar. Pide acceso a un administrador.» Quiere decir que tu correo todavía no está en la lista de personas autorizadas. Pídele a un administrador que te dé acceso (mira la sección “Dar acceso a otra persona”).
+**Si aparece este mensaje:** «Tu correo no tiene permiso para entrar. Pide acceso a un administrador.» Quiere decir que tu correo todavía no está en la lista de personas autorizadas. Pídele a un administrador que te dé acceso (mira la sección [Dar acceso a otra persona](#/ayuda/dar-acceso)).
 
 Para irte, pulsa «Salir» en la pantalla de inicio.
 
@@ -47,8 +47,8 @@ Para irte, pulsa «Salir» en la pantalla de inicio.
 6. Elige qué hacer con el artículo:
    - «Guardar borrador»: lo guarda sin que se vea en la web. El mensaje es «Borrador guardado.»
    - «Publicar»: lo deja listo para la web. El mensaje es «Publicado.» seguido de un recordatorio.
-   - «Programar»: lo publica más adelante (mira la sección “Programar”).
-7. Para que la web cambie de verdad, pulsa «Publicar cambios» en el inicio (mira la sección “Publicar cambios”).
+   - «Programar»: lo publica más adelante (mira la sección [Programar](#/ayuda/programar)).
+7. Para que la web cambie de verdad, pulsa «Publicar cambios» en el inicio (mira la sección [Publicar cambios](#/ayuda/publicar-cambios)).
 
 Si el artículo ya estaba publicado, el botón principal se llama «Guardar y publicar cambios».
 
@@ -71,6 +71,8 @@ El artículo queda en el estado «Programado». En la lista de «Mis artículos�
 
 **Cuándo sale en la web:** en la primera publicación que haya después de esa hora. Las publicaciones se hacen solas, como mucho una hora después de cada cambio, o al momento si alguien pulsa «Publicar cambios». Así que puede haber unos minutos de retraso, pero nunca sale antes de la hora elegida.
 
+*Esto funcionará en cuanto la web esté publicada en internet.*
+
 **Si eliges una fecha que ya pasó:** el artículo se publica ahora. El panel lo dice así: «Esa fecha ya había pasado, así que el artículo se ha publicado ahora.»
 
 **Si la fecha o la hora no son correctas:** el panel dice «La fecha y la hora no son válidas. Revisa el día y la hora (hora de España).»
@@ -92,7 +94,7 @@ El artículo queda en el estado «Programado». En la lista de «Mis artículos�
 - «Ver en la web»: abre el artículo publicado en otra pestaña.
 - «Despublicar»: quita el artículo de la web y lo deja como borrador. El panel pregunta antes: «¿Quitar de la web?»
 - «Mover a otra sección»: cambia el artículo a la sección que elijas.
-- «Enviar a la papelera»: mira la sección “Papelera”.
+- «Enviar a la papelera»: mira la sección [Papelera](#/ayuda/papelera).
 
 Después de cualquiera de estos cambios, la web no se actualiza hasta que pulses «Publicar cambios».
 
@@ -173,6 +175,8 @@ Es el botón que hace que la web se actualice con todo lo que has guardado: art�
 
 No hace falta pulsarlo cada vez que guardes algo. Si no lo pulsas, la web se actualiza sola en menos de 1 hora. Pulsarlo sirve para que salga antes.
 
+*Esto funcionará en cuanto la web esté publicada en internet.*
+
 Si la petición ya estaba hecha, el panel dice «Ya hay una publicación pedida; saldrá en la próxima ronda.» No hace falta pulsar otra vez.
 
 Si hay un fallo, el mensaje termina con «No se ha pedido publicar.» Eso significa que no se ha enviado la petición. Inténtalo de nuevo en un rato.
@@ -205,7 +209,7 @@ Lo que sí vale ya:
 
 1. **No te asustes.** Un correo de aviso casi nunca significa que la web se haya caído: la web está pensada para seguir funcionando aunque algo falle por detrás.
 2. **Lee el correo entero** y fíjate en el asunto.
-3. **Mira el semáforo** en el inicio del panel (mira la sección “El semáforo”). Si todo está en verde o amarillo, probablemente no hay nada urgente.
+3. **Mira el semáforo** en el inicio del panel (mira la sección [El semáforo](#/ayuda/el-semaforo)). Si todo está en verde o amarillo, probablemente no hay nada urgente.
 4. **No respondas ni pulses enlaces de un correo que no esperabas**, sobre todo si pide contraseñas. Los avisos de verdad no piden tu contraseña.
 5. **Reenvía el correo a la persona técnica** y espera a que te diga qué hacer.
 
@@ -218,13 +222,12 @@ Solo los administradores pueden hacerlo. Hay dos papeles:
 
 **Para dar acceso:**
 
-1. En el inicio, pulsa «Usuarios».
-2. En «Añadir a una persona», escribe su correo.
-3. Elige el papel: «Editor (artículos y comentarios)» o «Administrador (todo)».
-4. Pulsa «Añadir».
-5. Aparecerá un recuadro que dice «Falta un paso». Dile a esa persona que entre en el panel, pulse «¿Has olvidado la contraseña?» con su correo y siga el enlace que le llegue para elegir su contraseña. Después tendrá que confirmar su correo (mira la sección “Entrar”).
-
-Si esa persona todavía no tiene cuenta, la persona técnica tendrá que crearla.
+1. Si esa persona todavía no tiene cuenta, pide a la persona técnica que se la cree. Cuando ya la tenga, sigue con los pasos siguientes.
+2. En el inicio, pulsa «Usuarios».
+3. En «Añadir a una persona», escribe su correo.
+4. Elige el papel: «Editor (artículos y comentarios)» o «Administrador (todo)».
+5. Pulsa «Añadir».
+6. Aparecerá un recuadro que dice «Falta un paso». Dile a esa persona que entre en el panel, pulse «¿Has olvidado la contraseña?» con su correo y siga el enlace que le llegue para elegir su contraseña. Después tendrá que confirmar su correo (mira la sección [Entrar](#/ayuda/entrar)).
 
 **Para cambiar el papel o quitar a alguien:** en la lista de «Usuarios», pulsa «Hacer editor» o «Hacer administrador». Para quitar el permiso, pulsa «Quitar» y confirma con «Sí, quitar». Esa persona ya no podrá entrar, pero sus artículos se quedan como están.
 
