@@ -229,6 +229,41 @@ describe("editor", () => {
       await assertFails(getDoc(doc(anon(), "borrados/x")));
     });
   });
+  describe("solicitudesCuenta", () => {
+    const S = { pedidoEn: "2024-01-01T00:00:00.000Z", pedidoPor: ADMIN };
+    const ref = (db, id = "nuevo@x.es") => doc(db, "solicitudesCuenta", id);
+    it("el admin crea una con la forma exacta", async () => {
+      await assertSucceeds(setDoc(ref(auth(ADMIN)), S));
+    });
+    it("un editor, un anonimo y un admin sin verificar no la crean", async () => {
+      await assertFails(setDoc(ref(auth(EDITOR)), { ...S, pedidoPor: EDITOR }));
+      await assertFails(setDoc(ref(anon()), S));
+      await assertFails(setDoc(ref(auth(ADMIN, false)), S));
+    });
+    it("rechaza campos de mas o de menos, tipos malos y pedidoPor ajeno", async () => {
+      const db = auth(ADMIN);
+      await assertFails(setDoc(ref(db), { ...S, extra: 1 }));
+      await assertFails(setDoc(ref(db), { pedidoEn: S.pedidoEn }));
+      await assertFails(setDoc(ref(db), { pedidoPor: ADMIN }));
+      await assertFails(setDoc(ref(db), { ...S, pedidoEn: 5 }));
+      await assertFails(setDoc(ref(db), { ...S, pedidoPor: EDITOR }));
+    });
+    it("el id debe ser un correo en minusculas", async () => {
+      const db = auth(ADMIN);
+      await assertFails(setDoc(ref(db, "Nuevo@x.es"), S));
+      await assertFails(setDoc(ref(db, "no-es-correo"), S));
+    });
+    it("nadie la modifica; el admin la lee y la borra; el editor no", async () => {
+      await env.withSecurityRulesDisabled(async (ctx) => { await setDoc(ref(ctx.firestore()), S); });
+      await assertFails(setDoc(ref(auth(ADMIN)), S));
+      await assertFails(updateDoc(ref(auth(ADMIN)), { pedidoEn: "x" }));
+      await assertFails(getDoc(ref(auth(EDITOR))));
+      await assertFails(deleteDoc(ref(auth(EDITOR))));
+      await assertFails(getDoc(ref(anon())));
+      await assertSucceeds(getDoc(ref(auth(ADMIN))));
+      await assertSucceeds(deleteDoc(ref(auth(ADMIN))));
+    });
+  });
   it("un editor escribe publicarPendiente y publicarPendienteEn (texto) y nada mas en estado", async () => {
     const db = auth(EDITOR);
     await assertSucceeds(updateDoc(doc(db, "estado/sistema"), { publicarPendiente: true, publicarPendienteEn: "2024-01-01T00:00:00.000Z" }));

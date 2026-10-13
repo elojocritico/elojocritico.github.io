@@ -7,16 +7,17 @@ import { Boton } from "../componentes/Boton";
 import { BotonAyuda } from "../componentes/BotonAyuda";
 import { Cargando } from "../componentes/Cargando";
 import { Confirmar } from "../componentes/Confirmar";
-import { AVISOS_AJUSTES, ErrorAjustes, cambiarUsuario, esCorreo, leerAjustes, normalizarCorreo } from "../datos/ajustes";
+import { AVISOS_AJUSTES, ErrorAjustes, cambiarUsuario, esCorreo, leerAjustes, normalizarCorreo, pedirCuenta } from "../datos/ajustes";
 import { mensajeDeCambio } from "../mensajes";
 import { irA } from "../ruta";
 import type { Papel } from "../sesion";
 import { SoloAdmin } from "./Ajustes";
 
 export const INSTRUCCIONES_NUEVO =
-  "Dile a esa persona que entre en la web /admin/, pulse «¿Has olvidado la contraseña?» con su correo y siga el enlace; después tendrá que confirmar su correo.";
+  "La cuenta estará lista en menos de una hora. Después esa persona entra en /admin/, pulsa «¿Has olvidado la contraseña?» y sigue el correo";
 
-export const NOTA_SIN_CUENTA = "(Si esa persona aún no tiene cuenta, el administrador técnico tendrá que crearla.)";
+export const ERROR_SIN_SOLICITUD =
+  "Esa persona ya tiene permiso, pero no se ha podido preparar su cuenta. Pulsa «Quitar» en su fila y vuelve a añadirla.";
 
 type Mensaje = { tipo: "ok" | "error"; texto: string };
 const NOMBRE: Record<Papel, string> = { admin: "Administrador", editor: "Editor" };
@@ -99,9 +100,16 @@ function UsuariosAdmin({ usuario }: { usuario: User }) {
     if (lista && Object.keys(lista).some((k) => k.trim().toLowerCase() === c)) {
       return setMensaje({ tipo: "error", texto: "Esa persona ya está en la lista. Para cambiar su papel, usa el botón de su fila." });
     }
+    setInstrucciones(null);
     if (await aplicar(c, papelNuevo, `${c} ya tiene permiso como ${NOMBRE[papelNuevo].toLowerCase()}.`)) {
       setCorreo("");
-      setInstrucciones(c);
+      // El permiso ya está guardado; ahora se anota que hay que crear su cuenta (la crea el flujo horario).
+      try {
+        if (db) await pedirCuenta(db, usuario.email ?? "", c);
+        setInstrucciones(c);
+      } catch {
+        setMensaje({ tipo: "error", texto: ERROR_SIN_SOLICITUD });
+      }
     }
   }
 
@@ -167,9 +175,7 @@ function UsuariosAdmin({ usuario }: { usuario: User }) {
         </form>
         {instrucciones && (
           <Aviso tipo="info">
-            <strong>Falta un paso para {instrucciones}.</strong> {INSTRUCCIONES_NUEVO}
-            <br />
-            <small>{NOTA_SIN_CUENTA}</small>
+            <strong>{instrucciones} ya tiene permiso.</strong> {INSTRUCCIONES_NUEVO}
           </Aviso>
         )}
       </section>

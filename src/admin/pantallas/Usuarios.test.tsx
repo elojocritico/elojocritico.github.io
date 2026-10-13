@@ -2,12 +2,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, within, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-const d = vi.hoisted(() => ({ leerAjustes: vi.fn(), cambiarUsuario: vi.fn() }));
+const d = vi.hoisted(() => ({ leerAjustes: vi.fn(), cambiarUsuario: vi.fn(), pedirCuenta: vi.fn() }));
 vi.mock("../firebase", () => ({ auth: {}, db: { falso: true }, configurado: true }));
-vi.mock("../datos/ajustes", async () => ({ ...(await vi.importActual<object>("../datos/ajustes")), leerAjustes: d.leerAjustes, cambiarUsuario: d.cambiarUsuario }));
+vi.mock("../datos/ajustes", async () => ({ ...(await vi.importActual<object>("../datos/ajustes")), leerAjustes: d.leerAjustes, cambiarUsuario: d.cambiarUsuario, pedirCuenta: d.pedirCuenta }));
 vi.mock("../ruta", async () => ({ ...(await vi.importActual<object>("../ruta")), irA: vi.fn() }));
 
-import { Usuarios, INSTRUCCIONES_NUEVO, NOTA_SIN_CUENTA } from "./Usuarios";
+import { Usuarios, INSTRUCCIONES_NUEVO, ERROR_SIN_SOLICITUD } from "./Usuarios";
 import { ErrorAjustes } from "../datos/ajustes";
 
 const BD = { falso: true };
@@ -18,6 +18,7 @@ beforeEach(() => {
   Object.values(d).forEach((f) => f.mockReset());
   d.leerAjustes.mockResolvedValue({ ...lista() });
   d.cambiarUsuario.mockResolvedValue("v2");
+  d.pedirCuenta.mockResolvedValue(true);
 });
 
 describe("Usuarios", () => {
@@ -41,8 +42,29 @@ describe("Usuarios", () => {
     await userEvent.click(screen.getByRole("button", { name: "Añadir" }));
     await waitFor(() => expect(d.cambiarUsuario).toHaveBeenCalledWith(BD, "Ana@x.es", "v1", "nuevo@ejemplo.es", "editor"));
     expect(await screen.findByText(INSTRUCCIONES_NUEVO)).toBeInTheDocument();
-    expect(screen.getByText(NOTA_SIN_CUENTA)).toBeInTheDocument();
+    expect(INSTRUCCIONES_NUEVO).toBe("La cuenta estará lista en menos de una hora. Después esa persona entra en /admin/, pulsa «¿Has olvidado la contraseña?» y sigue el correo");
+    expect(d.pedirCuenta).toHaveBeenCalledWith(BD, "Ana@x.es", "nuevo@ejemplo.es");
     expect(screen.getByText("nuevo@ejemplo.es")).toBeInTheDocument();
+  });
+
+  it("si no se puede anotar la solicitud de cuenta, avisa con claridad pero el permiso se queda", async () => {
+    d.pedirCuenta.mockRejectedValue(Object.assign(new Error("x"), { code: "permission-denied" }));
+    render(<Usuarios usuario={usuario} papel="admin" />);
+    await screen.findByText("bea@x.es");
+    await userEvent.type(screen.getByLabelText("Correo"), "nuevo@ejemplo.es");
+    await userEvent.click(screen.getByRole("button", { name: "Añadir" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(ERROR_SIN_SOLICITUD);
+    expect(d.cambiarUsuario).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(INSTRUCCIONES_NUEVO)).toBeNull();
+    expect(screen.getByText("nuevo@ejemplo.es")).toBeInTheDocument();
+  });
+
+  it("al cambiar el papel o quitar a alguien no se pide ninguna cuenta", async () => {
+    render(<Usuarios usuario={usuario} papel="admin" />);
+    await screen.findByText("bea@x.es");
+    await userEvent.click(screen.getByRole("button", { name: "Hacer administrador a bea@x.es" }));
+    await waitFor(() => expect(d.cambiarUsuario).toHaveBeenCalled());
+    expect(d.pedirCuenta).not.toHaveBeenCalled();
   });
 
   it("rechaza un correo mal escrito y uno ya existente", async () => {
@@ -56,6 +78,7 @@ describe("Usuarios", () => {
     await userEvent.click(screen.getByRole("button", { name: "Añadir" }));
     expect(await screen.findByRole("alert")).toHaveTextContent(/ya está en la lista/);
     expect(d.cambiarUsuario).not.toHaveBeenCalled();
+    expect(d.pedirCuenta).not.toHaveBeenCalled();
   });
 
   it("quita a alguien solo tras confirmar", async () => {

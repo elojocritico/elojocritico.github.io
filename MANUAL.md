@@ -222,12 +222,13 @@ Solo los administradores pueden hacerlo. Hay dos papeles:
 
 **Para dar acceso:**
 
-1. Si esa persona todavía no tiene cuenta, pide a la persona técnica que se la cree. Cuando ya la tenga, sigue con los pasos siguientes.
-2. En el inicio, pulsa «Usuarios».
-3. En «Añadir a una persona», escribe su correo.
-4. Elige el papel: «Editor (artículos y comentarios)» o «Administrador (todo)».
-5. Pulsa «Añadir».
-6. Aparecerá un recuadro que dice «Falta un paso». Dile a esa persona que entre en el panel, pulse «¿Has olvidado la contraseña?» con su correo y siga el enlace que le llegue para elegir su contraseña. Después tendrá que confirmar su correo (mira la sección [Entrar](#/ayuda/entrar)).
+1. En el inicio, pulsa «Usuarios».
+2. En «Añadir a una persona», escribe su correo.
+3. Elige el papel: «Editor (artículos y comentarios)» o «Administrador (todo)».
+4. Pulsa «Añadir». Aparecerá un recuadro que dice: «La cuenta estará lista en menos de una hora». No hace falta que pidas nada a nadie: la cuenta se crea sola.
+5. Pasada esa hora, dile a esa persona que entre en /admin/, pulse «¿Has olvidado la contraseña?», escriba su correo y siga el correo que le llegue para elegir su contraseña (si no lo ve, que mire en «Spam»). Después ya puede entrar (mira la sección [Entrar](#/ayuda/entrar)).
+
+Si pulsas «Añadir» y sale un aviso rojo que dice que no se ha podido preparar la cuenta, pulsa «Quitar» en la fila de esa persona y vuelve a añadirla. Si sigue fallando, avisa a la persona técnica.
 
 **Para cambiar el papel o quitar a alguien:** en la lista de «Usuarios», pulsa «Hacer editor» o «Hacer administrador». Para quitar el permiso, pulsa «Quitar» y confirma con «Sí, quitar». Esa persona ya no podrá entrar, pero sus artículos se quedan como están.
 

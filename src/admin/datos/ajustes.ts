@@ -1,7 +1,7 @@
 // Capa de datos de Ajustes y Usuarios (ajustes/global). Recibe la base de datos como parámetro para poder probarse con el simulador.
 // Cada guardado va en una transacción que compara la marca de versión (actualizadoEn de ajustes/global) con la que vio quien guarda:
 // si otra persona guardó mientras tanto, no se pisa su cambio.
-import { deleteField, doc, FieldPath, getDoc, runTransaction, type Firestore } from "firebase/firestore";
+import { deleteField, doc, FieldPath, getDoc, runTransaction, setDoc, type Firestore } from "firebase/firestore";
 import { sanear } from "../../lib/sanear";
 import { esBloque, esCliente, esUrlWeb } from "../../lib/validacion";
 import type { Papel } from "../sesion";
@@ -170,4 +170,18 @@ export async function cambiarUsuario(db: Firestore, usuario: string, version: st
     tx.update(ref, campo, valor, ...resto);
   });
   return ahora;
+}
+
+/**
+ * Anota que hay que crear la cuenta de acceso de esa persona (solicitudesCuenta/{correo}); el flujo horario la crea.
+ * Si ya hay una solicitud sin atender para ese correo, no hace nada (las reglas no dejan modificarla). Devuelve true si la ha creado ahora.
+ */
+export async function pedirCuenta(db: Firestore, usuario: string, correo: string): Promise<boolean> {
+  const pedidoPor = quien(usuario).toLowerCase();
+  const clave = normalizarCorreo(correo);
+  if (!esCorreo(clave)) throw new ErrorAjustes("ajustes/correo");
+  const ref = doc(db, "solicitudesCuenta", clave);
+  if ((await getDoc(ref)).exists()) return false;
+  await setDoc(ref, { pedidoEn: new Date().toISOString(), pedidoPor });
+  return true;
 }

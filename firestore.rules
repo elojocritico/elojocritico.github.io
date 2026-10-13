@@ -126,6 +126,21 @@ service cloud.firestore {
         && (!('publicarPendienteEn' in request.resource.data) || request.resource.data.publicarPendienteEn is string);
     }
 
+    // Solicitudes de cuenta: al añadir un usuario en el panel, un admin anota aquí el correo (id en minúsculas) y el flujo horario
+    // crea la cuenta de Auth con firebase-admin y borra la solicitud. Los admins pueden leerlas y cancelarlas; nadie las modifica.
+    match /solicitudesCuenta/{correo} {
+      allow read, delete: if esAdmin();
+      allow create: if esAdmin()
+        && correo == correo.lower()
+        && correo.matches('^[^ @]+@[^ @]+[.][^ @]+$')
+        && request.resource.data.keys().hasOnly(['pedidoEn', 'pedidoPor'])
+        && request.resource.data.keys().hasAll(['pedidoEn', 'pedidoPor'])
+        && request.resource.data.pedidoEn is string
+        && request.resource.data.pedidoPor is string
+        && request.resource.data.pedidoPor == request.auth.token.email.lower();
+      allow update: if false;
+    }
+
     match /{document=**} { allow read, write: if false; }
   }
 }

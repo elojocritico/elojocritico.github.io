@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { doc, getDoc, setDoc, updateDoc, FieldPath, setLogLevel } from "firebase/firestore";
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from "vitest";
-import { leerAjustes, guardarAjustes, cambiarUsuario, ErrorAjustes } from "../src/admin/datos/ajustes.ts";
+import { leerAjustes, guardarAjustes, cambiarUsuario, pedirCuenta, ErrorAjustes } from "../src/admin/datos/ajustes.ts";
 import { contarCambios, publicarCambios } from "../src/admin/datos/publicar.ts";
 
 setLogLevel("silent");
@@ -190,5 +190,23 @@ describe("publicar cambios", () => {
     const f = vi.fn();
     await expect(publicarCambios(como("intruso@x.es"), { url: "https://x.test/p", obtenerToken: async () => "t", fetchFn: f })).rejects.toMatchObject({ code: "permission-denied" });
     expect(f).not.toHaveBeenCalled();
+  });
+});
+
+describe("pedirCuenta (solicitudesCuenta)", () => {
+  const solicitud = async (c) => (await sembrar((db) => getDoc(doc(db, "solicitudesCuenta", c)))).data();
+  it("un admin anota la solicitud con el correo en minúsculas; repetirla no falla ni la cambia", async () => {
+    expect(await pedirCuenta(como(ADMIN), "Admin@Eoc.Test", "  Nueva@Ejemplo.ES ")).toBe(true);
+    const s = await solicitud("nueva@ejemplo.es");
+    expect(Object.keys(s).sort()).toEqual(["pedidoEn", "pedidoPor"]);
+    expect(s.pedidoPor).toBe(ADMIN);
+    expect(s.pedidoEn).toMatch(/^\d{4}-\d{2}-\d{2}T.*Z$/);
+    expect(await pedirCuenta(como(ADMIN), ADMIN, "nueva@ejemplo.es")).toBe(false);
+    expect(await solicitud("nueva@ejemplo.es")).toEqual(s);
+  });
+  it("un editor no puede, y un correo malo se rechaza antes de escribir", async () => {
+    await expect(pedirCuenta(como(EDITOR), EDITOR, "nueva@ejemplo.es")).rejects.toMatchObject({ code: "permission-denied" });
+    await expect(pedirCuenta(como(ADMIN), ADMIN, "no-es-correo")).rejects.toMatchObject({ code: "ajustes/correo" });
+    expect(await solicitud("nueva@ejemplo.es")).toBeUndefined();
   });
 });

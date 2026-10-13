@@ -255,6 +255,14 @@ jobs:
           INICIO: ${{ steps.exportar.outputs.inicio }}
         run: npx tsx scripts/exportar.mjs --real --confirmar "$INICIO"
 
+      # Cuentas nuevas: los administradores las piden desde el panel (solicitudesCuenta) y aquí se crean con firebase-admin.
+      # Va después de confirmar la exportación y no corta el flujo: si falla, se anota el estado igualmente y el último paso hace fallar la ejecución (correo).
+      - name: Crear las cuentas pedidas
+        id: cuentas
+        if: steps.hay.outputs.actuar == '1'
+        continue-on-error: true
+        run: node scripts/crear-cuentas.mjs --real
+
       - name: Anotar el estado
         if: steps.hay.outputs.actuar == '1'
         env:
@@ -272,6 +280,12 @@ jobs:
         if: steps.cloudflare.outcome == 'failure'
         run: |
           echo "::error::GitHub Pages está publicado, pero el despliegue en Cloudflare Pages ha fallado."
+          exit 1
+
+      - name: Avisar si las cuentas han fallado
+        if: steps.cuentas.outcome == 'failure'
+        run: |
+          echo "::error::La web está publicada, pero no se han podido crear todas las cuentas pedidas. Se reintenta en la próxima ejecución."
           exit 1
 
       - name: Borrar la clave de Firebase
