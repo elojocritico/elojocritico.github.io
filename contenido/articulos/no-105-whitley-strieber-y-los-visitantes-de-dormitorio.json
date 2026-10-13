@@ -8,9 +8,13 @@
   "cronicas-del-misterio"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2015/05/comunnion.webp",
+  "tarjeta": "/img/2015/05/comunnion-640.webp",
+  "alt": "COMUNNION"
+ },
  "extracto": "Lorenzo Fernández y Manuel Carballal nos hablan de los visitantes de nuestros dormitorios. Nos recuerdan el caso de Whitley Strieber, el autor de ‘Communion’ y de otros muchos casos producidos en España. Más audios en Onda Cero",
- "cuerpoHtml": "<p><span class=\"img-perdida\">Imagen no recuperada</span>Lorenzo Fernández y Manuel Carballal nos hablan de los visitantes de nuestros dormitorios. Nos recuerdan el caso de Whitley Strieber, el autor de ‘Communion’ y de otros muchos casos producidos en España.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
+ "cuerpoHtml": "<p><a href=\"/img/2015/05/comunnion.webp\"><img alt=\"COMUNNION\" class=\"izq\" height=\"1329\" loading=\"lazy\" src=\"/img/2015/05/comunnion.webp\" width=\"1600\"/></a>Lorenzo Fernández y Manuel Carballal nos hablan de los visitantes de nuestros dormitorios. Nos recuerdan el caso de Whitley Strieber, el autor de ‘Communion’ y de otros muchos casos producidos en España.</p>\n<p>Más audios en <a href=\"http://www.ondacero.es/audios-online\" title=\"Audios Onda Cero\">Onda Cero</a></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/no-105-whitley-strieber-y-los-visitantes-de-dormitorio/",
  "enlacesExternos": [

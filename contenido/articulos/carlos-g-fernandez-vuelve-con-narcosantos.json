@@ -9,9 +9,13 @@
   "libros"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2018/07/narcosantos3.webp",
+  "tarjeta": "/img/2018/07/narcosantos3-640.webp",
+  "alt": "narcosantoS3"
+ },
  "extracto": "Publicado en EOC nº 87/88 Estamos de enhorabuena. Carlos Gabriel Fernández ha recuperado uno de sus mejores trabajos, ampliándolo y actualizándolo, para ofrecernos un nuevo estudio sobre los santos populares y las devociones más insólitas…",
- "cuerpoHtml": "<blockquote>\n<p>Publicado en <strong>EOC</strong> nº 87/88</p>\n</blockquote>\n<p><span class=\"img-perdida\">Imagen no recuperada</span></p>\n<p>Estamos de enhorabuena. Carlos Gabriel Fernández ha recuperado uno de sus mejores trabajos, ampliándolo y actualizándolo, para ofrecernos un nuevo estudio sobre los santos populares y las devociones más insólitas del planeta. Desde el pensamiento mágico en grupos terroristas y de crimen organizado hasta la beatificación popular de actores, cantantes y famosos.<span class=\"img-perdida\">Imagen no recuperada</span></p>\n<p>Fernández ha peregrinado a sus templos, santuarios y capillas, cubriendo un espacio en blanco en el estudio de la nueva espiritualidad, y la religiosidad popular del siglo XXI.</p>\n<p>Ya disponible en Amazon y en <a href=\"http://www.edicionescydonia.com\">http://www.edicionescydonia.com</a></p>",
+ "cuerpoHtml": "<blockquote>\n<p>Publicado en <strong>EOC</strong> nº 87/88</p>\n</blockquote>\n<p><img alt=\"narcosantoS3\" class=\"izq\" height=\"300\" loading=\"lazy\" src=\"/img/2018/07/narcosantos3.webp\" width=\"209\"/></p>\n<p>Estamos de enhorabuena. Carlos Gabriel Fernández ha recuperado uno de sus mejores trabajos, ampliándolo y actualizándolo, para ofrecernos un nuevo estudio sobre los santos populares y las devociones más insólitas del planeta. Desde el pensamiento mágico en grupos terroristas y de crimen organizado hasta la beatificación popular de actores, cantantes y famosos.<a href=\"/img/2018/07/carlos-fernandez.webp\"><img alt=\"Carlos Fernandez\" class=\"der\" height=\"199\" loading=\"lazy\" src=\"/img/2018/07/carlos-fernandez.webp\" width=\"300\"/></a></p>\n<p>Fernández ha peregrinado a sus templos, santuarios y capillas, cubriendo un espacio en blanco en el estudio de la nueva espiritualidad, y la religiosidad popular del siglo XXI.</p>\n<p>Ya disponible en Amazon y en <a href=\"http://www.edicionescydonia.com\">http://www.edicionescydonia.com</a></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/carlos-g-fernandez-vuelve-con-narcosantos/",
  "enlacesExternos": [

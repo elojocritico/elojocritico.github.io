@@ -8,9 +8,13 @@
   "confidenciales"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2024/03/portada-no-1-2-y-3-revista-de-ufologia-114810.webp",
+  "tarjeta": "/img/2024/03/portada-no-1-2-y-3-revista-de-ufologia-114810-640.webp",
+  "alt": "Portada Nº 1, 2 y 3 - Revista de Ufología_114810"
+ },
  "extracto": "Publicado en EOC nº 97 Siempre celebramos el nacimiento de un nuevo medio sobre anomalías. Todos ganamos con la pluralidad. Y acaba de publicarse el tercer número de “Revista de Ufología”, la más reciente publicación en habla hispana…",
- "cuerpoHtml": "<blockquote><p>Publicado en <strong>EOC</strong> nº 97</p></blockquote>\n<p><span class=\"img-perdida\">Imagen no recuperada</span>Siempre celebramos el nacimiento de un nuevo medio sobre anomalías.</p>\n<p>Todos ganamos con la pluralidad. Y acaba de publicarse el tercer número de “Revista de Ufología”, la más reciente publicación en habla hispana sobre OVNIs, impulsada por José L. Ramírez.</p>\n<p>Puedes descargarla gratis en: https://revistadeufologia.blogspot.com/</p>",
+ "cuerpoHtml": "<blockquote><p>Publicado en <strong>EOC</strong> nº 97</p></blockquote>\n<p><a href=\"/img/2024/03/portada-no-1-2-y-3-revista-de-ufologia-114810.webp\"><img alt=\"Portada Nº 1, 2 y 3 - Revista de Ufología_114810\" class=\"izq\" height=\"259\" loading=\"lazy\" src=\"/img/2024/03/portada-no-1-2-y-3-revista-de-ufologia-114810.webp\" width=\"300\"/></a>Siempre celebramos el nacimiento de un nuevo medio sobre anomalías.</p>\n<p>Todos ganamos con la pluralidad. Y acaba de publicarse el tercer número de “Revista de Ufología”, la más reciente publicación en habla hispana sobre OVNIs, impulsada por José L. Ramírez.</p>\n<p>Puedes descargarla gratis en: https://revistadeufologia.blogspot.com/</p>",
  "destacado": false,
  "origen": "https://elojocritico.info/la-nueva-revista-de-ufologia/",
  "enlacesExternos": []

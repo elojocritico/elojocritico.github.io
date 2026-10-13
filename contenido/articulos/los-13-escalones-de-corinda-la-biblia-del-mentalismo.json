@@ -8,9 +8,13 @@
   "libros"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2018/12/los-13-escalones.webp",
+  "tarjeta": "/img/2018/12/los-13-escalones-640.webp",
+  "alt": "los 13 escalones"
+ },
  "extracto": "Si te consideras investigador de fenómenos paranormales y no has leído “Los trece escalones del mentanismo” de Tony Corinda, no eres serio. Así de facil y así de tajante. En esta obra considerada “la Biblia del mentalismo” encontraras…",
- "cuerpoHtml": "<p><span class=\"img-perdida\">Imagen no recuperada</span></p>\n<p>Si te consideras investigador de fenómenos paranormales y no has leído “Los trece escalones del mentanismo” de Tony Corinda, no eres serio. Así de facil y así de tajante. En esta obra considerada “la Biblia del mentalismo” encontraras todos los conocimientos básicos para comprender como se puenden reproducir, fraudulentamente, efectos y rutinas de telepatía, clarividencia, telequinesis, precognición, espiritismo y practicamente cualquier otra fenomenología falsamente paranormal. <span class=\"img-perdida\">Imagen no recuperada</span> </p>\n<p>Esta edición de 2016, de Páginas Libros de Mágica, tiene el aliciente de venir prologada por Anthony Blacke, el mentalista español más conocido del momento. Por lo que si no lo tienes ya, ya estás tardando en hacerte con él. Tu percepción sobre el mundo de las anomalías cambiará radicalmente… </p>",
+ "cuerpoHtml": "<p><a href=\"/img/2018/12/los-13-escalones.webp\"><img alt=\"los 13 escalones\" class=\"izq\" height=\"300\" loading=\"lazy\" src=\"/img/2018/12/los-13-escalones.webp\" width=\"212\"/></a></p>\n<p>Si te consideras investigador de fenómenos paranormales y no has leído “Los trece escalones del mentanismo” de Tony Corinda, no eres serio. Así de facil y así de tajante. En esta obra considerada “la Biblia del mentalismo” encontraras todos los conocimientos básicos para comprender como se puenden reproducir, fraudulentamente, efectos y rutinas de telepatía, clarividencia, telequinesis, precognición, espiritismo y practicamente cualquier otra fenomenología falsamente paranormal. <a href=\"/img/2018/12/los-13.webp\"><img alt=\"los 13\" class=\"der\" height=\"300\" loading=\"lazy\" src=\"/img/2018/12/los-13.webp\" width=\"215\"/></a> </p>\n<p>Esta edición de 2016, de Páginas Libros de Mágica, tiene el aliciente de venir prologada por Anthony Blacke, el mentalista español más conocido del momento. Por lo que si no lo tienes ya, ya estás tardando en hacerte con él. Tu percepción sobre el mundo de las anomalías cambiará radicalmente… </p>",
  "destacado": false,
  "origen": "https://elojocritico.info/los-13-escalones-de-corinda-la-biblia-del-mentalismo/",
  "enlacesExternos": []

@@ -8,9 +8,13 @@
   "cronicas-del-misterio"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2015/06/david-icke.webp",
+  "tarjeta": "/img/2015/06/david-icke-640.webp",
+  "alt": "david-icke"
+ },
  "extracto": "En Crónicas del Misterio, junto con Lorenzo Fernández y Manuel Carballal, desmitificamos y denunciamos a determinados personajes que a través de la ‘exopolí tica’ introducen teorías conspiratorias basadas en reptilianos y que no tienen…",
- "cuerpoHtml": "<p><span class=\"img-perdida\">Imagen no recuperada</span>En Crónicas del Misterio, junto con Lorenzo Fernández y Manuel Carballal, desmitificamos y denunciamos a determinados personajes que a través de la ‘exopolí tica’ introducen teorías conspiratorias basadas en reptilianos y que no tienen ningún fundamento, según nos explican nuestros dos colaboradores.</p>\n<p><iframe allowfullscreen=\"\" height=\"200\" loading=\"lazy\" src=\"https://www.ivoox.com/player_ej_4723659_4_1.html?c1=ff6600\" width=\"320\"></iframe></p>",
+ "cuerpoHtml": "<p><a href=\"/img/2015/06/david-icke.webp\"><img alt=\"david-icke\" class=\"izq\" height=\"620\" loading=\"lazy\" src=\"/img/2015/06/david-icke.webp\" width=\"420\"/></a>En Crónicas del Misterio, junto con Lorenzo Fernández y Manuel Carballal, desmitificamos y denunciamos a determinados personajes que a través de la ‘exopolí tica’ introducen teorías conspiratorias basadas en reptilianos y que no tienen ningún fundamento, según nos explican nuestros dos colaboradores.</p>\n<p><iframe allowfullscreen=\"\" height=\"200\" loading=\"lazy\" src=\"https://www.ivoox.com/player_ej_4723659_4_1.html?c1=ff6600\" width=\"320\"></iframe></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/no-113-reptilianos-anunakis-y-el-negocio-de-la-exopolitica/",
  "enlacesExternos": []

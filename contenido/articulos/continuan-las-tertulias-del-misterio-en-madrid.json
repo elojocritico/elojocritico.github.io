@@ -9,9 +9,13 @@
   "taller-del-investigador"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2024/03/image-3.webp",
+  "tarjeta": "/img/2024/03/image-3-640.webp",
+  "alt": "image (3)"
+ },
  "extracto": "Publicado en EOC nº 97 Impulsadas por David Cuevas y tras un ligero cambió de ubicación, continúan celebrándose las tertulias del misterio. Todos los martes, de 18:00 a 21:00, ahora en los sótanos de Viena Capellanes. Calle Bordadores, nº…",
- "cuerpoHtml": "<blockquote><p>Publicado en<strong> EOC</strong> nº 97</p></blockquote>\n<p><span class=\"img-perdida\">Imagen no recuperada</span>Impulsadas por David Cuevas y tras un ligero cambió de ubicación, continúan celebrándose las tertulias del misterio.</p>\n<p>Todos los martes, de 18:00 a 21:00, ahora en los sótanos de Viena Capellanes. Calle Bordadores, nº 9, Madrid.</p>\n<p>Y todos estamos invitados.</p>\n<p>Por supuesto, es gratis.</p>\n<p><span class=\"img-perdida\">Imagen no recuperada</span></p>",
+ "cuerpoHtml": "<blockquote><p>Publicado en<strong> EOC</strong> nº 97</p></blockquote>\n<p><span class=\"img-perdida\">Imagen no recuperada</span>Impulsadas por David Cuevas y tras un ligero cambió de ubicación, continúan celebrándose las tertulias del misterio.</p>\n<p>Todos los martes, de 18:00 a 21:00, ahora en los sótanos de Viena Capellanes. Calle Bordadores, nº 9, Madrid.</p>\n<p>Y todos estamos invitados.</p>\n<p>Por supuesto, es gratis.</p>\n<p><a href=\"/img/2024/03/image-3.webp\"><img alt=\"image (3)\" class=\"der\" height=\"120\" loading=\"lazy\" src=\"/img/2024/03/image-3.webp\" width=\"205\"/></a></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/continuan-las-tertulias-del-misterio-en-madrid/",
  "enlacesExternos": []

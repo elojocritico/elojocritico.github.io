@@ -8,9 +8,13 @@
   "libros"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2017/08/libro11.webp",
+  "tarjeta": "/img/2017/08/libro11-640.webp",
+  "alt": "libro11"
+ },
  "extracto": "Publicado en EOC nº 83/84 L eslie Kean no es ufóloga, eso se nota, pero si periodista de investigación. Y el volumen que ahora publica en español Ediciones Urano “OVNIs” es el mejor ejemplo de cómo alguien ajeno al fenómeno, pero lleno de…",
- "cuerpoHtml": "<blockquote>\n<p>Publicado en <strong>EOC</strong> nº 83/84</p>\n</blockquote>\n<p>L<span class=\"img-perdida\">Imagen no recuperada</span>eslie Kean no es ufóloga, eso se nota, pero si periodista de investigación. Y el volumen que ahora publica en español Ediciones Urano “OVNIs” es el mejor ejemplo de cómo alguien ajeno al fenómeno, pero lleno de entusiasmo, puede remover cielo y tierra, para buscar evidencias y testimonios de primer nivel.</p>\n<p>Kean ha conseguido involucrar en su proyecto a militares, pilotos, y hasta un prólogo de John Podesta, ex Jefe de Gabinete de la Casa Blanca, y ya solo por eso merece un lugar en la biblioteca de todo investigador. Aunque comete errores de principiante, como dar tanto protagonismo a un caso como el de Petit-Rechain, que <b>EOC</b> explicó con detalle en su nº 68 <a href=\"http://ojo-critico.blogspot.com.es/2012/08/el-ovni-de-petit-rechain-asi-se-hizo-el.html\">http://ojo-critico.blogspot.com.es/2012/08/el-ovni-de-petit-rechain-asi-se-hizo-el.html</a></p>",
+ "cuerpoHtml": "<blockquote>\n<p>Publicado en <strong>EOC</strong> nº 83/84</p>\n</blockquote>\n<p>L<a href=\"/img/2017/08/libro11.webp\"><img alt=\"libro11\" class=\"izq\" height=\"281\" loading=\"lazy\" src=\"/img/2017/08/libro11.webp\" width=\"179\"/></a>eslie Kean no es ufóloga, eso se nota, pero si periodista de investigación. Y el volumen que ahora publica en español Ediciones Urano “OVNIs” es el mejor ejemplo de cómo alguien ajeno al fenómeno, pero lleno de entusiasmo, puede remover cielo y tierra, para buscar evidencias y testimonios de primer nivel.</p>\n<p>Kean ha conseguido involucrar en su proyecto a militares, pilotos, y hasta un prólogo de John Podesta, ex Jefe de Gabinete de la Casa Blanca, y ya solo por eso merece un lugar en la biblioteca de todo investigador. Aunque comete errores de principiante, como dar tanto protagonismo a un caso como el de Petit-Rechain, que <b>EOC</b> explicó con detalle en su nº 68 <a href=\"http://ojo-critico.blogspot.com.es/2012/08/el-ovni-de-petit-rechain-asi-se-hizo-el.html\">http://ojo-critico.blogspot.com.es/2012/08/el-ovni-de-petit-rechain-asi-se-hizo-el.html</a></p>",
  "destacado": false,
  "origen": "https://elojocritico.info/ovnis-una-vision-periodistica-actual/",
  "enlacesExternos": [

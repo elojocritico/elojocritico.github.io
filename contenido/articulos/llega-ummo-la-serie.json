@@ -10,9 +10,13 @@
   "ufologia"
  ],
  "etiquetas": [],
- "portada": null,
+ "portada": {
+  "src": "/img/2018/07/la-foto-6.webp",
+  "tarjeta": "/img/2018/07/la-foto-6-640.webp",
+  "alt": "la foto (6)"
+ },
  "extracto": "Centrado en la búsqueda de socios para coproducir a nivel internacional, el Pitch Copro Series está abierto a la participación de profesionales tanto de América como de cualquier país europeo, bajo la premisa de que los proyectos…",
- "cuerpoHtml": "<p><span class=\"img-perdida\">Imagen no recuperada</span></p>\nCentrado en la búsqueda de socios para coproducir a nivel internacional, el Pitch Copro Series está abierto a la participación de profesionales tanto de América como de cualquier país europeo, bajo la premisa de que los proyectos presentados deben tener relevancia para el mundo cultural de ambos continentes.\n\nLos 10 proyectos seleccionados por el Comité Editorial de Conecta Fiction podrán optar, además, a dos contratos de desarrollo ofrecidos por RTVE y Movistar+.\n\nEste año, la convocatoria alcanzó casi 100 proyectos provenientes de 15 países: el 58% de Europa, el 29% de Latinoamérica y el 13% de EEUU.\n\nLa temática predominante este año ha sido el drama, seguido por proyectos de thriller, representando entre ambos géneros un 60% de los proyectos recibidos. La comedia, en tanto, supuso un 12% del total.\n\nEntre los 10 proyectos finalistas del Pitch Copro Series destaca UMMO, de la productora francesa  Wild Horse. Una serie de misterio basada, aparentemente, en el fraude ufológico “made in spain” más internacional de la historia de la ufología.",
+ "cuerpoHtml": "<p><a href=\"/img/2018/07/la-foto-6.webp\"><img alt=\"la foto (6)\" class=\"izq\" height=\"215\" loading=\"lazy\" src=\"/img/2018/07/la-foto-6.webp\" width=\"418\"/></a></p>\nCentrado en la búsqueda de socios para coproducir a nivel internacional, el Pitch Copro Series está abierto a la participación de profesionales tanto de América como de cualquier país europeo, bajo la premisa de que los proyectos presentados deben tener relevancia para el mundo cultural de ambos continentes.\n\nLos 10 proyectos seleccionados por el Comité Editorial de Conecta Fiction podrán optar, además, a dos contratos de desarrollo ofrecidos por RTVE y Movistar+.\n\nEste año, la convocatoria alcanzó casi 100 proyectos provenientes de 15 países: el 58% de Europa, el 29% de Latinoamérica y el 13% de EEUU.\n\nLa temática predominante este año ha sido el drama, seguido por proyectos de thriller, representando entre ambos géneros un 60% de los proyectos recibidos. La comedia, en tanto, supuso un 12% del total.\n\nEntre los 10 proyectos finalistas del Pitch Copro Series destaca UMMO, de la productora francesa  Wild Horse. Una serie de misterio basada, aparentemente, en el fraude ufológico “made in spain” más internacional de la historia de la ufología.",
  "destacado": false,
  "origen": "https://elojocritico.info/llega-ummo-la-serie/",
  "enlacesExternos": []
