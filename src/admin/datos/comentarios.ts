@@ -79,7 +79,7 @@ export async function cambiarOculto(db: Firestore, slug: string, id: string, ocu
     const s = await tx.get(ref);
     const actual: string[] = s.exists() && Array.isArray(s.data().ids) ? s.data().ids.map(String) : [];
     const nuevos = ocultar ? (actual.includes(id) ? actual : [...actual, id]) : actual.filter((x) => x !== id);
-    tx.set(ref, { ids: nuevos });
+    tx.set(ref, { ids: nuevos }, { merge: true }); // merge: no pisa "textos" (copia del texto de los ocultos, la escribe el exportador)
     return nuevos;
   });
 }

@@ -176,6 +176,39 @@ describe("editor", () => {
   it("escribe archivoOcultos", async () => {
     await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/x"), { ids: ["1"] }));
   });
+  describe("archivoOcultos.textos (copia del texto de los ocultos)", () => {
+    const TEXTOS = { "7": { id: "7", autor: "A", fecha: "2018-01-01T10:00", html: "<p>t</p>", respuestaA: null } };
+    beforeEach(async () => {
+      await env.withSecurityRulesDisabled(async (ctx) => {
+        await setDoc(doc(ctx.firestore(), "archivoOcultos/t"), { ids: ["7"], textos: TEXTOS });
+      });
+    });
+    it("un editor lee los textos", async () => {
+      const s = await assertSucceeds(getDoc(doc(auth(EDITOR), "archivoOcultos/t")));
+      assert.deepEqual(s.data().textos, TEXTOS);
+    });
+    it("un lector o alguien sin papel no los lee", async () => {
+      await assertFails(getDoc(doc(anon(), "archivoOcultos/t")));
+      await assertFails(getDoc(doc(auth(SINPAPEL), "archivoOcultos/t")));
+    });
+    it("un editor puede cambiar ids sin tocar los textos", async () => {
+      await assertSucceeds(setDoc(doc(auth(EDITOR), "archivoOcultos/t"), { ids: ["7", "8"] }, { merge: true }));
+      await assertSucceeds(updateDoc(doc(auth(ADMIN), "archivoOcultos/t"), { ids: [] }));
+    });
+    it("un editor o admin no puede escribir, cambiar ni vaciar los textos", async () => {
+      for (const quien of [EDITOR, ADMIN]) {
+        const db = auth(quien);
+        await assertFails(updateDoc(doc(db, "archivoOcultos/t"), { textos: {} }));
+        await assertFails(updateDoc(doc(db, "archivoOcultos/t"), { textos: { "7": { ...TEXTOS["7"], html: "<p>otro</p>" } } }));
+        await assertFails(setDoc(doc(db, "archivoOcultos/t"), { ids: ["7"] })); // reemplazar sin textos los borraría
+        await assertFails(setDoc(doc(db, "archivoOcultos/nuevo"), { ids: [], textos: TEXTOS }));
+        await assertFails(deleteDoc(doc(db, "archivoOcultos/t")));
+      }
+    });
+    it("no admite otros campos", async () => {
+      await assertFails(updateDoc(doc(auth(EDITOR), "archivoOcultos/t"), { otro: 1 }));
+    });
+  });
   it("lee ajustes pero no puede escribirlos", async () => {
     const db = auth(EDITOR);
     await assertSucceeds(getDoc(doc(db, "ajustes/global")));
