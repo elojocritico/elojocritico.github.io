@@ -16,7 +16,7 @@ import {
 } from "../datos/guardar";
 import { SECCIONES, nombreDeSeccion } from "../datos/secciones";
 import { mensajeDeCambio, mensajeDeError } from "../mensajes";
-import { irA } from "../ruta";
+import { bloquearNavegacion, irA, sincronizarHash } from "../ruta";
 import { subirImagen, urlTarjeta, ErrorSubida } from "../subirImagen";
 import { sanear } from "../../lib/sanear";
 import { direccionDesdeTitulo, limpiarDireccion, problemaDeDireccion } from "../utiles/direccion";
@@ -93,7 +93,6 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
   >(null);
   const baseHtml = useRef(""); // el texto tal como estaba en el servidor, para detectar pérdidas al guardar
   const sucioRef = useRef(false);
-  const hashActual = useRef(typeof window === "undefined" ? "" : window.location.hash);
   sucioRef.current = sucio;
   const guardadoIntento = useRef<Campos | null>(null);
   const estadoIntento = useRef<Estado | null>(null);
@@ -136,21 +135,15 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
     return () => window.removeEventListener("beforeunload", aviso);
   }, [sucio]);
 
-  // Cambiar de pantalla con el botón «atrás» o el menú, con cambios sin guardar: se vuelve atrás y se pregunta.
+  // Cambiar de pantalla con el botón «atrás» o el menú, con cambios sin guardar: el router pregunta antes de cambiar.
   useEffect(() => {
-    const alCambiarHash = () => {
-      const nuevo = window.location.hash;
-      if (nuevo === hashActual.current) return;
-      if (!sucioRef.current) {
-        hashActual.current = nuevo;
-        return;
-      }
-      window.location.hash = hashActual.current;
-      setPregunta({ tipo: "navegar", destino: nuevo });
-    };
-    window.addEventListener("hashchange", alCambiarHash);
-    return () => window.removeEventListener("hashchange", alCambiarHash);
-  }, []);
+    if (!sucio) return;
+    return bloquearNavegacion((destino) => {
+      if (!sucioRef.current) return true;
+      setPregunta({ tipo: "navegar", destino });
+      return false;
+    });
+  }, [sucio]);
 
   useEffect(() => {
     if (mensaje) avisoRef.current?.focus();
@@ -281,7 +274,7 @@ export function Editor({ usuario, id }: { usuario: User; id?: string }) {
       if (estado !== "borrador" || eraPublicable) void marcarPublicarPendiente(db);
       if (esNuevo) {
         window.history.replaceState(null, "", "#/editar/" + encodeURIComponent(id2));
-        hashActual.current = window.location.hash;
+        sincronizarHash();
       }
       baseHtml.current = guardado.cuerpoHtml;
       setIdArticulo(id2);

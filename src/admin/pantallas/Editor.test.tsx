@@ -7,7 +7,7 @@ const g = vi.hoisted(() => ({
 }));
 vi.mock("../firebase", () => ({ auth: {}, db: { falso: true }, configurado: true }));
 vi.mock("../datos/guardar", async () => ({ ...(await vi.importActual<object>("../datos/guardar")), ...g }));
-vi.mock("../ruta", () => ({ irA: vi.fn() }));
+vi.mock("../ruta", async () => ({ ...(await vi.importActual<object>("../ruta")), irA: vi.fn() }));
 // TipTap necesita un navegador de verdad: aquí el cuadro de texto se sustituye por uno simple.
 vi.mock("../componentes/EditorTexto", () => ({
   EditorTexto: ({ inicial, alCambiar }: { inicial: string; alCambiar: (h: string) => void }) => (

@@ -45,6 +45,11 @@ describe("el editor no se come el contenido migrado", () => {
     expect(html).toMatch(/<iframe [^>]*src="https:\/\/www\.youtube-nocookie\.com\/embed\/dQw4w9WgXcQ/);
   });
 
+  it("el reproductor conserva la dirección normalizada (https), no la original", () => {
+    expect(porElEditor('<p><iframe src="http://www.ivoox.com/player_ej_1.html"></iframe></p>')).toContain('src="https://www.ivoox.com/player_ej_1.html"');
+    expect(porElEditor('<iframe src="//www.youtube.com/embed/abc"></iframe>')).toContain('src="https://www.youtube.com/embed/abc"');
+  });
+
   it("un iframe de un sitio no permitido no entra en el editor", () => {
     expect(porElEditor('<p>a</p><iframe src="https://malo.example/x"></iframe>')).not.toContain("iframe");
   });

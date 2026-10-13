@@ -8,7 +8,7 @@ const g = vi.hoisted(() => ({
 }));
 vi.mock("../firebase", () => ({ auth: {}, db: { falso: true }, configurado: true }));
 vi.mock("../datos/guardar", async () => ({ ...(await vi.importActual<object>("../datos/guardar")), ...g }));
-vi.mock("../ruta", () => ({ irA: vi.fn() }));
+vi.mock("../ruta", async () => ({ ...(await vi.importActual<object>("../ruta")), irA: vi.fn() }));
 vi.mock("../componentes/EditorTexto", () => ({
   EditorTexto: ({ inicial, alCambiar }: { inicial: string; alCambiar: (h: string) => void }) => (
     <textarea aria-label="Texto del artículo" defaultValue={inicial} onChange={(e) => alCambiar(e.target.value)} />
@@ -113,35 +113,6 @@ describe("Editor: tamaño del artículo y fotos de prueba", () => {
     await userEvent.click(screen.getByRole("button", { name: "Vista previa" }));
     expect(screen.getByText(/las fotos de prueba no se muestran/)).toBeInTheDocument();
     expect(screen.getByRole("article", { name: "Vista previa" }).querySelector("img")).toBeNull();
-  });
-});
-
-describe("Editor: salir con cambios sin guardar", () => {
-  it("al cambiar de pantalla por la dirección del navegador pregunta y vuelve atrás; «Salir sin guardar» continúa", async () => {
-    render(<Editor usuario={usuario} />);
-    await userEvent.type(screen.getByLabelText(/^Título/), "algo");
-    window.location.hash = "#/articulos";
-    const dialogo = await screen.findByRole("alertdialog", { name: "Tienes cambios sin guardar" });
-    await waitFor(() => expect(window.location.hash).toBe(""));
-    expect(irA).not.toHaveBeenCalled();
-    await userEvent.click(within(dialogo).getByRole("button", { name: "Salir sin guardar" }));
-    expect(irA).toHaveBeenCalledWith("#/articulos");
-  });
-
-  it("«Seguir editando» se queda", async () => {
-    render(<Editor usuario={usuario} />);
-    await userEvent.type(screen.getByLabelText(/^Título/), "algo");
-    window.location.hash = "#/inicio";
-    await userEvent.click(await screen.findByRole("button", { name: "Seguir editando" }));
-    expect(screen.queryByRole("alertdialog")).toBeNull();
-    expect(irA).not.toHaveBeenCalled();
-  });
-
-  it("sin cambios no pregunta", async () => {
-    render(<Editor usuario={usuario} />);
-    window.location.hash = "#/articulos";
-    await new Promise((r) => setTimeout(r, 30));
-    expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 });
 

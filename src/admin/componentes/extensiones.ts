@@ -32,7 +32,9 @@ export const Reproductor = Node.create({
       renderHTML: (a: Record<string, unknown>) => (a[nombre] ? { [nombre]: a[nombre] } : {}),
     });
     return {
-      src: texto("src"), width: texto("width"), height: texto("height"),
+      // El src ya viene normalizado (https) desde getAttrs: no se vuelve a leer del HTML original.
+      src: { default: null, parseHTML: () => null, renderHTML: (a: Record<string, unknown>) => (a.src ? { src: a.src } : {}) },
+      width: texto("width"), height: texto("height"),
       allowfullscreen: {
         default: null,
         parseHTML: (el: HTMLElement) => (el.hasAttribute("allowfullscreen") ? "" : null),
