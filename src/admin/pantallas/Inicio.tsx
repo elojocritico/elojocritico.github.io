@@ -66,6 +66,12 @@ export function Inicio({ usuario, papel }: { usuario: User; papel: Papel }) {
           Publicar cambios{estado !== undefined && <span className="contador">{publicarPendiente ? " (hay cambios)" : " (al día)"}</span>}
         </Boton>
       </nav>
+      {papel === "admin" && (
+        <nav className="fila-botones fila-izquierda" aria-label="Administración">
+          <Boton onClick={() => irA("ajustes")}>Ajustes de la web</Boton>
+          <Boton onClick={() => irA("usuarios")}>Usuarios</Boton>
+        </nav>
+      )}
 
       <section className="semaforo" aria-label="Estado de la web">
         <h2>Estado de la web</h2>

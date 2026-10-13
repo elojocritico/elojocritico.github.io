@@ -107,3 +107,13 @@
 .cambios-del-otro dt { font-weight: 700; color: var(--texto); }
 .cambios-del-otro dd { margin: 2px 0 12px; color: var(--texto-2); }
 .texto-comentario { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 12px; font-size: 17px; line-height: 1.5; }
+
+/* Ajustes, usuarios y publicar */
+.seccion-ajuste { border-top: 1px solid var(--linea); margin-top: 28px; padding-top: 8px; display: grid; gap: 12px; }
+.seccion-ajuste .campo, .buscador label, .lista-enlaces label { display: grid; gap: 6px; font-weight: 600; color: var(--texto-2); }
+.buscador { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; }
+.buscador label { flex: 1 1 240px; }
+.lista-enlaces { list-style: none; padding: 0; margin: 0; display: grid; gap: 18px; }
+.lista-enlaces li { display: grid; gap: 8px; border: 1px solid var(--linea); border-radius: 6px; padding: 12px; }
+.seccion-ajuste .casilla { margin: 4px 0; }
+.grande-texto { font-size: 1.5rem; font-weight: 700; margin: 16px 0; }

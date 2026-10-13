@@ -61,4 +61,15 @@ describe("Inicio sin acceso al estado", () => {
     expect(screen.queryByText("Aún no hay datos")).toBeNull();
     f.fallo = false;
   });
+
+  it("Ajustes y Usuarios solo se ofrecen a administradores", async () => {
+    f.estado = null;
+    const { unmount } = render(<Inicio usuario={usuario} papel="admin" />);
+    expect(screen.getByRole("button", { name: "Ajustes de la web" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Usuarios" })).toBeInTheDocument();
+    unmount();
+    render(<Inicio usuario={usuario} papel="editor" />);
+    expect(screen.queryByRole("button", { name: "Ajustes de la web" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Usuarios" })).toBeNull();
+  });
 });

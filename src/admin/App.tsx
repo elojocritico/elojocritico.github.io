@@ -9,6 +9,9 @@ import { Inicio } from "./pantallas/Inicio";
 import { Articulos } from "./pantallas/Articulos";
 import { Comentarios } from "./pantallas/Comentarios";
 import { Editor } from "./pantallas/Editor";
+import { Ajustes } from "./pantallas/Ajustes";
+import { Usuarios } from "./pantallas/Usuarios";
+import { Publicar } from "./pantallas/Publicar";
 import { SIN_CONFIGURAR } from "./mensajes";
 
 function Pronto() {
@@ -30,6 +33,9 @@ function Panel() {
   if (ruta.pantalla === "comentarios") return <Comentarios usuario={sesion.usuario} />;
   if (ruta.pantalla === "nuevo") return <Editor key="nuevo" usuario={sesion.usuario} />;
   if (ruta.pantalla === "editar" && ruta.id) return <Editor key={ruta.id} usuario={sesion.usuario} id={ruta.id} />;
+  if (ruta.pantalla === "ajustes") return <Ajustes usuario={sesion.usuario} papel={sesion.papel} />;
+  if (ruta.pantalla === "usuarios") return <Usuarios usuario={sesion.usuario} papel={sesion.papel} />;
+  if (ruta.pantalla === "publicar") return <Publicar usuario={sesion.usuario} />;
   return <Pronto />;
 }
 

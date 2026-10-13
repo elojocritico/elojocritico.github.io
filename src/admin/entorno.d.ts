@@ -4,4 +4,5 @@ interface ImportMetaEnv {
   readonly PUBLIC_EMULADOR?: string;
   readonly PUBLIC_CLOUDINARY_NUBE?: string;
   readonly PUBLIC_CLOUDINARY_PRESET?: string;
+  readonly PUBLIC_URL_PUBLICAR?: string;
 }
