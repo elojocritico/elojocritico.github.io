@@ -68,6 +68,25 @@ describe("importar (simulador)", () => {
     expect(r2.articulos).toMatchObject({ creados: 0, actualizados: 0, sinCambios: 3 });
   });
 
+  it("con actualizadoAhora los artículos creados llevan actualizadoEn = ahora y la segunda pasada no escribe nada", async () => {
+    const fijo = "2026-10-15T09:30:00.000Z";
+    const r = await importar({ db, dirContenido: dir, log: callar, actualizadoAhora: true, ahora: () => fijo });
+    expect(r.articulos).toMatchObject({ creados: 3, actualizados: 0 });
+    const d = (await db.doc("articulos/uno").get()).data();
+    expect(d.actualizadoEn).toBe(fijo);
+    expect(d.creadoEn).toBe("2020-03-04T11:00:00.000Z");
+    expect(d.fechaPublicacion).toBe("2020-03-04T11:00:00.000Z");
+    // Segunda pasada (otra hora): ni compara ni pisa actualizadoEn.
+    const r2 = await importar({ db, dirContenido: dir, log: callar, actualizadoAhora: true, ahora: () => "2026-10-16T00:00:00.000Z" });
+    expect(r2.escrituras).toBe(0);
+    expect(r2.articulos).toMatchObject({ creados: 0, actualizados: 0, sinCambios: 3 });
+    expect((await db.doc("articulos/uno").get()).data().actualizadoEn).toBe(fijo);
+    // Sin la opción, el comportamiento de siempre: actualizadoEn = fecha original.
+    await db.recursiveDelete(db.collection("articulos"));
+    await importar({ db, dirContenido: dir, log: callar });
+    expect((await db.doc("articulos/uno").get()).data().actualizadoEn).toBe("2020-03-04T11:00:00.000Z");
+  });
+
   it("anota cuántas fotos pendientes (marcas de foto perdida) tiene cada artículo", () => {
     const marca = '<span class="img-perdida">Imagen no recuperada</span>';
     expect(docArticulo({ slug: "m", fecha: "2020-01-10", cuerpoHtml: `<p>${marca}${marca}</p>` }).fotosPendientes).toBe(2);
@@ -124,6 +143,14 @@ describe("importar como comando: protección del proyecto real", () => {
     const r = correr([dir, "--real"], limpio());
     expect(r.status).toBe(1);
     expect(r.stderr).toContain("GOOGLE_APPLICATION_CREDENTIALS");
+  });
+
+  it("el indicador --fecha-actualizacion-ahora funciona como comando y no se toma por el directorio", async () => {
+    const r = correr(["--fecha-actualizacion-ahora", dir], process.env);
+    expect(r.status, r.stderr).toBe(0);
+    const d = (await db.doc("articulos/uno").get()).data();
+    expect(d.actualizadoEn).not.toBe("2020-03-04T11:00:00.000Z");
+    expect(new Date(d.actualizadoEn).getFullYear()).toBeGreaterThanOrEqual(2026);
   });
 
   it("con el simulador funciona e indica el destino", async () => {

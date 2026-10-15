@@ -1,10 +1,12 @@
 // Importa el contenido migrado (contenido/) a Firestore. Idempotente: no reescribe lo que ya es igual.
-// Uso:  node scripts/importar.mjs [directorio-contenido]
+// Uso:  node scripts/importar.mjs [directorio-contenido] [--fecha-actualizacion-ahora]
 // Simulador: define FIRESTORE_EMULATOR_HOST (y GCLOUD_PROJECT). Proyecto real: GOOGLE_APPLICATION_CREDENTIALS.
 // Sin simulador hay que añadir --real (y GOOGLE_APPLICATION_CREDENTIALS); si no, se niega a escribir.
 // RESERVADO: el valor "migración" en actualizadoPor es solo de este script. El panel NUNCA debe escribirlo
 // (el editor de artículos debe imponerlo): con él el importador se creería dueño del artículo y lo pisaría.
 // Los comentarios del archivo NO se importan (siguen en el repositorio).
+// --fecha-actualizacion-ahora: los artículos CREADOS llevan actualizadoEn = ahora (en vez de la fecha original),
+// para que la exportación incremental los vea; los ya existentes conservan su actualizadoEn (idempotente).
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,7 +47,7 @@ export function docArticulo(a) {
 
 const leer = (f) => JSON.parse(readFileSync(f, "utf-8"));
 
-export async function importar({ db = getFirestore(), dirContenido = resolve(dirname(fileURLToPath(import.meta.url)), "..", "contenido"), log = console.log } = {}) {
+export async function importar({ db = getFirestore(), dirContenido = resolve(dirname(fileURLToPath(import.meta.url)), "..", "contenido"), log = console.log, actualizadoAhora = false, ahora = () => new Date().toISOString() } = {}) {
   const dirArt = join(dirContenido, "articulos");
   const ficheros = existsSync(dirArt) ? readdirSync(dirArt).filter((f) => f.endsWith(".json")).sort() : [];
   const nuevos = ficheros.map((f) => docArticulo(leer(join(dirArt, f))));
@@ -69,7 +71,7 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
       }
       if (!snap.exists) {
         r.creados++;
-        await escribir(refs[j], trozo[j]);
+        await escribir(refs[j], actualizadoAhora ? { ...trozo[j], actualizadoEn: ahora() } : trozo[j]);
         continue;
       }
       const actual = snap.data();
@@ -78,13 +80,16 @@ export async function importar({ db = getFirestore(), dirContenido = resolve(dir
         editados.add(trozo[j].slug);
         continue;
       }
-      const propios = Object.fromEntries(Object.keys(trozo[j]).map((k) => [k, actual[k]]));
-      if (estable(propios) === estable(trozo[j])) {
+      // Con --fecha-actualizacion-ahora actualizadoEn no cuenta: ni se compara ni se pisa lo que ya hay.
+      const { actualizadoEn: _omitido, ...nuevoSinFecha } = trozo[j];
+      const deseado = actualizadoAhora ? nuevoSinFecha : trozo[j];
+      const propios = Object.fromEntries(Object.keys(deseado).map((k) => [k, actual[k]]));
+      if (estable(propios) === estable(deseado)) {
         r.sinCambios++;
         continue;
       }
       r.actualizados++;
-      await escribir(refs[j], trozo[j], { merge: true });
+      await escribir(refs[j], deseado, { merge: true });
     }
   }
 
@@ -134,7 +139,11 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     console.log(destino.mensaje);
     iniciarAdmin();
     const t = Date.now();
-    await importar({ dirContenido: destino.args[0] ? resolve(destino.args[0]) : undefined });
+    const posicionales = destino.args.filter((a) => !a.startsWith("--"));
+    await importar({
+      dirContenido: posicionales[0] ? resolve(posicionales[0]) : undefined,
+      actualizadoAhora: destino.args.includes("--fecha-actualizacion-ahora"),
+    });
     console.log(`✓ Hecho en ${((Date.now() - t) / 1000).toFixed(1)} s.`);
   } catch (e) {
     console.error("✗ No se ha podido importar:", e?.message ?? e);
