@@ -1,0 +1,20 @@
+{
+  "slug": "no-12-libros-prohibidos",
+  "titulo": "Nº 12 LIBROS PROHIBIDOS",
+  "subtitulo": "",
+  "fecha": "2013-09-19",
+  "autor": "El Ojo Crítico",
+  "secciones": [
+    "cronicas-del-misterio"
+  ],
+  "etiquetas": [],
+  "portada": {
+    "src": "/img/2013/11/escudo1.webp",
+    "tarjeta": "/img/2013/11/escudo1-640.webp",
+    "alt": "barcarrota"
+  },
+  "extracto": "Hacemos un repaso histórico a los libros prohibidos y los autores malditos con Lorenzo Fernández y Manuel Carballal.",
+  "cuerpoHtml": "<p>Hacemos un repaso histórico a los libros prohibidos y los autores malditos con Lorenzo Fernández y Manuel Carballal.</p>\n<p><img alt=\"barcarrota\" class=\"centro\" height=\"300\" loading=\"lazy\" src=\"/img/2013/11/escudo1.webp\" width=\"647\" /></p>\n<p><iframe allowfullscreen height=\"120\" loading=\"lazy\" src=\"https://www.ivoox.com/player_ej_1598456_1.html\" width=\"100%\"></iframe></p>",
+  "destacado": false,
+  "origen": "https://elojocritico.info/no-12-libros-prohibidos/"
+}
